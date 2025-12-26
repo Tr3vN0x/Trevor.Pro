@@ -37,10 +37,11 @@ $tagline = "Exploring the night side";
         border-radius: 50%; box-shadow: 0 0 80px rgba(240, 242, 255, 0.15); z-index: -1; 
     }
 
-    /* --- BADGE STYLES --- */
+    /* --- BADGE & COORDS --- */
     .badge { font-size: 0.55rem; padding: 1px 5px; border-radius: 4px; margin-left: 5px; vertical-align: middle; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
     .badge-owner { background: rgba(255, 215, 0, 0.2); color: var(--owner-gold); border: 1px solid var(--owner-gold); }
     .badge-verified { background: rgba(56, 151, 240, 0.2); color: var(--verified-blue); border: 1px solid var(--verified-blue); }
+    .coords { font-size: 0.65rem; color: var(--accent-nebula); font-family: monospace; opacity: 0.8; margin-left: 8px; }
 
     /* --- LAYOUT --- */
     main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; position: relative; z-index: 10; }
@@ -134,6 +135,7 @@ $tagline = "Exploring the night side";
         <div id="profile-display">
           <img id="my-avatar" class="avatar" style="width:100px; height:100px; margin-bottom:15px; border: 3px solid var(--accent-nebula);" src="">
           <h2 id="disp-name">Pilot</h2>
+          <div id="my-coords" class="coords" style="margin-bottom: 10px; font-size: 0.9rem;"></div>
           <p id="disp-bio" style="font-style:italic; font-size:0.85rem; color:var(--text-muted);"></p>
           <button onclick="toggleProfileEdit(true)" class="button">Update mission</button>
         </div>
@@ -179,11 +181,16 @@ $tagline = "Exploring the night side";
     const db = getFirestore(app);
     let chatListener = null;
 
+    // BADGE & COORD HELPER
     const getBadgeHTML = (uid) => {
         if (uid === "kAWYdnGnDuYJk9JZYsWZYqRo7ml1") return `<span class="badge badge-owner">Owner</span>`;
         if (uid === "tZkA30TJhCVpQ1dlAukrk6fOvpr2") return `<span class="badge badge-verified">Verified</span>`;
         return "";
     };
+
+    const getCoordHTML = (coords) => coords ? `<span class="coords">${coords}</span>` : "";
+
+    const generateRandomCoords = () => `${Math.floor(Math.random()*90)}N ${Math.floor(Math.random()*180)}E`;
 
     const switchTab = (id) => {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
@@ -204,6 +211,7 @@ $tagline = "Exploring the night side";
             document.getElementById('disp-name').innerHTML = d.username + getBadgeHTML(user.uid); 
             document.getElementById('disp-bio').innerText = d.bio;
             document.getElementById('greet-name').innerText = d.username;
+            document.getElementById('my-coords').innerText = d.coords || "Surface unknown";
           }
         });
 
@@ -213,7 +221,7 @@ $tagline = "Exploring the night side";
             const p = d.data();
             const card = document.createElement('div'); card.className = 'card'; card.style.display = 'flex'; card.style.gap = '15px';
             card.innerHTML = `<img src="${p.authorImg}" class="avatar" style="width:40px; height:40px;">
-              <div><b style="color:var(--accent-nebula); font-size:0.85rem;">${p.authorName}${getBadgeHTML(p.authorId)}</b>
+              <div><b style="color:var(--accent-nebula); font-size:0.85rem;">${p.authorName}${getBadgeHTML(p.authorId)}${getCoordHTML(p.authorCoords)}</b>
               <p style="margin:5px 0 0; font-size:0.9rem;">${p.text}</p></div>`;
             feed.appendChild(card);
           });
@@ -238,43 +246,35 @@ $tagline = "Exploring the night side";
       }
     });
 
-    // CHAT LOGIC WITH PFP & NAMES & BADGES
     window.openChat = async (targetId, targetName, targetImg) => {
       const u = auth.currentUser;
       const mySnap = await getDoc(doc(db, "users", u.uid));
       const myData = mySnap.data();
+      const targetSnap = await getDoc(doc(db, "users", targetId));
+      const targetData = targetSnap.data();
+
       const chatId = [u.uid, targetId].sort().join('_');
-      
       document.getElementById('chat-target-name').innerText = targetName;
       document.getElementById('chat-target-img').src = targetImg;
       document.getElementById('chat-overlay').style.display = 'flex';
-      
       const box = document.getElementById('chat-messages');
       if(chatListener) chatListener();
-      
       const q = query(collection(db, "chats"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
       chatListener = onSnapshot(q, (snap) => {
         box.innerHTML = "";
         snap.forEach(d => {
-          const m = d.data(); 
-          const isMe = m.sender === u.uid;
+          const m = d.data(); const isMe = m.sender === u.uid;
           const senderName = isMe ? myData.username : targetName;
           const senderImg = isMe ? myData.profile_Image : targetImg;
           const senderUid = isMe ? u.uid : targetId;
+          const senderCoords = isMe ? myData.coords : targetData.coords;
           
-          const wrap = document.createElement('div'); 
-          wrap.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
-          wrap.innerHTML = `
-            <img src="${senderImg}" class="chat-pfp">
-            <div class="bubble-container">
-              <span class="chat-user-label">${senderName}${getBadgeHTML(senderUid)}</span>
-              <div class="bubble">${m.text}</div>
-            </div>`;
+          const wrap = document.createElement('div'); wrap.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
+          wrap.innerHTML = `<img src="${senderImg}" class="chat-pfp"><div class="bubble-container"><span class="chat-user-label">${senderName}${getBadgeHTML(senderUid)}${getCoordHTML(senderCoords)}</span><div class="bubble">${m.text}</div></div>`;
           box.appendChild(wrap);
         });
         box.scrollTop = box.scrollHeight;
       });
-
       document.getElementById('chat-send-btn').onclick = async () => {
         const inp = document.getElementById('chat-input'); if(!inp.value.trim()) return;
         const txt = inp.value; inp.value = "";
@@ -289,7 +289,7 @@ $tagline = "Exploring the night side";
       const email = document.getElementById('email').value, pass = document.getElementById('password').value, user = document.getElementById('reg-username').value;
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db, "users", cred.user.uid), { username: user, bio: "Pilot active.", profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user}`, is_online: true });
+        await setDoc(doc(db, "users", cred.user.uid), { username: user, bio: "Pilot active.", profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user}`, is_online: true, coords: generateRandomCoords() });
       } catch (err) { if(err.code === 'auth/email-already-in-use') await signInWithEmailAndPassword(auth, email, pass); }
     };
 
@@ -297,7 +297,7 @@ $tagline = "Exploring the night side";
       const t = document.getElementById('post-content'); if(!t.value.trim()) return;
       const u = auth.currentUser;
       const uData = (await getDoc(doc(db, "users", u.uid))).data();
-      await addDoc(collection(db, "posts"), { text: t.value, authorId: u.uid, authorName: uData.username, authorImg: uData.profile_Image, timestamp: serverTimestamp() });
+      await addDoc(collection(db, "posts"), { text: t.value, authorId: u.uid, authorName: uData.username, authorImg: uData.profile_Image, authorCoords: uData.coords || "40N 60E", timestamp: serverTimestamp() });
       t.value = "";
     };
 
