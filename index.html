@@ -20,45 +20,19 @@ $tagline = "Exploring the night side";
       --online-glow: #00ff88;
     }
 
-    body { 
-        margin: 0; 
-        font-family: 'Poppins', sans-serif; 
-        background: var(--bg-primary); 
-        color: #e8ebff; 
-        min-height: 100vh; 
-        overflow-x: hidden; 
-    }
+    body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: #e8ebff; min-height: 100vh; overflow-x: hidden; }
 
     /* --- BACKGROUND ELEMENTS --- */
-    #starCanvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -2;
-        pointer-events: none;
-    }
-
+    #starCanvas { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
     .nebula-glow {
-        position: fixed;
-        inset: 0;
+        position: fixed; inset: 0; z-index: -1; pointer-events: none;
         background: radial-gradient(circle at 80% 10%, rgba(165, 180, 252, 0.08) 0%, transparent 50%),
                     radial-gradient(circle at 20% 80%, rgba(132, 139, 189, 0.05) 0%, transparent 40%);
-        z-index: -1;
-        pointer-events: none;
     }
-
     .moon-orb { 
-        position: fixed; 
-        top: -60px; 
-        right: -60px; 
-        width: 300px; 
-        height: 300px; 
+        position: fixed; top: -60px; right: -60px; width: 300px; height: 300px; 
         background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); 
-        border-radius: 50%; 
-        box-shadow: 0 0 80px rgba(240, 242, 255, 0.15); 
-        z-index: -1; 
+        border-radius: 50%; box-shadow: 0 0 80px rgba(240, 242, 255, 0.15); z-index: -1; 
     }
 
     /* --- LAYOUT --- */
@@ -74,27 +48,21 @@ $tagline = "Exploring the night side";
     #chat-overlay { position: fixed; inset: 0; background: var(--bg-primary); z-index: 200; display: none; flex-direction: column; }
     #chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; background: var(--glass-bg); }
     #chat-messages { flex-grow: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 15px; }
-    
     .msg-wrapper { display: flex; align-items: flex-end; gap: 10px; width: 100%; }
     .msg-wrapper.sent { flex-direction: row-reverse; }
-    .chat-pfp { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--glass-border); }
-    
-    .bubble-container { display: flex; flex-direction: column; max-width: 75%; }
-    .sent .bubble-container { align-items: flex-end; }
-    .bubble { padding: 12px 16px; border-radius: 20px; font-size: 0.9rem; line-height: 1.4; }
+    .bubble { padding: 12px 16px; border-radius: 20px; font-size: 0.9rem; line-height: 1.4; max-width: 75%; }
     .sent .bubble { background: var(--accent-moon); color: var(--bg-primary); border-bottom-right-radius: 4px; }
     .received .bubble { background: rgba(255,255,255,0.1); color: #fff; border-bottom-left-radius: 4px; border: 1px solid var(--glass-border); }
-    .chat-meta { font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: uppercase; display: flex; gap: 10px; }
 
-    /* --- INPUTS & NAV --- */
+    /* --- UI ELEMENTS --- */
     input, textarea { width: 100%; padding: 0.8rem; margin-bottom: 0.8rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; box-sizing: border-box; }
     .button { width: 100%; padding: 0.8rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; text-transform: uppercase; }
     .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 22px; display: flex; justify-content: space-around; padding: 10px; z-index: 100; }
     .nav-item { color: var(--text-muted); font-size: 0.6rem; text-transform: uppercase; cursor: pointer; opacity: 0.6; display: flex; flex-direction: column; align-items: center; }
     .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
-    .status-dot { width: 10px; height: 10px; background: var(--online-glow); border-radius: 50%; display: inline-block; }
-    .status-dot.offline { background: #444; }
     .hidden { display: none; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--online-glow); display: inline-block; }
+    .status-dot.offline { background: #444; }
   </style>
 </head>
 <body>
@@ -119,7 +87,8 @@ $tagline = "Exploring the night side";
   <main>
     <div id="auth-view" class="app-section active">
       <div class="card" style="text-align:center;">
-        <h2 style="letter-spacing: 4px;">LUNARTREV</h2>
+        <h2 style="letter-spacing: 4px; margin-bottom: 0.5rem;">LUNARTREV</h2>
+        <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2rem;">BROADCAST FROM THE DARK SIDE</p>
         <form id="auth-form">
           <input type="text" id="reg-username" placeholder="Pilot Username" required>
           <input type="email" id="email" placeholder="Earth Email" required>
@@ -130,6 +99,15 @@ $tagline = "Exploring the night side";
     </div>
 
     <div id="home-tab" class="app-section">
+      <div id="user-greeting" style="margin-bottom: 1.5rem; padding: 0 0.5rem;">
+        <h1 style="margin: 0; font-size: 1.4rem; letter-spacing: 1px;">
+          Welcome, <span id="greet-name" style="color: var(--accent-nebula); text-shadow: 0 0 10px rgba(165, 180, 252, 0.4);">Explorer</span>
+        </h1>
+        <p style="margin: 4px 0 0; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">
+          Logged into LunarTrev System
+        </p>
+      </div>
+
       <div class="card">
         <textarea id="post-content" placeholder="Broadcast to the moon..." rows="3"></textarea>
         <button id="send-btn" class="button">Transmit</button>
@@ -146,19 +124,22 @@ $tagline = "Exploring the night side";
       <div id="video-feed"></div>
     </div>
 
-    <div id="discover-tab" class="app-section"><h3>Active Crew</h3><div id="crew-list"></div></div>
+    <div id="discover-tab" class="app-section">
+      <h3 style="padding-left: 0.5rem; letter-spacing: 2px;">ACTIVE CREW</h3>
+      <div id="crew-list"></div>
+    </div>
 
     <div id="profile-tab" class="app-section">
       <div class="card" style="text-align:center;">
         <div id="profile-display">
-          <img id="my-avatar" class="avatar" style="width:100px; height:100px; margin-bottom:15px;" src="">
+          <img id="my-avatar" class="avatar" style="width:100px; height:100px; margin-bottom:15px; border: 3px solid var(--accent-nebula);" src="">
           <h2 id="disp-name">Pilot</h2>
           <p id="disp-bio" style="font-style:italic; font-size:0.85rem; color:var(--text-muted); margin-bottom: 20px;"></p>
           <button onclick="toggleProfileEdit(true)" class="button">Update Mission Log</button>
         </div>
         <div id="profile-edit" class="hidden">
           <input type="text" id="edit-avatar-url" placeholder="Avatar URL">
-          <textarea id="edit-bio" placeholder="Bio..." rows="3"></textarea>
+          <textarea id="edit-bio" placeholder="Update bio..." rows="3"></textarea>
           <button id="save-profile-btn" class="button">Save Changes</button>
         </div>
         <button id="logout-btn" style="margin-top:2rem; background:none; border:1px solid #ff4d4d; color:#ff4d4d; width:100%; cursor:pointer; padding:10px; border-radius:10px;">Logout</button>
@@ -177,7 +158,6 @@ $tagline = "Exploring the night side";
     const canvas = document.getElementById('starCanvas');
     const ctx = canvas.getContext('2d');
     let stars = [];
-
     function initStars() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -192,14 +172,13 @@ $tagline = "Exploring the night side";
             });
         }
     }
-
     function drawStars() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "white";
         stars.forEach(s => {
             s.opacity += s.speed;
             if (s.opacity > 1 || s.opacity < 0) s.speed *= -1;
-            ctx.globalAlpha = s.opacity;
+            ctx.globalAlpha = Math.max(0, s.opacity);
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
             ctx.fill();
@@ -208,8 +187,7 @@ $tagline = "Exploring the night side";
         requestAnimationFrame(drawStars);
     }
     window.addEventListener('resize', initStars);
-    initStars();
-    drawStars();
+    initStars(); drawStars();
   </script>
 
   <script type="module">
@@ -240,48 +218,6 @@ $tagline = "Exploring the night side";
     };
     document.querySelectorAll('.nav-item').forEach(i => i.onclick = () => switchTab(i.dataset.tab));
 
-    window.openChat = async (targetId, targetName, targetImg) => {
-      const u = auth.currentUser;
-      const mySnap = await getDoc(doc(db, "users", u.uid));
-      const myData = mySnap.data();
-      const chatId = [u.uid, targetId].sort().join('_');
-      
-      document.getElementById('chat-target-name').innerText = targetName;
-      document.getElementById('chat-target-img').src = targetImg;
-      document.getElementById('chat-overlay').style.display = 'flex';
-      
-      const box = document.getElementById('chat-messages');
-      box.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Syncing frequency...</p>';
-
-      if(chatListener) chatListener();
-      const q = query(collection(db, "chats"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
-      
-      chatListener = onSnapshot(q, (snap) => {
-        box.innerHTML = "";
-        snap.forEach(d => {
-          const m = d.data(); const isMe = m.sender === u.uid;
-          const time = m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "...";
-          const wrap = document.createElement('div'); wrap.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
-          wrap.innerHTML = `
-            <img src="${isMe ? myData.profile_Image : targetImg}" class="chat-pfp">
-            <div class="bubble-container">
-              <div class="bubble">${m.text}</div>
-              <div class="chat-meta"><span>${isMe ? myData.username : targetName}</span><span>${time}</span></div>
-            </div>`;
-          box.appendChild(wrap);
-        });
-        box.scrollTop = box.scrollHeight;
-      });
-
-      document.getElementById('chat-send-btn').onclick = async () => {
-        const inp = document.getElementById('chat-input'); if(!inp.value.trim()) return;
-        const txt = inp.value; inp.value = "";
-        await addDoc(collection(db, "chats"), { chatId, sender: u.uid, text: txt, timestamp: serverTimestamp() });
-      };
-    };
-
-    window.closeChat = () => { document.getElementById('chat-overlay').style.display = 'none'; if(chatListener) chatListener(); };
-
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         document.getElementById('auth-view').classList.remove('active');
@@ -293,36 +229,35 @@ $tagline = "Exploring the night side";
             document.getElementById('my-avatar').src = d.profile_Image; 
             document.getElementById('disp-name').innerText = d.username;
             document.getElementById('disp-bio').innerText = d.bio;
+            document.getElementById('greet-name').innerText = d.username; // SET WELCOME NAME
           }
         });
 
-        // Feed Logic
+        // Real-time Feed
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
           const feed = document.getElementById('lunar-feed'); feed.innerHTML = "";
           snap.forEach(d => {
             const p = d.data();
             const card = document.createElement('div');
-            card.className = 'card';
-            card.style.display = 'flex'; card.style.gap = '15px';
-            card.innerHTML = `
-              <img src="${p.authorImg}" class="avatar" style="width:40px; height:40px;">
-              <div>
-                <b style="color:var(--accent-nebula); font-size:0.85rem;">${p.authorName}</b>
-                <p style="margin:5px 0 0; font-size:0.9rem;">${p.text}</p>
-              </div>`;
+            card.className = 'card'; card.style.display = 'flex'; card.style.gap = '15px';
+            card.innerHTML = `<img src="${p.authorImg}" class="avatar" style="width:40px; height:40px;">
+              <div><b style="color:var(--accent-nebula); font-size:0.85rem;">${p.authorName}</b>
+              <p style="margin:5px 0 0; font-size:0.9rem;">${p.text}</p></div>`;
             feed.appendChild(card);
           });
         });
 
-        // Crew List
+        // Active Crew List
         onSnapshot(collection(db, "users"), (s) => {
           const list = document.getElementById('crew-list'); list.innerHTML = "";
-          s.forEach(doc => {
-            if(doc.id !== user.uid) {
-                const u = doc.data();
-                const div = document.createElement('div'); div.className='card'; div.style.display='flex'; div.style.alignItems='center'; div.style.gap='10px'; div.style.cursor='pointer';
-                div.innerHTML = `<img src="${u.profile_Image}" class="avatar" style="width:35px; height:35px;"> <b>${u.username}</b> <span class="status-dot ${u.is_online?'':'offline'}"></span>`;
-                div.onclick = () => openChat(doc.id, u.username, u.profile_Image);
+          s.forEach(docSnap => {
+            if(docSnap.id !== user.uid) {
+                const u = docSnap.data();
+                const div = document.createElement('div'); div.className='card'; div.style.display='flex'; div.style.alignItems='center'; div.style.gap='12px'; div.style.cursor='pointer';
+                div.innerHTML = `<img src="${u.profile_Image}" class="avatar" style="width:35px; height:35px;"> 
+                                 <b style="flex-grow:1;">${u.username}</b> 
+                                 <span class="status-dot ${u.is_online?'':'offline'}"></span>`;
+                div.onclick = () => openChat(docSnap.id, u.username, u.profile_Image);
                 list.appendChild(div);
             }
           });
@@ -335,6 +270,37 @@ $tagline = "Exploring the night side";
       }
     });
 
+    // Chat Functions
+    window.openChat = async (targetId, targetName, targetImg) => {
+      const u = auth.currentUser;
+      const mySnap = await getDoc(doc(db, "users", u.uid));
+      const myData = mySnap.data();
+      const chatId = [u.uid, targetId].sort().join('_');
+      document.getElementById('chat-target-name').innerText = targetName;
+      document.getElementById('chat-target-img').src = targetImg;
+      document.getElementById('chat-overlay').style.display = 'flex';
+      const box = document.getElementById('chat-messages');
+      if(chatListener) chatListener();
+      const q = query(collection(db, "chats"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
+      chatListener = onSnapshot(q, (snap) => {
+        box.innerHTML = "";
+        snap.forEach(d => {
+          const m = d.data(); const isMe = m.sender === u.uid;
+          const wrap = document.createElement('div'); wrap.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
+          wrap.innerHTML = `<div class="bubble">${m.text}</div>`;
+          box.appendChild(wrap);
+        });
+        box.scrollTop = box.scrollHeight;
+      });
+      document.getElementById('chat-send-btn').onclick = async () => {
+        const inp = document.getElementById('chat-input'); if(!inp.value.trim()) return;
+        const txt = inp.value; inp.value = "";
+        await addDoc(collection(db, "chats"), { chatId, sender: u.uid, text: txt, timestamp: serverTimestamp() });
+      };
+    };
+    window.closeChat = () => { document.getElementById('chat-overlay').style.display = 'none'; if(chatListener) chatListener(); };
+
+    // Auth & Actions
     document.getElementById('auth-form').onsubmit = async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value, pass = document.getElementById('password').value, user = document.getElementById('reg-username').value;
