@@ -38,10 +38,18 @@ $tagline = "Exploring the night side";
     main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; position: relative; z-index: 10; }
     .app-section { display: none; }
     .app-section.active { display: block; }
-    .card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 1.2rem; margin-bottom: 1rem; overflow: hidden; }
+    .card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 1.2rem; margin-bottom: 1rem; overflow: hidden; position: relative; }
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: #111; border: 2px solid var(--glass-border); object-fit: cover; }
     
     .post-image { width: calc(100% + 2.4rem); margin: 1rem -1.2rem -1.2rem -1.2rem; display: block; border-top: 1px solid var(--glass-border); max-height: 400px; object-fit: cover; }
+
+    /* --- OPTIONS MENU --- */
+    .post-options { position: absolute; top: 1rem; right: 1rem; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; }
+    .options-dropdown { position: absolute; top: 2.5rem; right: 1rem; background: #0f172a; border: 1px solid var(--glass-border); border-radius: 12px; z-index: 50; display: none; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); }
+    .options-dropdown.show { display: block; }
+    .opt-item { padding: 10px 20px; font-size: 0.8rem; white-space: nowrap; transition: 0.2s; }
+    .opt-item:hover { background: rgba(255,255,255,0.1); }
+    .opt-delete { color: #ff4d4d; }
 
     /* --- CHAT --- */
     #chat-overlay { position: fixed; inset: 0; background: var(--bg-primary); z-index: 200; display: none; flex-direction: column; }
@@ -135,7 +143,7 @@ $tagline = "Exploring the night side";
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM", authDomain: "lunartrev.firebaseapp.com", projectId: "lunartrev", storageBucket: "lunartrev.firebasestorage.app", messagingSenderId: "152908127950", appId: "1:152908127950:web:6db39b55cbe5d5b0f33a9f" };
     const app = initializeApp(firebaseConfig);
@@ -159,6 +167,26 @@ $tagline = "Exploring the night side";
     };
     document.querySelectorAll('.nav-item').forEach(i => i.onclick = () => switchTab(i.dataset.tab));
 
+    // Post Actions
+    window.deletePost = async (id) => {
+        if(confirm("Terminate this broadcast?")) {
+            await deleteDoc(doc(db, "posts", id));
+        }
+    };
+
+    window.editPost = async (id, currentText) => {
+        const newText = prompt("Edit your transmission:", currentText);
+        if(newText && newText !== currentText) {
+            await updateDoc(doc(db, "posts", id), { text: newText });
+        }
+    };
+
+    window.toggleOptions = (id) => {
+        const el = document.getElementById(`opt-${id}`);
+        document.querySelectorAll('.options-dropdown').forEach(d => { if(d !== el) d.classList.remove('show'); });
+        el.classList.toggle('show');
+    };
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         document.getElementById('auth-view').classList.remove('active');
@@ -177,12 +205,23 @@ $tagline = "Exploring the night side";
           const feed = document.getElementById('lunar-feed'); feed.innerHTML = "";
           snap.forEach(d => {
             const p = d.data();
+            const isAuthor = p.authorId === user.uid;
             const card = document.createElement('div'); card.className = 'card';
             let imgHTML = p.imageUrl ? `<img src="${p.imageUrl}" class="post-image" onerror="this.style.display='none'">` : "";
+            
+            let optionsHTML = isAuthor ? `
+                <div class="post-options" onclick="toggleOptions('${d.id}')">•••</div>
+                <div class="options-dropdown" id="opt-${d.id}">
+                    <div class="opt-item" onclick="editPost('${d.id}', '${p.text.replace(/'/g, "\\'")}')">Edit</div>
+                    <div class="opt-item opt-delete" onclick="deletePost('${d.id}')">Delete</div>
+                </div>
+            ` : "";
+
             card.innerHTML = `
+              ${optionsHTML}
               <div style="display:flex; gap:15px; align-items:flex-start;">
                 <img src="${p.authorImg}" class="avatar" style="width:40px;">
-                <div>
+                <div style="flex-grow:1;">
                   <b>${p.authorName}${getBadgeHTML(p.authorId)}${formatTime(p.timestamp)}</b>
                   <p style="margin: 5px 0;">${p.text}</p>
                 </div>
@@ -226,7 +265,6 @@ $tagline = "Exploring the night side";
       }
     });
 
-    // OPEN CHAT WITH RE-FIXED BADGES
     window.openChat = async (targetId, targetName, targetImg) => {
       const u = auth.currentUser;
       const mySnap = await getDoc(doc(db, "users", u.uid));
@@ -253,7 +291,6 @@ $tagline = "Exploring the night side";
           const wrap = document.createElement('div'); 
           wrap.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
           
-          // Re-injecting the badge logic directly into the message label
           wrap.innerHTML = `
             <img src="${senderImg}" class="chat-pfp">
             <div style="display:flex; flex-direction:column; max-width:75%; ${isMe ? 'align-items:flex-end':''}">
@@ -310,6 +347,13 @@ $tagline = "Exploring the night side";
       } catch (err) { if(err.code === 'auth/email-already-in-use') await signInWithEmailAndPassword(auth, email, pass); }
     };
     document.getElementById('logout-btn').onclick = () => signOut(auth);
+
+    // Global click listener to close dropdowns
+    window.onclick = (e) => {
+        if (!e.target.matches('.post-options')) {
+            document.querySelectorAll('.options-dropdown').forEach(d => d.classList.remove('show'));
+        }
+    };
   </script>
 </body>
 </html>
