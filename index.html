@@ -1,184 +1,277 @@
-<?php $title="LunarTrev"; ?>
+<?php
+$title = "LunarTrev";
+$tagline = "Exploring the night side";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= $title ?></title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><?php echo $title; ?></title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #05070a;
+      --accent-moon: #f0f2ff;
+      --accent-nebula: #a5b4fc;
+      --text-muted: #848bbd;
+      --glass-bg: rgba(13, 19, 45, 0.75);
+      --glass-border: rgba(207, 216, 255, 0.15);
+      --online-glow: #00ff88;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    body {
+      margin: 0; font-family: 'Poppins', sans-serif;
+      background: var(--bg-primary); color: #e8ebff;
+      min-height: 100vh; overflow-x: hidden;
+      background-image: radial-gradient(circle at 80% 10%, rgba(207, 216, 255, 0.05) 0%, transparent 50%);
+    }
 
-<style>
-:root{
-  --bg:#030510;
-  --glass:rgba(25,30,70,.45);
-  --stroke:rgba(120,140,255,.25);
-  --accent:#7aa2ff;
-  --glow:0 0 30px rgba(120,150,255,.35);
-}
+    .stars { position: fixed; inset: 0; background-image: radial-gradient(1px 1px at 20% 30%, white 80%, transparent 81%), radial-gradient(1.5px 1.5px at 70% 60%, white 80%, transparent 81%); opacity: 0.3; z-index: -2; }
+    .moon-orb { position: fixed; top: -60px; right: -60px; width: 300px; height: 300px; background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); border-radius: 50%; box-shadow: 0 0 60px rgba(207, 216, 255, 0.1); z-index: -1; }
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Poppins,sans-serif;
-  background:
-    radial-gradient(circle at top,#101a50,#02030a 60%);
-  color:#eef1ff;
-}
+    main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; }
+    
+    /* Sections */
+    .app-section { display: none; animation: moonRise 0.4s ease-out; }
+    .app-section.active { display: block; }
+    @keyframes moonRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-main{
-  max-width:520px;
-  margin:auto;
-  padding:1.5rem 1.2rem 7rem;
-}
+    .card {
+      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: 28px;
+      padding: 1.5rem; margin-bottom: 1.2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
 
-.card{
-  background:var(--glass);
-  border:1px solid var(--stroke);
-  backdrop-filter:blur(18px);
-  border-radius:26px;
-  padding:1.4rem;
-  margin-bottom:1.2rem;
-  box-shadow:var(--glow);
-}
+    /* Avatars & Status */
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: #111; border: 2px solid var(--glass-border); object-fit: cover; }
+    .status-dot { width: 10px; height: 10px; background: var(--online-glow); border-radius: 50%; display: inline-block; box-shadow: 0 0 10px var(--online-glow); }
+    .status-dot.offline { background: #444; box-shadow: none; }
 
-h2{
-  margin:0 0 1rem;
-  letter-spacing:2px;
-}
+    /* Forms */
+    input, textarea { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; box-sizing: border-box; font-family: inherit; resize: none; }
+    .button { width: 100%; padding: 1rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
 
-textarea,input{
-  width:100%;
-  background:rgba(0,0,0,.35);
-  border:1px solid var(--stroke);
-  border-radius:14px;
-  padding:1rem;
-  color:#fff;
-  outline:none;
-  margin-bottom:1rem;
-}
+    /* Nav Bar */
+    .nav-bar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 380px; background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 22px; display: flex; justify-content: space-around; padding: 12px; z-index: 100; }
+    .nav-item { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; opacity: 0.6; }
+    .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
 
-textarea:focus,input:focus{
-  border-color:var(--accent);
-}
+    /* Post Layout */
+    .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .post-info { display: flex; flex-direction: column; flex-grow: 1; }
+    .post-username { font-weight: 700; font-size: 0.95rem; color: var(--accent-moon); }
+    .post-meta { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
 
-button{
-  width:100%;
-  padding:1rem;
-  border-radius:16px;
-  border:none;
-  background:linear-gradient(135deg,#6f8dff,#9fb4ff);
-  color:#000;
-  font-weight:700;
-  cursor:pointer;
-  box-shadow:0 10px 25px rgba(120,150,255,.35);
-}
+    .pulse-btn { background: none; border: 1px solid var(--glass-border); color: var(--accent-nebula); padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; margin-top: 10px; transition: 0.2s; }
+    .pulse-btn.active { background: var(--accent-moon); color: var(--bg-primary); border-color: var(--accent-moon); }
 
-button:disabled{
-  opacity:.4;
-  cursor:not-allowed;
-}
-
-.avatar{
-  width:42px;height:42px;
-  border-radius:50%;
-  box-shadow:0 0 10px rgba(150,170,255,.6);
-}
-
-.post-text{
-  margin:.7rem 0 1rem;
-  line-height:1.5;
-}
-
-.post-actions{
-  display:flex;
-  gap:10px;
-}
-
-.post-actions button{
-  flex:1;
-  padding:.45rem;
-  font-size:.8rem;
-  border-radius:12px;
-  background:none;
-  color:#fff;
-  border:1px solid var(--stroke);
-}
-
-.nav{
-  position:fixed;
-  bottom:18px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--glass);
-  border:1px solid var(--stroke);
-  border-radius:26px;
-  padding:.6rem 1.2rem;
-  display:flex;
-  gap:28px;
-  backdrop-filter:blur(20px);
-}
-
-.nav span{
-  cursor:pointer;
-  opacity:.6;
-}
-
-.nav span.active{
-  opacity:1;
-  color:var(--accent);
-}
-
-.hidden{display:none}
-</style>
+    .hidden { display: none; }
+  </style>
 </head>
-
 <body>
-<main>
 
-<!-- AUTH -->
-<div id="auth-view">
-  <div class="card">
-    <h2>LUNARTREV</h2>
-    <form id="auth-form">
-      <input id="reg-username" placeholder="Pilot name" required>
-      <input id="email" type="email" placeholder="Email" required>
-      <input id="password" type="password" placeholder="Password" required>
-      <button>Enter Orbit</button>
-    </form>
-  </div>
-</div>
+  <div class="stars"></div>
+  <div class="moon-orb"></div>
 
-<!-- FEED -->
-<div id="home-tab" class="hidden">
-  <div class="card">
-    <textarea id="post-content" rows="3" placeholder="Transmit to the galaxy..."></textarea>
-    <button id="send-btn" disabled>Transmit</button>
-  </div>
-  <div id="feed"></div>
-</div>
+  <main>
+    <div id="auth-view" class="app-section active">
+        <div class="card" style="text-align:center;">
+            <h2 style="margin-top:0;">LUNARTREV</h2>
+            <form id="auth-form">
+                <input type="text" id="reg-username" placeholder="Pilot Username" required>
+                <input type="email" id="email" placeholder="Earth Email" required>
+                <input type="password" id="password" placeholder="Security Key" required>
+                <button type="submit" class="button">Access System</button>
+            </form>
+        </div>
+    </div>
 
-<!-- PROFILE -->
-<div id="profile-tab" class="hidden">
-  <div class="card" style="text-align:center">
-    <img id="my-avatar" class="avatar" style="width:96px;height:96px"><br><br>
-    <strong id="disp-name"></strong>
-    <p id="disp-bio"></p>
-    <button id="logout-btn">Logout</button>
-  </div>
-</div>
+    <div id="home-tab" class="app-section">
+      <div class="card">
+        <textarea id="post-content" placeholder="Broadcast to the sector..." rows="3"></textarea>
+        <button id="send-btn" class="button">Transmit</button>
+      </div>
+      <div id="lunar-feed"></div>
+    </div>
 
-</main>
+    <div id="discover-tab" class="app-section">
+      <h3 style="margin-bottom:1rem; padding-left:10px;">Nearby Signals</h3>
+      <div id="crew-list"></div>
+    </div>
 
-<div class="nav hidden" id="nav">
-  <span data-tab="home-tab" class="active">Feed</span>
-  <span data-tab="profile-tab">Profile</span>
-</div>
+    <div id="profile-tab" class="app-section">
+      <div class="card" style="text-align:center;">
+        <img id="my-avatar" class="avatar" style="width:100px; height:100px; margin-bottom:15px;" src="">
+        <h2 id="disp-name" style="margin:0;">Pilot</h2>
+        <p id="disp-coords" style="font-size:0.7rem; color:var(--accent-nebula); margin-bottom:10px;">SCANNING COORDINATES...</p>
+        <p id="disp-bio" style="font-style:italic; font-size:0.85rem; color:var(--text-muted);"></p>
+        <button id="logout-btn" style="margin-top:2rem; background:transparent; border:1px solid #ff4d4d; color:#ff4d4d; padding:10px; width:100%; border-radius:10px; cursor:pointer;">Eject Session</button>
+      </div>
+    </div>
+  </main>
 
-<!-- 🔧 SCRIPT (unchanged logic) -->
-<script type="module">
-/* SAME FIREBASE / JS CODE AS BEFORE — NO CHANGES */
-</script>
+  <nav class="nav-bar hidden" id="main-nav">
+    <div class="nav-item active" data-tab="home-tab">Feed</div>
+    <div class="nav-item" data-tab="discover-tab">Crew</div>
+    <div class="nav-item" data-tab="profile-tab">Profile</div>
+  </nav>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, GeoPoint } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM",
+      authDomain: "lunartrev.firebaseapp.com",
+      projectId: "lunartrev",
+      storageBucket: "lunartrev.firebasestorage.app",
+      messagingSenderId: "152908127950",
+      appId: "1:152908127950:web:6db39b55cbe5d5b0f33a9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const switchTab = (tabId) => {
+      document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+    };
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => switchTab(item.getAttribute('data-tab')));
+    });
+
+    // SIGNUP / LOGIN
+    document.getElementById('auth-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const username = document.getElementById('reg-username').value;
+      
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", userCred.user.uid), {
+          username: username,
+          bio: "Exploration log started.",
+          coordinates: new GeoPoint(0, 0),
+          friends: [],
+          is_online: true,
+          joinedAt: serverTimestamp(),
+          profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
+          rank_level: 1
+        });
+      } catch (err) {
+        if (err.code === 'auth/email-already-in-use') await signInWithEmailAndPassword(auth, email, password);
+      }
+    });
+
+    // POSTING (THE FIX)
+    document.getElementById('send-btn').addEventListener('click', async () => {
+      const content = document.getElementById('post-content').value;
+      const user = auth.currentUser;
+      if (!content.trim() || !user) return;
+
+      const userSnap = await getDoc(doc(db, "users", user.uid));
+      if (!userSnap.exists()) return;
+      const u = userSnap.data();
+
+      await addDoc(collection(db, "posts"), {
+        text: content,
+        authorId: user.uid,
+        authorName: u.username ?? "Pilot",
+        authorImg: u.profile_Image ?? "",
+        authorLoc: u.coordinates ? `${u.coordinates.latitude}° N, ${u.coordinates.longitude}° E` : "Moon",
+        likes: [],
+        timestamp: serverTimestamp()
+      });
+      document.getElementById('post-content').value = "";
+    });
+
+    // FEED LISTENER (FIXING 'UNDEFINED' & '...')
+    onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snapshot) => {
+      const feedDiv = document.getElementById('lunar-feed');
+      feedDiv.innerHTML = "";
+      snapshot.forEach((pDoc) => {
+        const p = pDoc.data();
+        const likes = p.likes ?? [];
+        const isLiked = likes.includes(auth.currentUser?.uid);
+        const timeStr = p.timestamp ? p.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "Syncing...";
+        
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="post-header">
+            <img class="avatar" src="${p.authorImg || 'https://api.dicebear.com/7.x/bottts/svg?seed=Lunar'}">
+            <div class="post-info">
+              <span class="post-username">${p.authorName ?? 'Pilot'}</span>
+              <span class="post-meta">${p.authorLoc ?? 'Moon'} • ${timeStr}</span>
+            </div>
+          </div>
+          <div style="font-size:0.9rem; line-height:1.5;">${p.text}</div>
+          <button class="pulse-btn ${isLiked ? 'active' : ''}">Pulse (${likes.length})</button>
+        `;
+        card.querySelector('button').onclick = () => {
+          updateDoc(doc(db, "posts", pDoc.id), { likes: isLiked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid) });
+        };
+        feedDiv.appendChild(card);
+      });
+    });
+
+    // CREW LISTENER
+    onSnapshot(collection(db, "users"), (snapshot) => {
+      const crewList = document.getElementById('crew-list');
+      crewList.innerHTML = "";
+      snapshot.forEach((uDoc) => {
+        const u = uDoc.data();
+        crewList.innerHTML += `
+          <div class="card" style="display:flex; align-items:center; gap:12px; padding:1rem;">
+            <img class="avatar" src="${u.profile_Image || ''}">
+            <div style="flex-grow:1;">
+              <div style="font-weight:600; font-size:0.9rem;">${u.username ?? 'Unknown'}</div>
+              <div style="font-size:0.6rem; color:var(--text-muted);">RANK ${u.rank_level ?? 1}</div>
+            </div>
+            <div class="status-dot ${u.is_online ? '' : 'offline'}"></div>
+          </div>`;
+      });
+    });
+
+    // GLOBAL AUTH OBSERVER
+    onAuthStateChanged(auth, async (user) => {
+      const nav = document.getElementById('main-nav');
+      if (user) {
+        document.getElementById('auth-view').classList.remove('active');
+        nav.classList.remove('hidden');
+        switchTab('home-tab');
+        
+        const snap = await getDoc(doc(db, "users", user.uid));
+        if (snap.exists()) {
+          const d = snap.data();
+          document.getElementById('disp-name').innerText = d.username ?? "Pilot";
+          document.getElementById('disp-bio').innerText = d.bio ?? "";
+          document.getElementById('my-avatar').src = d.profile_Image ?? "";
+          if(d.coordinates) {
+             document.getElementById('disp-coords').innerText = `${d.coordinates.latitude}° N, ${d.coordinates.longitude}° E`;
+          }
+          await updateDoc(doc(db, "users", user.uid), { is_online: true });
+        }
+      } else {
+        document.getElementById('auth-view').classList.add('active');
+        nav.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('logout-btn').onclick = async () => {
+      if(auth.currentUser) {
+        await updateDoc(doc(db, "users", auth.currentUser.uid), { is_online: false });
+        signOut(auth);
+      }
+    };
+  </script>
 </body>
 </html>
