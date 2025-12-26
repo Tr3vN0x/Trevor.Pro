@@ -15,7 +15,8 @@ $tagline = "Exploring the night side";
       --bg-primary: #05070a;
       --accent-moon: #f0f2ff;
       --accent-nebula: #a5b4fc;
-      --glass-bg: rgba(13, 19, 45, 0.7);
+      --text-muted: #848bbd;
+      --glass-bg: rgba(13, 19, 45, 0.75);
       --glass-border: rgba(207, 216, 255, 0.15);
     }
 
@@ -23,53 +24,65 @@ $tagline = "Exploring the night side";
       margin: 0; font-family: 'Poppins', sans-serif;
       background: var(--bg-primary); color: #e8ebff;
       min-height: 100vh; overflow-x: hidden;
+      background-image: radial-gradient(circle at 80% 10%, rgba(207, 216, 255, 0.05) 0%, transparent 50%);
     }
 
-    /* Background Elements */
+    /* Fixed Cosmic Background */
     .stars { position: fixed; inset: 0; background-image: radial-gradient(1px 1px at 20% 30%, white 80%, transparent 81%), radial-gradient(1.5px 1.5px at 70% 60%, white 80%, transparent 81%); opacity: 0.3; z-index: -2; }
     .moon-orb { position: fixed; top: -60px; right: -60px; width: 300px; height: 300px; background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); border-radius: 50%; box-shadow: 0 0 60px rgba(207, 216, 255, 0.1); z-index: -1; }
 
-    /* Main Container */
-    main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem 8rem; }
+    main { max-width: 500px; margin: 0 auto; padding: 2rem 1.5rem 8rem; }
+    
     .logo-area { text-align: center; padding: 2rem 0; }
-    .logo { font-size: 2.5rem; font-weight: 700; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .logo { font-size: 2.8rem; font-weight: 700; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
 
     /* App Sections */
-    .app-section { display: none; animation: moonRise 0.5s ease-out; }
+    .app-section { display: none; animation: moonRise 0.4s ease-out; }
     .app-section.active { display: block; }
 
     @keyframes moonRise {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Cards */
     .card {
-      background: var(--glass-bg); backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border); border-radius: 24px;
-      padding: 2rem; margin-bottom: 1.5rem;
+      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: 28px;
+      padding: 2.5rem; margin-bottom: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
 
-    /* Navigation Bar (The Control Module) */
+    /* Form Styling */
+    input { 
+      width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 12px; 
+      border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); 
+      color: #fff; outline: none; box-sizing: border-box; 
+    }
+    input:focus { border-color: var(--accent-moon); }
+
+    .button { 
+      width: 100%; padding: 1rem; border-radius: 12px; border: none; 
+      background: var(--accent-moon); color: var(--bg-primary); 
+      font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    /* Navigation Bar */
     .nav-bar {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      width: 90%; max-width: 400px;
-      background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(25px);
-      border: 1px solid var(--glass-border); border-radius: 20px;
+      position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+      width: 85%; max-width: 380px;
+      background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border); border-radius: 22px;
       display: flex; justify-content: space-around; padding: 12px;
-      z-index: 100; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      z-index: 100; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
     }
 
     .nav-item {
-      color: var(--text-muted); text-decoration: none; font-size: 0.75rem;
-      text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
-      transition: 0.3s; opacity: 0.6;
+      color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; 
+      letter-spacing: 1.5px; cursor: pointer; transition: 0.3s; opacity: 0.6;
     }
-
-    .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
+    .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; border-bottom: 2px solid var(--accent-moon); }
 
     .hidden { display: none; }
-    .button { width: 100%; padding: 1rem; border-radius: 12px; border: none; background: var(--accent-moon); font-weight: 700; cursor: pointer; }
+    .status-msg { font-size: 0.8rem; text-align: center; color: var(--accent-nebula); margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -79,70 +92,117 @@ $tagline = "Exploring the night side";
 
   <div class="logo-area">
     <div class="logo">LunarTrev</div>
+    <div style="font-size:0.7rem; color:var(--accent-nebula); letter-spacing:0.3em; text-transform:uppercase;">Phase 1.0</div>
   </div>
 
   <main>
     <div id="auth-view" class="app-section active">
         <div class="card">
-            <h2 id="auth-title">Initiate Profile</h2>
+            <h2 style="margin-top:0; text-align:center;">Initiate Profile</h2>
             <form id="auth-form">
-                <input type="email" id="email" placeholder="Email" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #333; background:#000; color:#fff;">
-                <input type="password" id="password" placeholder="Password" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #333; background:#000; color:#fff;">
-                <button type="submit" class="button">Launch</button>
+                <input type="text" id="reg-username" placeholder="Pilot Name (e.g. Apollo)">
+                <input type="email" id="email" placeholder="Earth Email" required>
+                <input type="password" id="password" placeholder="Security Key" required>
+                <button type="submit" class="button" id="auth-btn">Launch Account</button>
             </form>
+            <div id="auth-status" class="status-msg"></div>
         </div>
     </div>
 
     <div id="home-tab" class="app-section">
       <div class="card">
-        <h3>Lunar Feed</h3>
-        <p style="color:var(--accent-nebula)">Waiting for incoming transmissions...</p>
+        <h3 style="margin-top:0;">Lunar Feed</h3>
+        <p style="color:var(--text-muted); font-style:italic;">No transmissions found in this sector yet.</p>
       </div>
     </div>
 
     <div id="discover-tab" class="app-section">
       <div class="card">
-        <h3>The Crew</h3>
-        <p>Scanning local orbit for other pilots.</p>
+        <h3 style="margin-top:0;">Nearby Pilots</h3>
+        <p>Searching frequencies...</p>
       </div>
     </div>
 
     <div id="profile-tab" class="app-section">
       <div class="card">
-        <h3>Pilot Data</h3>
-        <p>Name: <span id="disp-name">Loading...</span></p>
-        <p>Rank: <span id="disp-rank">...</span></p>
-        <button id="logout-btn" style="background:none; color:red; border:none; cursor:pointer;">Terminate Session</button>
+        <h3 style="margin-top:0;">System Data</h3>
+        <p>Pilot: <strong id="disp-name">...</strong></p>
+        <p>Rank: <span id="disp-rank" style="color:var(--accent-nebula);">...</span></p>
+        <button id="logout-btn" style="margin-top:2rem; background:transparent; border:1px solid #ff4d4d; color:#ff4d4d; padding:10px; width:100%; border-radius:10px; cursor:pointer;">Eject (Logout)</button>
       </div>
     </div>
   </main>
 
   <nav class="nav-bar hidden" id="main-nav">
-    <div class="nav-item active" onclick="showTab('home-tab', this)">Home</div>
-    <div class="nav-item" onclick="showTab('discover-tab', this)">Discover</div>
-    <div class="nav-item" onclick="showTab('profile-tab', this)">Profile</div>
+    <div class="nav-item active" data-tab="home-tab">Home</div>
+    <div class="nav-item" data-tab="discover-tab">Crew</div>
+    <div class="nav-item" data-tab="profile-tab">Profile</div>
   </nav>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = { /* Your Config Here */ };
+    const firebaseConfig = {
+      apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM",
+      authDomain: "lunartrev.firebaseapp.com",
+      projectId: "lunartrev",
+      storageBucket: "lunartrev.firebasestorage.app",
+      messagingSenderId: "152908127950",
+      appId: "1:152908127950:web:6db39b55cbe5d5b0f33a9f"
+    };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // TAB LOGIC
-    window.showTab = (tabId, element) => {
+    // FIX: Tab Switcher (Module Compatible)
+    const switchTab = (tabId) => {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       
       document.getElementById(tabId).classList.add('active');
-      element.classList.add('active');
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
     };
 
-    // AUTH OBSERVER
+    // Attach click events to nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => switchTab(item.getAttribute('data-tab')));
+    });
+
+    // Handle Auth Submission
+    const authForm = document.getElementById('auth-form');
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const status = document.getElementById('auth-status');
+      status.innerText = "Synchronizing with Lunar base...";
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const username = document.getElementById('reg-username').value;
+
+      try {
+        // We assume signup mode for this specific form
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", userCred.user.uid), {
+          username: username || "Unknown Pilot",
+          rank: "Stargazer",
+          joinedAt: serverTimestamp(),
+          bio: "Just landed."
+        });
+      } catch (err) {
+        // If user already exists, try logging them in
+        if (err.code === 'auth/email-already-in-use') {
+           try { await signInWithEmailAndPassword(auth, email, password); } 
+           catch (e) { status.innerText = "Error: " + e.message; }
+        } else {
+           status.innerText = "Error: " + err.message;
+        }
+      }
+    });
+
+    // AUTH OBSERVER (The Core Brain)
     onAuthStateChanged(auth, async (user) => {
       const authView = document.getElementById('auth-view');
       const nav = document.getElementById('main-nav');
@@ -150,9 +210,8 @@ $tagline = "Exploring the night side";
       if (user) {
         authView.classList.remove('active');
         nav.classList.remove('hidden');
-        showTab('home-tab', document.querySelector('.nav-item'));
+        switchTab('home-tab');
 
-        // Load Profile Data
         const snap = await getDoc(doc(db, "users", user.uid));
         if (snap.exists()) {
           document.getElementById('disp-name').innerText = snap.data().username;
