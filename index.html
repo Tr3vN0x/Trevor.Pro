@@ -1,119 +1,162 @@
+<?php
+// LunarTrev – Simple PHP entry point
+$title = "LunarTrev";
+$tagline = "Exploring the night side";
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><?php echo $title; ?></title>
 
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-:root {
-  --bg-primary: #070b1a;          /* Deep space */
-  --bg-secondary: #0d132d;        /* Night sky */
-  --accent-moon: #cfd8ff;         /* Moon glow */
-  --accent-nebula: #7b7cff;       /* Soft purple-blue */
-  --accent-star: #ffffff;         /* Stars */
-  --text-primary: #e8ebff;        /* Main text */
-  --text-muted: #9aa3d6;          /* Subtle text */
-  --glass-bg: rgba(255,255,255,0.06);
-  --glass-border: rgba(255,255,255,0.15);
-}
+  <style>
+    /* ============================= */
+    /* LunarTrev – Lunar Theme CSS */
+    /* ============================= */
 
-/* Global */
-body {
-  margin: 0;
-  font-family: 'Inter', 'Poppins', system-ui, sans-serif;
-  background: radial-gradient(circle at top, #121a3a 0%, var(--bg-primary) 60%);
-  color: var(--text-primary);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+    :root {
+      --bg-primary: #070b1a;
+      --bg-secondary: #0d132d;
+      --accent-moon: #cfd8ff;
+      --accent-nebula: #7b7cff;
+      --text-primary: #e8ebff;
+      --text-muted: #9aa3d6;
+      --glass-bg: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.15);
+    }
 
-/* Starfield background */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image:
-    radial-gradient(1px 1px at 20% 30%, white 40%, transparent 41%),
-    radial-gradient(1px 1px at 80% 20%, white 40%, transparent 41%),
-    radial-gradient(1px 1px at 50% 70%, white 40%, transparent 41%),
-    radial-gradient(1px 1px at 10% 80%, white 40%, transparent 41%);
-  opacity: 0.4;
-  pointer-events: none;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-/* Header */
-.header {
-  padding: 2.5rem 1.5rem;
-  text-align: center;
-}
+    body {
+      margin: 0;
+      font-family: 'Poppins', system-ui, sans-serif;
+      background: radial-gradient(circle at top, #121a3a 0%, var(--bg-primary) 65%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-.logo {
-  font-size: clamp(2.2rem, 5vw, 3.5rem);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  background: linear-gradient(120deg, var(--accent-moon), var(--accent-nebula));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 25px rgba(123,124,255,0.35);
-}
+    /* Starfield */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, white 40%, transparent 41%),
+        radial-gradient(1px 1px at 80% 20%, white 40%, transparent 41%),
+        radial-gradient(1px 1px at 50% 70%, white 40%, transparent 41%),
+        radial-gradient(1px 1px at 10% 80%, white 40%, transparent 41%);
+      opacity: 0.4;
+      pointer-events: none;
+    }
 
-.tagline {
-  margin-top: 0.75rem;
-  color: var(--text-muted);
-}
+    header {
+      text-align: center;
+      padding: 4rem 1.5rem 2.5rem;
+    }
 
-/* Glass card */
-.card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--glass-border);
-  border-radius: 18px;
-  padding: 1.75rem;
-  box-shadow: 0 0 40px rgba(0,0,0,0.4);
-}
+    .logo {
+      font-size: clamp(2.5rem, 6vw, 3.8rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: linear-gradient(120deg, var(--accent-moon), var(--accent-nebula));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(123,124,255,0.35);
+    }
 
-/* Buttons */
-.button {
-  display: inline-block;
-  padding: 0.75rem 1.6rem;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--accent-nebula), var(--accent-moon));
-  color: #0a0f2a;
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: 0 0 25px rgba(123,124,255,0.45);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+    .tagline {
+      margin-top: 0.8rem;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
 
-.button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 40px rgba(123,124,255,0.7);
-}
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
 
-/* Sections */
-.section {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-}
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 0 45px rgba(0,0,0,0.45);
+      animation: float 6s ease-in-out infinite;
+    }
 
-.section-title {
-  font-size: 1.8rem;
-  margin-bottom: 1.2rem;
-  color: var(--accent-moon);
-}
+    .card h2 {
+      margin-top: 0;
+      color: var(--accent-moon);
+    }
 
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 2rem 1rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
+    .card p {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
 
-/* Subtle floating animation */
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0); }
-}
+    .button {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.8rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent-nebula), var(--accent-moon));
+      color: #0a0f2a;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 0 30px rgba(123,124,255,0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-.float {
-  animation: float 6s ease-in-out infinite;
-}
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 45px rgba(123,124,255,0.75);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">LunarTrev</div>
+    <div class="tagline"><?php echo $tagline; ?></div>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>Welcome</h2>
+      <p>
+        LunarTrev is a moon-inspired digital space — calm, clean, and cosmic.
+        Perfect for creators, streamers, or personal brands that thrive after dark.
+      </p>
+      <a href="#" class="button">Explore</a>
+    </div>
+  </main>
+
+  <footer>
+    © <?php echo date("Y"); ?> LunarTrev · All rights reserved
+  </footer>
+
+</body>
+</html>
