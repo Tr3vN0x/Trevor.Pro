@@ -1,13 +1,30 @@
 <?php
 $title = "LunarTrev";
 $tagline = "Exploring the night side";
+$description = "A private frequency for pilots exploring the lunar surface. Share broadcasts, secure transmissions, and coordinate your crew.";
+$preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=1000"; // A high-quality space image
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title><?php echo $title; ?></title>
+  <meta name="title" content="<?php echo $title; ?>">
+  <meta name="description" content="<?php echo $description; ?>">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://lunartrev.web.app/"> <meta property="og:title" content="<?php echo $title; ?> | <?php echo $tagline; ?>">
+  <meta property="og:description" content="<?php echo $description; ?>">
+  <meta property="og:image" content="<?php echo $preview_image; ?>">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://lunartrev.web.app/">
+  <meta property="twitter:title" content="<?php echo $title; ?>">
+  <meta property="twitter:description" content="<?php echo $description; ?>">
+  <meta property="twitter:image" content="<?php echo $preview_image; ?>">
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -170,7 +187,6 @@ $tagline = "Exploring the night side";
     };
     document.querySelectorAll('.nav-item[data-tab]').forEach(i => i.onclick = () => switchTab(i.dataset.tab));
 
-    // --- ECHO LOGIC ---
     window.toggleEcho = async (postId, currentlyEchoed) => {
       const ref = doc(db, "posts", postId);
       const uid = auth.currentUser.uid;
@@ -179,7 +195,6 @@ $tagline = "Exploring the night side";
 
     window.deletePost = async (id) => { if(confirm("Sever transmission?")) await deleteDoc(doc(db, "posts", id)); };
 
-    // --- BROADCAST ---
     document.getElementById('send-btn').onclick = async () => {
       const text = document.getElementById('post-content').value.trim();
       const img = document.getElementById('post-image-url').value.trim();
@@ -189,7 +204,6 @@ $tagline = "Exploring the night side";
       document.getElementById('post-content').value = ""; document.getElementById('post-image-url').value = "";
     };
 
-    // --- CHAT WITH MEDIA ---
     window.openChat = async (targetId, name, img) => {
         const myId = auth.currentUser.uid;
         const myData = (await getDoc(doc(db, "users", myId))).data();
@@ -231,7 +245,15 @@ $tagline = "Exploring the night side";
     };
     window.closeChat = () => { document.getElementById('chat-overlay').style.display = 'none'; };
 
-    // --- CORE ---
+    document.getElementById('save-profile-btn').onclick = async () => {
+      await updateDoc(doc(db, "users", auth.currentUser.uid), {
+        username: document.getElementById('edit-username').value.trim(),
+        profile_Image: document.getElementById('edit-avatar-url').value.trim(),
+        bio: document.getElementById('edit-bio').value.trim()
+      });
+      alert("Identity Updated.");
+    };
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         document.getElementById('auth-view').classList.remove('active');
@@ -280,13 +302,11 @@ $tagline = "Exploring the night side";
       } else { document.getElementById('auth-view').classList.add('active'); document.getElementById('main-nav').classList.add('hidden'); }
     });
 
-    // Event Mappings
     window.toggleEcho = toggleEcho;
     window.deletePost = deletePost;
     window.closeChat = closeChat;
     window.auth = auth;
 
-    // Background logic
     const canvas = document.getElementById('starCanvas'); const ctx = canvas.getContext('2d'); let stars = [];
     const initStars = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars = Array.from({length: 200}, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 1.2, o: Math.random() })); };
     const animateStars = () => { ctx.clearRect(0,0,canvas.width,canvas.height); stars.forEach(s => { s.o += 0.005; ctx.fillStyle = `rgba(240,242,255, ${Math.abs(Math.sin(s.o))})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); }); requestAnimationFrame(animateStars); };
