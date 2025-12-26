@@ -1,6 +1,6 @@
 <?php
 $title = "LunarTrev";
-$tagline = "Socializing on the dark side";
+$tagline = "Exploring the night side";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,263 +9,92 @@ $tagline = "Socializing on the dark side";
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?php echo $title; ?></title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  
   <style>
     :root {
       --bg-primary: #05070a;
       --accent-moon: #f0f2ff;
       --accent-nebula: #a5b4fc;
+      --text-primary: #e8ebff;
       --text-muted: #848bbd;
-      --glass-bg: rgba(13, 19, 45, 0.8);
-      --glass-border: rgba(207, 216, 255, 0.15);
-      --online-glow: #00ff88;
+      --glass-bg: rgba(13, 19, 45, 0.6);
+      --glass-border: rgba(207, 216, 255, 0.2);
     }
 
     body {
       margin: 0; font-family: 'Poppins', sans-serif;
-      background: var(--bg-primary); color: #e8ebff;
-      min-height: 100vh;
+      background: var(--bg-primary); color: var(--text-primary);
+      min-height: 100vh; overflow-x: hidden;
+      background-image: radial-gradient(circle at 80% 10%, rgba(207, 216, 255, 0.08) 0%, transparent 40%);
     }
 
-    .stars { position: fixed; inset: 0; background-image: radial-gradient(1px 1px at 20% 30%, white 80%, transparent 81%), radial-gradient(1.5px 1.5px at 70% 60%, white 80%, transparent 81%); opacity: 0.3; z-index: -2; }
-    main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; }
-    
-    .app-section { display: none; }
-    .app-section.active { display: block; animation: fadeIn 0.3s ease-in; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    /* Starfield */
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background-image: radial-gradient(1px 1px at 25% 15%, #fff 50%, transparent 50%),
+                        radial-gradient(1px 1px at 60% 80%, #fff 50%, transparent 50%);
+      opacity: 0.3; z-index: -1;
+    }
 
+    header { text-align: center; padding: 4rem 1.5rem 1rem; }
+    .logo { font-size: 3.5rem; font-weight: 700; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .tagline { color: var(--accent-nebula); letter-spacing: 0.2em; font-size: 0.8rem; text-transform: uppercase; }
+
+    main { max-width: 450px; margin: 0 auto; padding: 2rem 1.5rem; }
     .card {
-      background: var(--glass-bg); backdrop-filter: blur(15px);
+      background: var(--glass-bg); backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border); border-radius: 24px;
-      padding: 1.2rem; margin-bottom: 1rem;
+      padding: 2.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #111; border: 1px solid var(--glass-border); }
-    .status-dot { width: 10px; height: 10px; background: var(--online-glow); border-radius: 50%; box-shadow: 0 0 8px var(--online-glow); }
+    .form-group { margin-bottom: 1.2rem; }
+    label { display: block; font-size: 0.75rem; color: var(--accent-nebula); margin-bottom: 0.5rem; text-transform: uppercase; }
+    input {
+      width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border); border-radius: 10px;
+      color: white; outline: none; box-sizing: border-box;
+    }
+    input:focus { border-color: var(--accent-moon); }
 
-    input, textarea { width: 100%; padding: 0.9rem; margin-bottom: 0.8rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.4); color: #fff; outline: none; box-sizing: border-box; font-family: inherit; }
-    .button { width: 100%; padding: 0.9rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; text-transform: uppercase; }
+    .button {
+      width: 100%; padding: 1rem; border: none; border-radius: 10px;
+      background: var(--accent-moon); color: var(--bg-primary);
+      font-weight: 700; cursor: pointer; text-transform: uppercase;
+      transition: 0.3s; margin-top: 1rem;
+    }
+    .button:hover { opacity: 0.9; transform: translateY(-2px); }
 
-    .nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(10, 15, 30, 0.95); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; justify-content: space-around; padding: 12px; z-index: 100; }
-    .nav-item { color: var(--text-muted); font-size: 0.75rem; cursor: pointer; opacity: 0.6; }
-    .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
-
-    .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .post-user { font-weight: 700; font-size: 0.9rem; color: var(--accent-moon); }
-    .post-time { font-size: 0.65rem; color: var(--text-muted); }
-    .pulse-btn { background: none; border: 1px solid var(--glass-border); color: var(--accent-nebula); padding: 5px 12px; border-radius: 15px; cursor: pointer; font-size: 0.75rem; margin-top: 10px; }
-    .pulse-btn.active { background: var(--accent-moon); color: var(--bg-primary); }
-
-    .hidden { display: none; }
+    footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.7rem; }
   </style>
 </head>
 <body>
-
-  <div class="stars"></div>
+  <header>
+    <div class="logo">LunarTrev</div>
+    <div class="tagline"><?php echo $tagline; ?></div>
+  </header>
 
   <main>
-    <div id="auth-view" class="app-section active">
-        <div class="card" style="text-align:center;">
-            <h2 style="margin-bottom: 0.5rem;">LunarTrev</h2>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;">Join the Lunar Network</p>
-            <form id="auth-form">
-                <input type="text" id="reg-username" placeholder="Choose Username" required>
-                <input type="email" id="email" placeholder="Email Address" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit" class="button">Enter Station</button>
-            </form>
+    <div class="card">
+      <h2 style="margin-top:0; text-align:center;">Create Profile</h2>
+      <form id="signup-form">
+        <div class="form-group">
+          <label>Pilot Name</label>
+          <input type="text" id="username" placeholder="MoonWalker" required>
         </div>
-    </div>
-
-    <div id="home-tab" class="app-section">
-      <div class="card">
-        <textarea id="post-content" placeholder="What's happening on your side?..." rows="2"></textarea>
-        <button id="send-btn" class="button">Post Transmission</button>
-      </div>
-      <div id="lunar-feed"></div>
-    </div>
-
-    <div id="discover-tab" class="app-section">
-      <h3 style="margin-left: 10px;">Active Crew</h3>
-      <div id="crew-list"></div>
-    </div>
-
-    <div id="profile-tab" class="app-section">
-      <div class="card" style="text-align:center;">
-        <img id="my-avatar" class="avatar" style="width:80px; height:80px; margin-bottom:10px;" src="">
-        <h2 id="disp-name" style="margin:0;"></h2>
-        <p id="disp-email" style="font-size: 0.75rem; color: var(--text-muted);"></p>
-        <button id="logout-btn" style="margin-top:2rem; background:none; border:1px solid #ff4d4d; color:#ff4d4d; padding:8px; width:100%; border-radius:10px; cursor:pointer;">Sign Out</button>
-      </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" required>
+        </div>
+        <div class="form-group">
+          <label>Security Key (Password)</label>
+          <input type="password" id="password" required>
+        </div>
+        <button type="submit" class="button">Begin Journey</button>
+      </form>
     </div>
   </main>
 
-  <nav class="nav-bar hidden" id="main-nav">
-    <div class="nav-item active" data-tab="home-tab">Feed</div>
-    <div class="nav-item" data-tab="discover-tab">Crew</div>
-    <div class="nav-item" data-tab="profile-tab">Profile</div>
-  </nav>
+  <footer>© <?php echo date("Y"); ?> LUNARTREV // SYSTEM ONLINE</footer>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, GeoPoint } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM",
-      authDomain: "lunartrev.firebaseapp.com",
-      projectId: "lunartrev",
-      storageBucket: "lunartrev.firebasestorage.app",
-      messagingSenderId: "152908127950",
-      appId: "1:152908127950:web:6db39b55cbe5d5b0f33a9f"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // NAVIGATION
-    const switchTab = (tabId) => {
-      document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-    };
-
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', () => switchTab(item.getAttribute('data-tab')));
-    });
-
-    // SIGN UP / SIGN IN LOGIC
-    document.getElementById('auth-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const username = document.getElementById('reg-username').value;
-      
-      try {
-        // Try creating user
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, "users", userCred.user.uid), {
-          username: username,
-          email: email,
-          profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
-          is_online: true,
-          joinedAt: serverTimestamp(),
-          rank_level: 1,
-          coordinates: new GeoPoint(0, 0),
-          bio: "",
-          friends: []
-        });
-      } catch (err) {
-        // If user exists, just sign in
-        if (err.code === 'auth/email-already-in-use') {
-          await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          alert(err.message);
-        }
-      }
-    });
-
-    // POSTING (Saves username and time)
-    document.getElementById('send-btn').addEventListener('click', async () => {
-      const content = document.getElementById('post-content').value;
-      if (!content.trim() || !auth.currentUser) return;
-
-      const userSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
-      const u = userSnap.data();
-
-      await addDoc(collection(db, "posts"), {
-        text: content,
-        authorId: auth.currentUser.uid,
-        username: u.username,
-        profile_Image: u.profile_Image,
-        likes: [],
-        timestamp: serverTimestamp()
-      });
-      document.getElementById('post-content').value = "";
-    });
-
-    // FEED LISTENER
-    onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snapshot) => {
-      const feedDiv = document.getElementById('lunar-feed');
-      feedDiv.innerHTML = "";
-      snapshot.forEach((pDoc) => {
-        const p = pDoc.data();
-        const likes = p.likes || [];
-        const isLiked = likes.includes(auth.currentUser?.uid);
-        const time = p.timestamp ? p.timestamp.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "Posting...";
-        
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="post-header">
-            <img class="avatar" src="${p.profile_Image}">
-            <div class="post-info">
-              <span class="post-user">${p.username}</span>
-              <span class="post-time">${time}</span>
-            </div>
-          </div>
-          <div style="font-size:0.9rem;">${p.text}</div>
-          <button class="pulse-btn ${isLiked ? 'active' : ''}">
-            ${isLiked ? '♥ Pulsed' : '♡ Pulse'} (${likes.length})
-          </button>
-        `;
-        card.querySelector('button').onclick = () => {
-          updateDoc(doc(db, "posts", pDoc.id), { 
-            likes: isLiked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid) 
-          });
-        };
-        feedDiv.appendChild(card);
-      });
-    });
-
-    // CREW LISTENER
-    onSnapshot(collection(db, "users"), (snapshot) => {
-      const crewList = document.getElementById('crew-list');
-      crewList.innerHTML = "";
-      snapshot.forEach((uDoc) => {
-        const u = uDoc.data();
-        crewList.innerHTML += `
-          <div class="card" style="display:flex; align-items:center; gap:12px; padding:1rem;">
-            <img class="avatar" src="${u.profile_Image}">
-            <div style="flex-grow:1;">
-              <div style="font-weight:600; font-size:0.9rem;">${u.username}</div>
-              <div style="font-size:0.6rem; color:var(--text-muted); text-transform:uppercase;">Crew Member</div>
-            </div>
-            <div class="status-dot ${u.is_online ? '' : 'offline'}"></div>
-          </div>`;
-      });
-    });
-
-    // AUTH OBSERVER
-    onAuthStateChanged(auth, async (user) => {
-      const nav = document.getElementById('main-nav');
-      if (user) {
-        document.getElementById('auth-view').classList.remove('active');
-        nav.classList.remove('hidden');
-        switchTab('home-tab');
-        
-        const snap = await getDoc(doc(db, "users", user.uid));
-        if (snap.exists()) {
-          const d = snap.data();
-          document.getElementById('disp-name').innerText = d.username;
-          document.getElementById('disp-email').innerText = d.email;
-          document.getElementById('my-avatar').src = d.profile_Image;
-          await updateDoc(doc(db, "users", user.uid), { is_online: true });
-        }
-      } else {
-        document.getElementById('auth-view').classList.add('active');
-        nav.classList.add('hidden');
-      }
-    });
-
-    document.getElementById('logout-btn').onclick = async () => {
-      if(auth.currentUser) {
-        await updateDoc(doc(db, "users", auth.currentUser.uid), { is_online: false });
-        signOut(auth);
-      }
-    };
-  </script>
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>
