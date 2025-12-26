@@ -29,7 +29,7 @@ $tagline = "Exploring the night side";
     .nebula-glow { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle at 80% 10%, rgba(165, 180, 252, 0.08) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(132, 139, 189, 0.05) 0%, transparent 40%); }
     .moon-orb { position: fixed; top: -60px; right: -60px; width: 300px; height: 300px; background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); border-radius: 50%; box-shadow: 0 0 80px rgba(240, 242, 255, 0.15); z-index: -1; }
 
-    /* --- UI --- */
+    /* --- UI ELEMENTS --- */
     .badge { font-size: 0.55rem; padding: 1px 5px; border-radius: 4px; margin-left: 5px; vertical-align: middle; font-weight: 700; text-transform: uppercase; }
     .badge-owner { background: rgba(255, 215, 0, 0.2); color: var(--owner-gold); border: 1px solid var(--owner-gold); }
     .badge-verified { background: rgba(56, 151, 240, 0.2); color: var(--verified-blue); border: 1px solid var(--verified-blue); }
@@ -38,9 +38,12 @@ $tagline = "Exploring the night side";
     main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; position: relative; z-index: 10; }
     .app-section { display: none; }
     .app-section.active { display: block; }
-    .card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 1.2rem; margin-bottom: 1rem; }
+    .card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 1.2rem; margin-bottom: 1rem; overflow: hidden; }
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: #111; border: 2px solid var(--glass-border); object-fit: cover; }
     
+    /* --- POST IMAGE STYLE --- */
+    .post-image { width: calc(100% + 2.4rem); margin: 1rem -1.2rem -1.2rem -1.2rem; display: block; border-top: 1px solid var(--glass-border); max-height: 400px; object-fit: cover; }
+
     /* --- CHAT --- */
     #chat-overlay { position: fixed; inset: 0; background: var(--bg-primary); z-index: 200; display: none; flex-direction: column; }
     #chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; background: var(--glass-bg); }
@@ -58,7 +61,6 @@ $tagline = "Exploring the night side";
     .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 22px; display: flex; justify-content: space-around; padding: 10px; z-index: 100; }
     .nav-item { color: var(--text-muted); font-size: 0.6rem; cursor: pointer; text-align: center; opacity: 0.6; }
     .nav-item.active { color: var(--accent-moon); opacity: 1; }
-    .hidden { display: none; }
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--online-glow); display: inline-block; }
   </style>
 </head>
@@ -97,8 +99,9 @@ $tagline = "Exploring the night side";
     <div id="home-tab" class="app-section">
       <h1 id="user-greeting">Welcome</h1>
       <div class="card">
-        <textarea id="post-content" placeholder="Broadcast to the moon..."></textarea>
-        <button id="send-btn" class="button">Transmit</button>
+        <textarea id="post-content" placeholder="What's on your frequency?" rows="2"></textarea>
+        <input type="text" id="post-image-url" placeholder="Image URL (optional)" style="font-size: 0.8rem;">
+        <button id="send-btn" class="button">Transmit Broadcast</button>
       </div>
       <div id="lunar-feed"></div>
     </div>
@@ -171,20 +174,30 @@ $tagline = "Exploring the night side";
           }
         });
 
-        // Global Feed
+        // FEED WITH IMAGE SUPPORT
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
           const feed = document.getElementById('lunar-feed'); feed.innerHTML = "";
           snap.forEach(d => {
             const p = d.data();
-            const card = document.createElement('div'); card.className = 'card'; card.style.display = 'flex'; card.style.gap = '15px';
-            card.innerHTML = `<img src="${p.authorImg}" class="avatar" style="width:40px;"><div><b>${p.authorName}${getBadgeHTML(p.authorId)}${formatTime(p.timestamp)}</b><p>${p.text}</p></div>`;
+            const card = document.createElement('div'); card.className = 'card';
+            let imgHTML = p.imageUrl ? `<img src="${p.imageUrl}" class="post-image" onerror="this.style.display='none'">` : "";
+            
+            card.innerHTML = `
+              <div style="display:flex; gap:15px; align-items:flex-start;">
+                <img src="${p.authorImg}" class="avatar" style="width:40px;">
+                <div>
+                  <b>${p.authorName}${getBadgeHTML(p.authorId)}${formatTime(p.timestamp)}</b>
+                  <p style="margin: 5px 0;">${p.text}</p>
+                </div>
+              </div>
+              ${imgHTML}
+            `;
             feed.appendChild(card);
           });
         });
 
-        // Load only "My Crew" (People I have chatted with)
         const loadCrew = () => {
-            onSnapshot(query(collection(db, "chats"), where("chatId", ">=", "")), async (snap) => {
+            onSnapshot(query(collection(db, "chats")), async (snap) => {
                 const crewIds = new Set();
                 snap.forEach(d => {
                     const ids = d.data().chatId.split('_');
@@ -193,7 +206,6 @@ $tagline = "Exploring the night side";
                         if(other) crewIds.add(other);
                     }
                 });
-                
                 const list = document.getElementById('crew-list'); list.innerHTML = "";
                 for (let id of crewIds) {
                     const uSnap = await getDoc(doc(db, "users", id));
@@ -208,7 +220,6 @@ $tagline = "Exploring the night side";
             });
         };
         loadCrew();
-
         switchTab('home-tab');
       } else {
         document.getElementById('auth-view').classList.add('active');
@@ -216,16 +227,32 @@ $tagline = "Exploring the night side";
       }
     });
 
-    // SEARCH PILOTS LOGIC
+    // TRANSMIT WITH IMAGE
+    document.getElementById('send-btn').onclick = async () => {
+      const text = document.getElementById('post-content').value.trim();
+      const img = document.getElementById('post-image-url').value.trim();
+      if(!text && !img) return;
+      const u = auth.currentUser;
+      const uData = (await getDoc(doc(db, "users", u.uid))).data();
+      
+      await addDoc(collection(db, "posts"), { 
+        text: text, 
+        imageUrl: img,
+        authorId: u.uid, 
+        authorName: uData.username, 
+        authorImg: uData.profile_Image, 
+        timestamp: serverTimestamp() 
+      });
+      
+      document.getElementById('post-content').value = "";
+      document.getElementById('post-image-url').value = "";
+    };
+
     document.getElementById('search-btn').onclick = async () => {
         const name = document.getElementById('search-pilot').value.trim();
-        if(!name) return;
         const q = query(collection(db, "users"), where("username", "==", name));
         const snap = await getDocs(q);
         const res = document.getElementById('search-results'); res.innerHTML = "";
-        
-        if(snap.empty) { res.innerHTML = "<p style='font-size:0.8rem; opacity:0.5;'>No pilot found on this frequency.</p>"; return; }
-        
         snap.forEach(ds => {
             if(ds.id === auth.currentUser.uid) return;
             const u = ds.data();
@@ -241,27 +268,22 @@ $tagline = "Exploring the night side";
       const mySnap = await getDoc(doc(db, "users", u.uid));
       const myData = mySnap.data();
       const chatId = [u.uid, targetId].sort().join('_');
-      
       document.getElementById('chat-target-name').innerText = targetName;
       document.getElementById('chat-target-img').src = targetImg;
       document.getElementById('chat-overlay').style.display = 'flex';
-      
       const box = document.getElementById('chat-messages');
       if(chatListener) chatListener();
-      
       const q = query(collection(db, "chats"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
       chatListener = onSnapshot(q, (snap) => {
         box.innerHTML = "";
         snap.forEach(d => {
-          const m = d.data(); 
-          const isMe = m.sender === u.uid;
+          const m = d.data(); const isMe = m.sender === u.uid;
           const wrap = document.createElement('div'); wrap.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
           wrap.innerHTML = `<img src="${isMe ? myData.profile_Image : targetImg}" class="chat-pfp"><div style="display:flex; flex-direction:column; max-width:75%; ${isMe ? 'align-items:flex-end':''}"><span style="font-size:0.6rem; color:var(--text-muted);">${isMe ? myData.username : targetName}${formatTime(m.timestamp)}</span><div class="bubble">${m.text}</div></div>`;
           box.appendChild(wrap);
         });
         box.scrollTop = box.scrollHeight;
       });
-
       document.getElementById('chat-send-btn').onclick = async () => {
         const inp = document.getElementById('chat-input'); if(!inp.value.trim()) return;
         const txt = inp.value; inp.value = "";
@@ -270,7 +292,6 @@ $tagline = "Exploring the night side";
     };
 
     window.closeChat = () => { document.getElementById('chat-overlay').style.display = 'none'; if(chatListener) chatListener(); };
-
     document.getElementById('auth-form').onsubmit = async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value, pass = document.getElementById('password').value, user = document.getElementById('reg-username').value;
@@ -279,17 +300,9 @@ $tagline = "Exploring the night side";
         await setDoc(doc(db, "users", cred.user.uid), { username: user, profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user}`, is_online: true });
       } catch (err) { if(err.code === 'auth/email-already-in-use') await signInWithEmailAndPassword(auth, email, pass); }
     };
-
-    document.getElementById('send-btn').onclick = async () => {
-      const t = document.getElementById('post-content'); if(!t.value.trim()) return;
-      const u = auth.currentUser;
-      const uData = (await getDoc(doc(db, "users", u.uid))).data();
-      await addDoc(collection(db, "posts"), { text: t.value, authorId: u.uid, authorName: uData.username, authorImg: uData.profile_Image, timestamp: serverTimestamp() });
-      t.value = "";
-    };
-
-    document.getElementById('logout-btn').onclick = async () => { signOut(auth); };
+    document.getElementById('logout-btn').onclick = () => signOut(auth);
   </script>
+  
   <script>
     const canvas = document.getElementById('starCanvas');
     const ctx = canvas.getContext('2d');
