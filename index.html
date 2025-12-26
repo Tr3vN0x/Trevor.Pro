@@ -34,12 +34,12 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
 
     body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: #e8ebff; min-height: 100vh; overflow-x: hidden; }
 
-    /* --- BACKGROUND ELEMENTS --- */
+    /* --- BACKGROUND --- */
     #starCanvas { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
     .nebula-glow { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle at 80% 10%, rgba(165, 180, 252, 0.08) 0%, transparent 50%); }
     .moon-orb { position: fixed; top: -60px; right: -60px; width: 300px; height: 300px; background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); border-radius: 50%; box-shadow: 0 0 80px rgba(240, 242, 255, 0.15); z-index: -1; }
 
-    /* --- UI STRUCTURE --- */
+    /* --- UI --- */
     main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; position: relative; z-index: 10; }
     .app-section { display: none; }
     .app-section.active { display: block; }
@@ -47,34 +47,35 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: #111; border: 2px solid var(--glass-border); object-fit: cover; }
     .badge { font-size: 0.55rem; padding: 2px 8px; border-radius: 4px; margin-left: 5px; font-weight: 700; text-transform: uppercase; border: 1px solid currentColor; display: inline-block; vertical-align: middle; }
     .badge-owner { color: var(--owner-gold); border-color: var(--owner-gold); }
-    .timestamp { font-size: 0.6rem; color: var(--text-muted); font-family: monospace; margin-left: 8px; }
-
-    /* --- POSTS & CHAT --- */
-    .post-img, .chat-img { width: 100%; border-radius: 16px; margin-top: 10px; border: 1px solid var(--glass-border); display: block; max-height: 300px; object-fit: cover; }
-    .delete-btn { position: absolute; top: 1.2rem; right: 1.2rem; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; opacity: 0.5; }
-    .action-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.75rem; margin-top: 10px; padding: 0 10px 0 0; }
-    .report-btn { color: #ffab00; opacity: 0.7; }
-
+    
+    /* --- MESSAGING & CHAT --- */
     #chat-overlay { position: fixed; inset: 0; background: var(--bg-primary); z-index: 1000; display: none; flex-direction: column; }
     #chat-header { padding: 1rem; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; background: var(--glass-bg); }
-    #chat-messages { flex-grow: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 20px; }
-    .msg-wrapper { display: flex; flex-direction: column; max-width: 85%; }
-    .msg-wrapper.sent { align-self: flex-end; align-items: flex-end; }
-    .msg-wrapper.received { align-self: flex-start; align-items: flex-start; }
+    #chat-messages { flex-grow: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 24px; }
+    
+    .msg-wrapper { display: flex; gap: 12px; max-width: 85%; }
+    .msg-wrapper.sent { align-self: flex-end; flex-direction: row-reverse; }
+    .msg-wrapper.received { align-self: flex-start; }
+    
+    .msg-content { display: flex; flex-direction: column; }
+    .sent .msg-content { align-items: flex-end; }
+    
     .bubble { padding: 10px 16px; border-radius: 18px; font-size: 0.9rem; line-height: 1.4; word-wrap: break-word; }
     .sent .bubble { background: var(--accent-moon); color: var(--bg-primary); border-top-right-radius: 4px; }
     .received .bubble { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); border-top-left-radius: 4px; }
+    
+    .chat-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--glass-border); flex-shrink: 0; margin-top: 4px; }
 
     /* --- MODERATION --- */
-    .mod-dashboard { border: 2px solid var(--owner-gold); padding: 1rem; border-radius: 18px; margin-top: 2rem; display: none; text-align: left; }
-    .report-item { border-bottom: 1px solid var(--glass-border); padding: 10px 0; font-size: 0.8rem; }
+    .mod-dashboard { border: 2px solid var(--owner-gold); padding: 1rem; border-radius: 18px; margin-top: 2rem; display: none; }
+    .report-item { border-bottom: 1px solid var(--glass-border); padding: 10px 0; font-size: 0.8rem; text-align: left; }
 
-    /* --- NAV & INPUTS --- */
-    input, textarea { width: 100%; padding: 0.8rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; margin-bottom: 0.8rem; box-sizing: border-box; }
-    .button { width: 100%; padding: 0.8rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; }
+    /* --- NAV --- */
     .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 22px; display: flex; justify-content: space-around; padding: 10px; z-index: 100; }
     .nav-item { color: var(--text-muted); font-size: 0.6rem; cursor: pointer; text-align: center; opacity: 0.6; }
     .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
+    input, textarea { width: 100%; padding: 0.8rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; margin-bottom: 0.8rem; box-sizing: border-box; }
+    .button { width: 100%; padding: 0.8rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -86,9 +87,9 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
 
   <div id="chat-overlay">
     <div id="chat-header">
-      <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&larr;</button>
+      <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:1.5rem;">&larr;</button>
       <img id="chat-target-img" class="avatar" style="width:35px; height:35px;">
-      <span id="chat-target-name" style="font-weight:700; margin-left:5px;">Pilot</span>
+      <span id="chat-target-name" style="font-weight:700;">Pilot</span>
     </div>
     <div id="chat-messages"></div>
     <div style="padding:1rem; background:var(--glass-bg); border-top:1px solid var(--glass-border);">
@@ -103,7 +104,7 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
           <h2 style="letter-spacing: 5px;"><?php echo strtoupper($title); ?></h2>
           <form id="auth-form">
             <input type="text" id="reg-username" placeholder="Pilot Handle" required>
-            <input type="email" id="email" placeholder="Email Frequency" required>
+            <input type="email" id="email" placeholder="Email" required>
             <input type="password" id="password" placeholder="Access Key" required>
             <button type="submit" class="button">Establish Link</button>
           </form>
@@ -114,7 +115,6 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
       <h1 id="welcome-text">Connecting...</h1>
       <div class="card">
         <textarea id="post-content" placeholder="Broadcast a signal..." rows="2"></textarea>
-        <input type="text" id="post-image-url" placeholder="Visual Data URL (Optional)">
         <button id="send-btn" class="button">Transmit Broadcast</button>
       </div>
       <div id="lunar-feed"></div>
@@ -126,18 +126,18 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
     </div>
 
     <div id="profile-tab" class="app-section">
-      <h3>PILOT PROFILE</h3>
+      <h3>PROFILE</h3>
       <div class="card" style="text-align:center;">
         <img id="profile-preview-img" src="" class="avatar" style="width:80px; height:80px; margin-bottom:1rem;">
         <input type="text" id="edit-username" placeholder="Pilot Handle">
         <button id="save-profile-btn" class="button">Update Identity</button>
 
         <div id="mod-dashboard" class="mod-dashboard">
-          <h4 style="color:var(--owner-gold); margin-top:0;">MISSION CONTROL: REPORTS</h4>
-          <div id="report-queue" style="max-height: 200px; overflow-y: auto;">No pending alerts.</div>
+          <h4 style="color:var(--owner-gold);">MISSION CONTROL: REPORTS</h4>
+          <div id="report-queue">No pending alerts.</div>
         </div>
 
-        <button onclick="auth.signOut()" class="button" style="margin-top:1.5rem; background:rgba(255,0,0,0.1); color:var(--danger);">Sever Connection</button>
+        <button onclick="auth.signOut()" class="button" style="margin-top:1rem; opacity:0.6;">Sever Connection</button>
       </div>
     </div>
   </main>
@@ -161,7 +161,6 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
     let activeChatListener = null;
 
     const getBadgeHTML = (uid) => uid === ownerId ? `<span class="badge badge-owner">Owner</span>` : "";
-    const formatTime = (ts) => ts ? ts.toDate().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : "...";
 
     window.switchTab = (id) => {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
@@ -173,41 +172,15 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
     };
     document.querySelectorAll('.nav-item[data-tab]').forEach(i => i.onclick = () => switchTab(i.dataset.tab));
 
-    // --- MODERATION ---
-    window.reportPost = async (postId, content) => {
-      if(!confirm("Report this transmission to Mission Control?")) return;
-      await addDoc(collection(db, "reports"), { postId, content: content.substring(0, 40) + "...", reportedBy: auth.currentUser.uid, timestamp: serverTimestamp() });
-      alert("Alert sent to Mission Control.");
-    };
-
-    const initModDashboard = () => {
-      onSnapshot(query(collection(db, "reports"), orderBy("timestamp", "desc")), (snap) => {
-        const queue = document.getElementById('report-queue');
-        queue.innerHTML = snap.empty ? "No pending alerts." : "";
-        snap.forEach(d => {
-          const r = d.data();
-          const div = document.createElement('div');
-          div.className = 'report-item';
-          div.innerHTML = `
-            <b>Flagged:</b> ${r.content}<br>
-            <button onclick="deletePost('${r.postId}')" style="color:red; background:none; border:none; cursor:pointer;">[DELETE]</button>
-            <button onclick="dismissReport('${d.id}')" style="color:gray; background:none; border:none; cursor:pointer; margin-left:10px;">[IGNORE]</button>
-          `;
-          queue.appendChild(div);
-        });
-      });
-    };
-    window.dismissReport = async (id) => { await deleteDoc(doc(db, "reports", id)); };
-
-    // --- CHAT ---
-    window.openChat = async (targetId, name, img) => {
+    // --- MESSAGING WITH PROFILE PICTURES ---
+    window.openChat = async (targetId, name, targetImg) => {
       const myId = auth.currentUser.uid;
       const mySnap = await getDoc(doc(db, "users", myId));
       const myData = mySnap.data();
       const chatId = [myId, targetId].sort().join('_');
       
       document.getElementById('chat-target-name').innerText = name;
-      document.getElementById('chat-target-img').src = img;
+      document.getElementById('chat-target-img').src = targetImg;
       document.getElementById('chat-overlay').style.display = 'flex';
       
       const box = document.getElementById('chat-messages');
@@ -216,13 +189,19 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
       activeChatListener = onSnapshot(query(collection(db, "messages"), where("chatId", "==", chatId), orderBy("timestamp", "asc")), (snap) => {
         box.innerHTML = "";
         snap.forEach(d => {
-          const m = d.data(); const isMe = m.sender === myId;
+          const m = d.data();
+          const isMe = m.sender === myId;
+          const senderName = isMe ? myData.username : name;
+          const senderImg = isMe ? myData.profile_Image : targetImg;
+          
           const div = document.createElement('div');
           div.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
           div.innerHTML = `
-            <div style="font-size:0.6rem; font-weight:700;">${isMe ? myData.username : name}${getBadgeHTML(m.sender)}</div>
-            <div class="bubble">${m.text}</div>
-            <div style="font-size:0.5rem; opacity:0.5;">${formatTime(m.timestamp)}</div>
+            <img src="${senderImg}" class="chat-avatar">
+            <div class="msg-content">
+              <span style="font-size:0.6rem; font-weight:700; margin-bottom:4px;">${senderName}${getBadgeHTML(m.sender)}</span>
+              <div class="bubble">${m.text}</div>
+            </div>
           `;
           box.appendChild(div);
         });
@@ -236,30 +215,37 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
         document.getElementById('chat-input').value = "";
       };
     };
-    window.closeChat = () => { document.getElementById('chat-overlay').style.display = 'none'; if(activeChatListener) activeChatListener(); };
 
-    // --- AUTH & DATA SYNC ---
+    window.closeChat = () => { document.getElementById('chat-overlay').style.display = 'none'; };
+
+    // --- CORE LOGIC ---
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         document.getElementById('auth-view').classList.remove('active');
         document.getElementById('main-nav').classList.remove('hidden');
-        
+        switchTab('home-tab');
+
         if(user.uid === ownerId) {
             document.getElementById('mod-dashboard').style.display = 'block';
-            initModDashboard();
+            onSnapshot(query(collection(db, "reports")), (snap) => {
+                const q = document.getElementById('report-queue');
+                q.innerHTML = snap.empty ? "No pending alerts." : "";
+                snap.forEach(d => {
+                    const r = d.data();
+                    q.innerHTML += `<div class="report-item">${r.content}<br><button onclick="deletePost('${r.postId}')" style="color:red; background:none; border:none; cursor:pointer;">[DELETE]</button></div>`;
+                });
+            });
         }
 
         onSnapshot(doc(db, "users", user.uid), (snap) => {
           const d = snap.data();
-          if(!d) return;
           document.getElementById('welcome-text').innerText = `Welcome ${d.username} to LunarTrev`;
           document.getElementById('profile-preview-img').src = d.profile_Image;
           document.getElementById('edit-username').value = d.username;
-
+          
           const crewList = document.getElementById('crew-list'); crewList.innerHTML = "";
           (d.friends || []).forEach(async fid => {
-             const uSnap = await getDoc(doc(db, "users", fid));
-             const u = uSnap.data();
+             const u = (await getDoc(doc(db, "users", fid))).data();
              const div = document.createElement('div'); div.className = 'card'; div.style = "display:flex; align-items:center; gap:12px; cursor:pointer;";
              div.innerHTML = `<img src="${u.profile_Image}" class="avatar" style="width:40px; height:40px;"> <div><b>${u.username}</b>${getBadgeHTML(fid)}</div>`;
              div.onclick = () => openChat(fid, u.username, u.profile_Image);
@@ -274,14 +260,13 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
             const card = document.createElement('div'); card.className = 'card';
             card.innerHTML = `
               ${(p.authorId === user.uid || user.uid === ownerId) ? `<button class="delete-btn" onclick="deletePost('${d.id}')">✕</button>` : ''}
-              <div style="display:flex; gap:15px; align-items:flex-start;">
+              <div style="display:flex; gap:15px;">
                 <img src="${p.authorImg}" class="avatar" style="width:40px; height:40px;">
                 <div style="flex:1;">
-                  <b>${p.authorName}${getBadgeHTML(p.authorId)} <span class="timestamp">${formatTime(p.timestamp)}</span></b>
-                  <p style="margin: 5px 0;">${p.text}</p>
-                  ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-img">` : ''}
+                  <b>${p.authorName}${getBadgeHTML(p.authorId)}</b>
+                  <p>${p.text}</p>
                   <button class="action-btn" onclick="toggleEcho('${d.id}', ${p.echoes?.includes(user.uid)})">☆ Echo [${p.echoes?.length || 0}]</button>
-                  <button class="action-btn report-btn" onclick="reportPost('${d.id}', '${p.text}')">⚠ Report</button>
+                  <button class="action-btn" style="color:#ffab00;" onclick="reportPost('${d.id}', '${p.text}')">⚠ Report</button>
                 </div>
               </div>`;
             feed.appendChild(card);
@@ -292,16 +277,19 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
 
     document.getElementById('send-btn').onclick = async () => {
       const text = document.getElementById('post-content').value.trim();
-      const img = document.getElementById('post-image-url').value.trim();
-      if(!text && !img) return;
       const u = (await getDoc(doc(db, "users", auth.currentUser.uid))).data();
-      await addDoc(collection(db, "posts"), { text, imageUrl: img, authorId: auth.currentUser.uid, authorName: u.username, authorImg: u.profile_Image, timestamp: serverTimestamp(), echoes: [] });
-      document.getElementById('post-content').value = ""; document.getElementById('post-image-url').value = "";
+      await addDoc(collection(db, "posts"), { text, authorId: auth.currentUser.uid, authorName: u.username, authorImg: u.profile_Image, timestamp: serverTimestamp(), echoes: [] });
+      document.getElementById('post-content').value = "";
     };
 
-    window.deletePost = async (id) => { if(confirm("Sever transmission?")) await deleteDoc(doc(db, "posts", id)); };
+    window.reportPost = async (postId, content) => {
+        await addDoc(collection(db, "reports"), { postId, content: content.substring(0, 30), reportedBy: auth.currentUser.uid });
+        alert("Reported.");
+    };
+
+    window.deletePost = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "posts", id)); };
     window.toggleEcho = async (id, isEchoed) => { await updateDoc(doc(db, "posts", id), { echoes: isEchoed ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid) }); };
-    
+
     document.getElementById('auth-form').onsubmit = async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value, pass = document.getElementById('password').value, user = document.getElementById('reg-username').value;
@@ -311,40 +299,25 @@ $preview_image = "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?a
       } catch { await signInWithEmailAndPassword(auth, email, pass); }
     };
 
-    window.auth = auth;
-
-    // --- STARS ANIMATION LOGIC ---
+    // --- STARS ANIMATION ---
     const canvas = document.getElementById('starCanvas');
     const ctx = canvas.getContext('2d');
     let stars = [];
-
     const initStars = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
       stars = Array.from({ length: 200 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.5,
-        o: Math.random(),
-        s: 0.005 + Math.random() * 0.01
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+        r: Math.random() * 1.5, o: Math.random(), s: 0.005 + Math.random() * 0.01
       }));
     };
-
     const drawStars = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(s => {
-        s.o += s.s;
-        ctx.fillStyle = `rgba(240, 242, 255, ${Math.abs(Math.sin(s.o))})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
+      stars.forEach(s => { s.o += s.s; ctx.fillStyle = `rgba(240, 242, 255, ${Math.abs(Math.sin(s.o))})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); });
       requestAnimationFrame(drawStars);
     };
-
-    initStars();
-    drawStars();
+    initStars(); drawStars();
     window.addEventListener('resize', initStars);
+    window.auth = auth;
   </script>
 </body>
 </html>
