@@ -47,11 +47,11 @@ $tagline = "Exploring the night side";
     .status-dot { width: 10px; height: 10px; background: var(--online-glow); border-radius: 50%; display: inline-block; box-shadow: 0 0 10px var(--online-glow); }
     .status-dot.offline { background: #444; box-shadow: none; }
 
-    input, textarea { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; box-sizing: border-box; font-family: inherit; resize: none; }
-    .button { width: 100%; padding: 1rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+    input, textarea { width: 100%; padding: 0.8rem; margin-bottom: 0.8rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; box-sizing: border-box; font-family: inherit; }
+    .button { width: 100%; padding: 0.8rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
     
-    .nav-bar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 380px; background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 22px; display: flex; justify-content: space-around; padding: 12px; z-index: 100; }
-    .nav-item { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; opacity: 0.6; }
+    .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 22px; display: flex; justify-content: space-around; padding: 10px; z-index: 100; }
+    .nav-item { color: var(--text-muted); font-size: 0.6rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; opacity: 0.6; display: flex; flex-direction: column; align-items: center; }
     .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
 
     .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
@@ -59,15 +59,17 @@ $tagline = "Exploring the night side";
     .post-username { font-weight: 700; font-size: 0.95rem; color: var(--accent-moon); }
     .post-meta { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
 
-    .pulse-btn { background: none; border: 1px solid var(--glass-border); color: var(--accent-nebula); padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; margin-top: 10px; transition: 0.2s; }
+    .pulse-btn { background: none; border: 1px solid var(--glass-border); color: var(--accent-nebula); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; margin-top: 10px; transition: 0.2s; margin-right: 5px;}
     .pulse-btn.active { background: var(--accent-moon); color: var(--bg-primary); border-color: var(--accent-moon); }
 
-    .edit-link { font-size: 0.65rem; color: var(--accent-nebula); cursor: pointer; text-decoration: underline; opacity: 0.8; margin-left: 8px; }
-    .edit-area { background: rgba(255,255,255,0.05); border: 1px solid var(--accent-nebula); color: #fff; margin: 10px 0; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; font-family: inherit; }
-    .btn-group { display: flex; gap: 8px; }
-    
+    .comment-sec { margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--glass-border); font-size: 0.8rem; }
+    .comment-item { margin-bottom: 10px; color: #ced4ff; }
+    .comment-author { font-weight: 700; color: var(--accent-moon); margin-right: 5px; }
+
     .rank-badge { font-size: 0.6rem; color: var(--accent-moon); background: rgba(165, 180, 252, 0.2); display: inline-block; padding: 2px 10px; border-radius: 10px; margin-top: 5px; text-transform: uppercase; font-weight: 700; }
+    .video-container { width: 100%; border-radius: 15px; overflow: hidden; margin-top: 10px; background: #000; aspect-ratio: 16/9; }
     .hidden { display: none; }
+    .edit-link { font-size: 0.65rem; color: var(--accent-nebula); cursor: pointer; text-decoration: underline; opacity: 0.8; margin-left: 8px; }
   </style>
 </head>
 <body>
@@ -90,15 +92,30 @@ $tagline = "Exploring the night side";
 
     <div id="home-tab" class="app-section">
       <div class="card">
-        <textarea id="post-content" placeholder="Broadcast to the sector..." rows="3"></textarea>
+        <textarea id="post-content" placeholder="Broadcast to the sector..." rows="3" style="resize:none;"></textarea>
         <button id="send-btn" class="button">Transmit</button>
       </div>
       <div id="lunar-feed"></div>
     </div>
 
+    <div id="videos-tab" class="app-section">
+      <h3 style="margin-bottom:1rem; padding-left:10px;">Visual Uplinks</h3>
+      <div class="card">
+        <input type="text" id="video-url" placeholder="Paste Video URL (MP4/Direct)">
+        <input type="text" id="video-desc" placeholder="Video Description">
+        <button id="post-video-btn" class="button">Upload Signal</button>
+      </div>
+      <div id="video-feed"></div>
+    </div>
+
     <div id="discover-tab" class="app-section">
       <h3 style="margin-bottom:1rem; padding-left:10px;">Your Crew</h3>
       <div id="crew-list"></div>
+    </div>
+
+    <div id="requests-tab" class="app-section">
+      <h3 style="margin-bottom:1rem; padding-left:10px;">Incoming Frequencies</h3>
+      <div id="requests-list"></div>
     </div>
 
     <div id="profile-tab" class="app-section">
@@ -111,17 +128,12 @@ $tagline = "Exploring the night side";
           <p id="disp-bio" style="font-style:italic; font-size:0.85rem; color:var(--text-muted); margin-bottom: 20px;"></p>
           <button onclick="toggleProfileEdit(true)" class="pulse-btn" style="width:100%;">Update Mission Log</button>
         </div>
-
         <div id="profile-edit" class="hidden">
-          <h3 style="margin-top:0;">Update Credentials</h3>
-          <input type="text" id="edit-avatar-url" placeholder="Avatar Image URL">
-          <textarea id="edit-bio" placeholder="Update bio..." rows="3"></textarea>
-          <div class="btn-group">
-            <button id="save-profile-btn" class="button" style="flex:2;">Save</button>
-            <button onclick="toggleProfileEdit(false)" class="button" style="flex:1; background:transparent; border:1px solid var(--glass-border); color:white;">Back</button>
-          </div>
+          <input type="text" id="edit-avatar-url" placeholder="Avatar URL">
+          <textarea id="edit-bio" placeholder="Bio..." rows="3"></textarea>
+          <button id="save-profile-btn" class="button">Save</button>
+          <button onclick="toggleProfileEdit(false)" class="button" style="background:transparent; border:1px solid var(--glass-border); color:white; margin-top:5px;">Back</button>
         </div>
-
         <button id="logout-btn" style="margin-top:2rem; background:transparent; border:1px solid #ff4d4d; color:#ff4d4d; padding:10px; width:100%; border-radius:10px; cursor:pointer;">Eject Session</button>
       </div>
     </div>
@@ -129,14 +141,16 @@ $tagline = "Exploring the night side";
 
   <nav class="nav-bar hidden" id="main-nav">
     <div class="nav-item active" data-tab="home-tab">Feed</div>
+    <div class="nav-item" data-tab="videos-tab">Video</div>
     <div class="nav-item" data-tab="discover-tab">Crew</div>
-    <div class="nav-item" data-tab="profile-tab">Profile</div>
+    <div class="nav-item" data-tab="requests-tab">Req</div>
+    <div class="nav-item" data-tab="profile-tab">Me</div>
   </nav>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, GeoPoint } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, GeoPoint, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM",
@@ -151,7 +165,7 @@ $tagline = "Exploring the night side";
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Navigation Logic
+    // --- Core Navigation ---
     const switchTab = (tabId) => {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -164,170 +178,173 @@ $tagline = "Exploring the night side";
       item.addEventListener('click', () => switchTab(item.getAttribute('data-tab')));
     });
 
-    // Geolocation Sync
-    const updatePilotLocation = async (uid) => {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          try {
-            await updateDoc(doc(db, "users", uid), { coordinates: new GeoPoint(lat, lng) });
-            document.getElementById('disp-coords').innerText = `${lat.toFixed(2)}° N, ${lng.toFixed(2)}° E`;
-          } catch (e) {}
-        });
-      }
-    };
-
-    // Auth logic
+    // --- Auth & Geo ---
     document.getElementById('auth-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const username = document.getElementById('reg-username').value;
+      const pass = document.getElementById('password').value;
+      const user = document.getElementById('reg-username').value;
       try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, "users", userCred.user.uid), {
-          username: username,
-          bio: "Pilot active.",
-          coordinates: new GeoPoint(0, 0),
-          friends: [],
-          is_online: true,
-          joinedAt: serverTimestamp(),
-          profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
-          rank_level: 1
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db, "users", cred.user.uid), {
+          username: user, bio: "Pilot active.", friends: [], requests: [], rank_level: 1, is_online: true, 
+          profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user}`, coordinates: new GeoPoint(0,0)
         });
-      } catch (err) {
-        if (err.code === 'auth/email-already-in-use') await signInWithEmailAndPassword(auth, email, password);
+      } catch (err) { if (err.code === 'auth/email-already-in-use') await signInWithEmailAndPassword(auth, email, pass); }
+    });
+
+    const updateLoc = async (uid) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          await updateDoc(doc(db, "users", uid), { coordinates: new GeoPoint(pos.coords.latitude, pos.coords.longitude) });
+        });
       }
-    });
+    };
 
-    // Feed / Posting
-    document.getElementById('send-btn').addEventListener('click', async () => {
-      const content = document.getElementById('post-content').value;
-      const user = auth.currentUser;
-      if (!content.trim() || !user) return;
-      const uSnap = await getDoc(doc(db, "users", user.uid));
-      const u = uSnap.data();
-      const loc = u.coordinates ? `${u.coordinates.latitude.toFixed(2)}° N, ${u.coordinates.longitude.toFixed(2)}° E` : "Unknown Sector";
+    // --- Posting Logic (Text & Video) ---
+    const transmitPost = async (content, type = "text", extra = "") => {
+      const u = auth.currentUser;
+      const uSnap = await getDoc(doc(db, "users", u.uid));
+      const data = uSnap.data();
+      const loc = data.coordinates ? `${data.coordinates.latitude.toFixed(2)}° N, ${data.coordinates.longitude.toFixed(2)}° E` : "Deep Space";
       
-      await addDoc(collection(db, "posts"), {
-        text: content,
-        authorId: user.uid,
-        authorName: u.username ?? "Pilot",
-        authorImg: u.profile_Image ?? "",
-        authorLoc: loc,
-        likes: [],
-        timestamp: serverTimestamp()
+      await addDoc(collection(db, type === "text" ? "posts" : "videos"), {
+        text: content, url: extra, authorId: u.uid, authorName: data.username, authorImg: data.profile_Image,
+        authorLoc: loc, likes: [], comments: [], timestamp: serverTimestamp()
       });
-      document.getElementById('post-content').value = "";
-    });
+    };
 
-    onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
-      const feed = document.getElementById('lunar-feed');
-      feed.innerHTML = "";
-      snap.forEach((pDoc) => {
-        const p = pDoc.data();
-        const pid = pDoc.id;
-        const isOwner = auth.currentUser?.uid === p.authorId;
-        const timeStr = p.timestamp ? p.timestamp.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "...";
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="post-header">
-            <img class="avatar" src="${p.authorImg}">
-            <div class="post-info">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="post-username">${p.authorName}</span>
-                <div>
-                  ${isOwner ? `<span class="edit-link" onclick="toggleEdit('${pid}')">Modify</span>` : `<span class="edit-link" onclick="addFriend('${p.authorId}')">Add Crew</span>`}
+    document.getElementById('send-btn').onclick = () => {
+      const txt = document.getElementById('post-content').value;
+      if(txt.trim()) { transmitPost(txt, "text"); document.getElementById('post-content').value = ""; }
+    };
+
+    document.getElementById('post-video-btn').onclick = () => {
+      const url = document.getElementById('video-url').value;
+      const desc = document.getElementById('video-desc').value;
+      if(url.trim()) { transmitPost(desc, "video", url); document.getElementById('video-url').value = ""; document.getElementById('video-desc').value = ""; }
+    };
+
+    // --- Feed Rendering (Shared for Posts/Videos) ---
+    const renderFeed = (coll, targetId, isVideo = false) => {
+      onSnapshot(query(collection(db, coll), orderBy("timestamp", "desc")), (snap) => {
+        const div = document.getElementById(targetId);
+        div.innerHTML = "";
+        snap.forEach(d => {
+          const p = d.data();
+          const pid = d.id;
+          const isOwner = auth.currentUser?.uid === p.authorId;
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="post-header">
+              <img class="avatar" src="${p.authorImg}">
+              <div class="post-info">
+                <div style="display:flex; justify-content:space-between;">
+                  <span class="post-username">${p.authorName}</span>
+                  ${!isOwner ? `<span class="edit-link" onclick="sendFreq('${p.authorId}')">Add Crew</span>` : ''}
                 </div>
+                <span class="post-meta">${p.authorLoc}</span>
               </div>
-              <span class="post-meta">${p.authorLoc} • ${timeStr}</span>
             </div>
-          </div>
-          <div id="text-${pid}">${p.text}</div>
-          <div id="edit-box-${pid}" class="hidden">
-            <textarea id="input-${pid}" class="edit-area">${p.text}</textarea>
-            <button class="pulse-btn active" onclick="saveEdit('${pid}')">Update</button>
-          </div>
-          <button class="pulse-btn ${p.likes.includes(auth.currentUser?.uid) ? 'active' : ''}" onclick="toggleLike('${pid}')">Pulse (${p.likes.length})</button>
-        `;
-        feed.appendChild(card);
-      });
-    });
-
-    // Crew List (Friends Only)
-    const syncCrewList = (userData) => {
-      const list = document.getElementById('crew-list');
-      const friends = userData.friends || [];
-      if (friends.length === 0) { list.innerHTML = "<p style='text-align:center; opacity:0.5;'>Crew empty. Find pilots in the feed.</p>"; return; }
-      
-      onSnapshot(collection(db, "users"), (snap) => {
-        list.innerHTML = "";
-        snap.forEach(uDoc => {
-          if (friends.includes(uDoc.id)) {
-            const u = uDoc.data();
-            list.innerHTML += `<div class="card" style="display:flex; align-items:center; gap:12px;">
-              <img class="avatar" src="${u.profile_Image}">
-              <div style="flex-grow:1;"><div style="font-weight:600;">${u.username}</div><div style="font-size:0.6rem;">RANK ${u.rank_level}</div></div>
-              <div class="status-dot ${u.is_online ? '' : 'offline'}"></div>
-            </div>`;
-          }
+            <div>${p.text}</div>
+            ${isVideo ? `<div class="video-container"><video src="${p.url}" controls style="width:100%; height:100%;"></video></div>` : ''}
+            <button class="pulse-btn ${p.likes.includes(auth.currentUser?.uid) ? 'active' : ''}" onclick="pulse('${coll}', '${pid}')">Pulse (${p.likes.length})</button>
+            <button class="pulse-btn" onclick="toggleComments('${pid}')">Comm (${p.comments.length})</button>
+            <div id="comm-box-${pid}" class="hidden comment-sec">
+              <div id="comm-list-${pid}"></div>
+              <input type="text" id="comm-in-${pid}" placeholder="Reply to frequency..." style="width:75%; margin:0;">
+              <button onclick="postComm('${coll}', '${pid}')" style="width:20%; padding:5px; border-radius:10px; border:none; background:var(--accent-moon);">Go</button>
+            </div>
+          `;
+          div.appendChild(card);
+          // Render individual comments
+          const list = card.querySelector(`#comm-list-${pid}`);
+          p.comments.forEach(c => {
+            list.innerHTML += `<div class="comment-item"><span class="comment-author">${c.user}:</span>${c.text}</div>`;
+          });
         });
       });
     };
 
-    // Global Window Functions
-    window.toggleEdit = (id) => { document.getElementById(`text-${id}`).classList.toggle('hidden'); document.getElementById(`edit-box-${id}`).classList.toggle('hidden'); };
-    window.saveEdit = async (id) => { const txt = document.getElementById(`input-${id}`).value; await updateDoc(doc(db, "posts", id), { text: txt }); toggleEdit(id); };
-    window.toggleLike = async (id) => {
-      const pRef = doc(db, "posts", id);
+    // --- Crew & Request Logic ---
+    window.sendFreq = async (targetId) => {
+      const u = auth.currentUser;
+      const uSnap = await getDoc(doc(db, "users", u.uid));
+      await updateDoc(doc(db, "users", targetId), { requests: arrayUnion({id: u.uid, name: uSnap.data().username}) });
+      alert("Frequency sent to pilot.");
+    };
+
+    const syncRequests = (uid) => {
+      onSnapshot(doc(db, "users", uid), (snap) => {
+        const reqs = snap.data().requests || [];
+        const div = document.getElementById('requests-list');
+        div.innerHTML = reqs.length ? "" : "<p style='text-align:center; opacity:0.5;'>No incoming signals.</p>";
+        reqs.forEach(r => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `<p>Signal from <b>${r.name}</b></p>
+            <button onclick="acceptReq('${r.id}', '${r.name}')" class="button" style="margin-bottom:5px;">Accept</button>
+            <button onclick="ignoreReq('${r.id}', '${r.name}')" class="button" style="background:#ff4d4d; color:white;">Ignore</button>`;
+          div.appendChild(card);
+        });
+      });
+    };
+
+    window.acceptReq = async (rid, rname) => {
+      const u = auth.currentUser;
+      await updateDoc(doc(db, "users", u.uid), { friends: arrayUnion(rid), requests: arrayRemove({id: rid, name: rname}) });
+      await updateDoc(doc(db, "users", rid), { friends: arrayUnion(u.uid) });
+    };
+
+    window.ignoreReq = async (rid, rname) => {
+      await updateDoc(doc(db, "users", auth.currentUser.uid), { requests: arrayRemove({id: rid, name: rname}) });
+    };
+
+    // --- Interactions ---
+    window.pulse = async (coll, pid) => {
+      const pRef = doc(db, coll, pid);
       const snap = await getDoc(pRef);
-      const likes = snap.data().likes || [];
+      const likes = snap.data().likes;
       const uid = auth.currentUser.uid;
       await updateDoc(pRef, { likes: likes.includes(uid) ? arrayRemove(uid) : arrayUnion(uid) });
     };
-    window.addFriend = async (target) => {
-      await updateDoc(doc(db, "users", auth.currentUser.uid), { friends: arrayUnion(target) });
-      const snap = await getDoc(doc(db, "users", auth.currentUser.uid));
-      syncCrewList(snap.data());
-    };
-    window.toggleProfileEdit = (show) => { document.getElementById('profile-display').classList.toggle('hidden', show); document.getElementById('profile-edit').classList.toggle('hidden', !show); };
 
-    document.getElementById('save-profile-btn').onclick = async () => {
-      const avatar = document.getElementById('edit-avatar-url').value;
-      const bio = document.getElementById('edit-bio').value;
-      await updateDoc(doc(db, "users", auth.currentUser.uid), { profile_Image: avatar, bio: bio });
-      window.location.reload(); // Quick sync
+    window.toggleComments = (pid) => document.getElementById(`comm-box-${pid}`).classList.toggle('hidden');
+
+    window.postComm = async (coll, pid) => {
+      const inEl = document.getElementById(`comm-in-${pid}`);
+      if(!inEl.value.trim()) return;
+      const uSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
+      await updateDoc(doc(db, coll, pid), { comments: arrayUnion({user: uSnap.data().username, text: inEl.value}) });
+      inEl.value = "";
     };
 
-    // Auth Observer
+    // --- State Management ---
     onAuthStateChanged(auth, async (user) => {
-      const nav = document.getElementById('main-nav');
       if (user) {
         document.getElementById('auth-view').classList.remove('active');
-        nav.classList.remove('hidden');
+        document.getElementById('main-nav').classList.remove('hidden');
         const snap = await getDoc(doc(db, "users", user.uid));
-        if (snap.exists()) {
-          const d = snap.data();
-          document.getElementById('disp-name').innerText = d.username;
-          document.getElementById('disp-bio').innerText = d.bio;
-          document.getElementById('my-avatar').src = d.profile_Image;
-          document.getElementById('disp-rank').innerText = `RANK ${d.rank_level}`;
-          syncCrewList(d);
-          updatePilotLocation(user.uid);
-          await updateDoc(doc(db, "users", user.uid), { is_online: true });
-        }
+        const d = snap.data();
+        document.getElementById('my-avatar').src = d.profile_Image;
+        document.getElementById('disp-name').innerText = d.username;
+        document.getElementById('disp-bio').innerText = d.bio;
+        document.getElementById('disp-rank').innerText = `RANK ${d.rank_level}`;
+        renderFeed("posts", "lunar-feed");
+        renderFeed("videos", "video-feed", true);
+        syncRequests(user.uid);
+        updateLoc(user.uid);
+        switchTab('home-tab');
       } else {
         document.getElementById('auth-view').classList.add('active');
-        nav.classList.add('hidden');
+        document.getElementById('main-nav').classList.add('hidden');
       }
     });
 
-    document.getElementById('logout-btn').onclick = async () => {
-      await updateDoc(doc(db, "users", auth.currentUser.uid), { is_online: false });
-      signOut(auth);
-    };
+    // Logout
+    document.getElementById('logout-btn').onclick = () => signOut(auth);
+
   </script>
 </body>
 </html>
