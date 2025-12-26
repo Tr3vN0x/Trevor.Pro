@@ -24,57 +24,40 @@ $tagline = "Exploring the night side";
 
     body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: #e8ebff; min-height: 100vh; overflow-x: hidden; }
 
-    /* --- BACKGROUND ELEMENTS --- */
+    /* --- BACKGROUND --- */
     #starCanvas { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
-    .nebula-glow {
-        position: fixed; inset: 0; z-index: -1; pointer-events: none;
-        background: radial-gradient(circle at 80% 10%, rgba(165, 180, 252, 0.08) 0%, transparent 50%),
-                    radial-gradient(circle at 20% 80%, rgba(132, 139, 189, 0.05) 0%, transparent 40%);
-    }
-    .moon-orb { 
-        position: fixed; top: -60px; right: -60px; width: 300px; height: 300px; 
-        background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); 
-        border-radius: 50%; box-shadow: 0 0 80px rgba(240, 242, 255, 0.15); z-index: -1; 
-    }
+    .nebula-glow { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle at 80% 10%, rgba(165, 180, 252, 0.08) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(132, 139, 189, 0.05) 0%, transparent 40%); }
+    .moon-orb { position: fixed; top: -60px; right: -60px; width: 300px; height: 300px; background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); border-radius: 50%; box-shadow: 0 0 80px rgba(240, 242, 255, 0.15); z-index: -1; }
 
-    /* --- BADGE & TIME --- */
-    .badge { font-size: 0.55rem; padding: 1px 5px; border-radius: 4px; margin-left: 5px; vertical-align: middle; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    /* --- UI --- */
+    .badge { font-size: 0.55rem; padding: 1px 5px; border-radius: 4px; margin-left: 5px; vertical-align: middle; font-weight: 700; text-transform: uppercase; }
     .badge-owner { background: rgba(255, 215, 0, 0.2); color: var(--owner-gold); border: 1px solid var(--owner-gold); }
     .badge-verified { background: rgba(56, 151, 240, 0.2); color: var(--verified-blue); border: 1px solid var(--verified-blue); }
-    .timestamp { font-size: 0.6rem; color: var(--text-muted); font-family: monospace; margin-left: 8px; font-weight: 400; }
+    .timestamp { font-size: 0.6rem; color: var(--text-muted); font-family: monospace; margin-left: 8px; }
 
-    /* --- LAYOUT --- */
     main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; position: relative; z-index: 10; }
-    .app-section { display: none; animation: moonRise 0.4s ease-out; }
+    .app-section { display: none; }
     .app-section.active { display: block; }
-    @keyframes moonRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
     .card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 1.2rem; margin-bottom: 1rem; }
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: #111; border: 2px solid var(--glass-border); object-fit: cover; }
     
-    /* --- CHAT OVERLAY --- */
+    /* --- CHAT --- */
     #chat-overlay { position: fixed; inset: 0; background: var(--bg-primary); z-index: 200; display: none; flex-direction: column; }
-    #chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; background: var(--glass-bg); backdrop-filter: blur(10px); }
+    #chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; background: var(--glass-bg); }
     #chat-messages { flex-grow: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 20px; }
-    
     .msg-wrapper { display: flex; align-items: flex-start; gap: 10px; width: 100%; }
     .msg-wrapper.sent { flex-direction: row-reverse; }
-    
-    .chat-pfp { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--glass-border); flex-shrink: 0; }
-    .bubble-container { display: flex; flex-direction: column; max-width: 75%; }
-    .sent .bubble-container { align-items: flex-end; }
-
-    .chat-user-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; display: flex; align-items: center; }
-    .bubble { padding: 10px 14px; border-radius: 18px; font-size: 0.9rem; line-height: 1.4; }
+    .chat-pfp { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--glass-border); }
+    .bubble { padding: 10px 14px; border-radius: 18px; font-size: 0.9rem; }
     .sent .bubble { background: var(--accent-moon); color: var(--bg-primary); border-top-right-radius: 4px; }
     .received .bubble { background: rgba(255,255,255,0.1); color: #fff; border-top-left-radius: 4px; border: 1px solid var(--glass-border); }
 
-    /* --- UI ELEMENTS --- */
-    input, textarea { width: 100%; padding: 0.8rem; margin-bottom: 0.8rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; box-sizing: border-box; }
-    .button { width: 100%; padding: 0.8rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; text-transform: uppercase; }
+    /* --- FORM --- */
+    input, textarea { width: 100%; padding: 0.8rem; margin-bottom: 0.8rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
+    .button { width: 100%; padding: 0.8rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; }
     .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 22px; display: flex; justify-content: space-around; padding: 10px; z-index: 100; }
-    .nav-item { color: var(--text-muted); font-size: 0.6rem; text-transform: uppercase; cursor: pointer; opacity: 0.6; display: flex; flex-direction: column; align-items: center; }
-    .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
+    .nav-item { color: var(--text-muted); font-size: 0.6rem; cursor: pointer; text-align: center; opacity: 0.6; }
+    .nav-item.active { color: var(--accent-moon); opacity: 1; }
     .hidden { display: none; }
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--online-glow); display: inline-block; }
   </style>
@@ -87,64 +70,62 @@ $tagline = "Exploring the night side";
 
   <div id="chat-overlay">
     <div id="chat-header">
-      <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&larr;</button>
+      <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:1.5rem;">&larr;</button>
       <img id="chat-target-img" class="avatar" style="width:35px; height:35px;">
       <span id="chat-target-name" style="font-weight:700;">Pilot</span>
     </div>
     <div id="chat-messages"></div>
-    <div id="chat-input-area" style="padding: 1rem; background: var(--glass-bg); display: flex; gap: 10px; border-top: 1px solid var(--glass-border);">
-      <input type="text" id="chat-input" placeholder="Frequency check..." style="margin-bottom:0;">
-      <button id="chat-send-btn" class="button" style="width:80px; padding:0;">SEND</button>
+    <div id="chat-input-area" style="padding: 1rem; display: flex; gap: 10px; background: var(--glass-bg);">
+      <input type="text" id="chat-input" placeholder="Transmission..." style="margin-bottom:0;">
+      <button id="chat-send-btn" class="button" style="width:80px;">SEND</button>
     </div>
   </div>
 
   <main>
     <div id="auth-view" class="app-section active">
-      <div class="card" style="text-align:center;">
-        <h2 style="letter-spacing: 4px; margin-bottom: 0.5rem;">LUNARTREV</h2>
-        <form id="auth-form">
-          <input type="text" id="reg-username" placeholder="Pilot Username" required>
-          <input type="email" id="email" placeholder="Earth Email" required>
-          <input type="password" id="password" placeholder="Security Key" required>
-          <button type="submit" class="button">Access System</button>
-        </form>
-      </div>
+        <div class="card" style="text-align:center;">
+          <h2>LUNARTREV</h2>
+          <form id="auth-form">
+            <input type="text" id="reg-username" placeholder="Username" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Key" required>
+            <button type="submit" class="button">Connect</button>
+          </form>
+        </div>
     </div>
 
     <div id="home-tab" class="app-section">
-      <div id="user-greeting" style="margin-bottom: 1.5rem; padding: 0 0.5rem;">
-        <h1 style="margin: 0; font-size: 1.4rem; letter-spacing: 1px;">Welcome, <span id="greet-name" style="color: var(--accent-nebula);">Explorer</span></h1>
-      </div>
+      <h1 id="user-greeting">Welcome</h1>
       <div class="card">
-        <textarea id="post-content" placeholder="Broadcast to the moon..." rows="3"></textarea>
+        <textarea id="post-content" placeholder="Broadcast to the moon..."></textarea>
         <button id="send-btn" class="button">Transmit</button>
       </div>
       <div id="lunar-feed"></div>
     </div>
 
-    <div id="videos-tab" class="app-section">
-      <div class="card"><input type="text" id="video-url" placeholder="Video URL"><button id="post-video-btn" class="button">Upload</button></div>
-      <div id="video-feed"></div>
+    <div id="discover-tab" class="app-section">
+      <h3>ADD PILOTS</h3>
+      <div class="card">
+        <input type="text" id="search-pilot" placeholder="Enter Pilot Name...">
+        <button id="search-btn" class="button">Find Pilot</button>
+      </div>
+      <div id="search-results"></div>
+      
+      <h3 style="margin-top:2rem;">YOUR CREW</h3>
+      <div id="crew-list"></div>
     </div>
-
-    <div id="discover-tab" class="app-section"><h3>ACTIVE CREW</h3><div id="crew-list"></div></div>
 
     <div id="profile-tab" class="app-section">
       <div class="card" style="text-align:center;">
-        <div id="profile-display">
-          <img id="my-avatar" class="avatar" style="width:100px; height:100px; margin-bottom:15px; border: 3px solid var(--accent-nebula);" src="">
-          <h2 id="disp-name">Pilot</h2>
-          <p id="disp-bio" style="font-style:italic; font-size:0.85rem; color:var(--text-muted);"></p>
-          <button onclick="toggleProfileEdit(true)" class="button">Update mission</button>
-        </div>
-        <button id="logout-btn" style="margin-top:2rem; background:none; border:1px solid #ff4d4d; color:#ff4d4d; width:100%; cursor:pointer; padding:10px; border-radius:10px;">Logout</button>
+        <img id="my-avatar" class="avatar" style="width:100px; height:100px; margin-bottom:15px;">
+        <h2 id="disp-name">Pilot</h2>
+        <button id="logout-btn" class="button" style="background:none; border:1px solid #ff4d4d; color:#ff4d4d;">Logout</button>
       </div>
     </div>
   </main>
 
   <nav class="nav-bar hidden" id="main-nav">
     <div class="nav-item active" data-tab="home-tab">Feed</div>
-    <div class="nav-item" data-tab="videos-tab">Video</div>
     <div class="nav-item" data-tab="discover-tab">Crew</div>
     <div class="nav-item" data-tab="profile-tab">Me</div>
   </nav>
@@ -152,7 +133,7 @@ $tagline = "Exploring the night side";
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM", authDomain: "lunartrev.firebaseapp.com", projectId: "lunartrev", storageBucket: "lunartrev.firebasestorage.app", messagingSenderId: "152908127950", appId: "1:152908127950:web:6db39b55cbe5d5b0f33a9f" };
     const app = initializeApp(firebaseConfig);
@@ -160,24 +141,19 @@ $tagline = "Exploring the night side";
     const db = getFirestore(app);
     let chatListener = null;
 
-    // BADGE & TIME FORMATTER
     const getBadgeHTML = (uid) => {
         if (uid === "kAWYdnGnDuYJk9JZYsWZYqRo7ml1") return `<span class="badge badge-owner">Owner</span>`;
         if (uid === "tZkA30TJhCVpQ1dlAukrk6fOvpr2") return `<span class="badge badge-verified">Verified</span>`;
         return "";
     };
 
-    const formatTime = (ts) => {
-      if(!ts) return "";
-      const date = ts.toDate();
-      return `<span class="timestamp">${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} MST</span>`;
-    };
+    const formatTime = (ts) => ts ? `<span class="timestamp">${ts.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} MST</span>` : "";
 
     const switchTab = (id) => {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-      const activeNav = document.querySelector(`[data-tab="${id}"]`); if(activeNav) activeNav.classList.add('active');
+      document.querySelector(`[data-tab="${id}"]`).classList.add('active');
     };
     document.querySelectorAll('.nav-item').forEach(i => i.onclick = () => switchTab(i.dataset.tab));
 
@@ -185,41 +161,54 @@ $tagline = "Exploring the night side";
       if (user) {
         document.getElementById('auth-view').classList.remove('active');
         document.getElementById('main-nav').classList.remove('hidden');
+        
         onSnapshot(doc(db, "users", user.uid), (snap) => {
           const d = snap.data();
           if(d) {
             document.getElementById('my-avatar').src = d.profile_Image; 
             document.getElementById('disp-name').innerHTML = d.username + getBadgeHTML(user.uid); 
-            document.getElementById('disp-bio').innerText = d.bio;
-            document.getElementById('greet-name').innerText = d.username;
+            document.getElementById('user-greeting').innerText = `Welcome, ${d.username}`;
           }
         });
 
-        // FEED WITH TIMESTAMPS
+        // Global Feed
         onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
           const feed = document.getElementById('lunar-feed'); feed.innerHTML = "";
           snap.forEach(d => {
             const p = d.data();
             const card = document.createElement('div'); card.className = 'card'; card.style.display = 'flex'; card.style.gap = '15px';
-            card.innerHTML = `<img src="${p.authorImg}" class="avatar" style="width:40px; height:40px;">
-              <div><b style="color:var(--accent-nebula); font-size:0.85rem;">${p.authorName}${getBadgeHTML(p.authorId)}${formatTime(p.timestamp)}</b>
-              <p style="margin:5px 0 0; font-size:0.9rem;">${p.text}</p></div>`;
+            card.innerHTML = `<img src="${p.authorImg}" class="avatar" style="width:40px;"><div><b>${p.authorName}${getBadgeHTML(p.authorId)}${formatTime(p.timestamp)}</b><p>${p.text}</p></div>`;
             feed.appendChild(card);
           });
         });
 
-        onSnapshot(collection(db, "users"), (s) => {
-          const list = document.getElementById('crew-list'); list.innerHTML = "";
-          s.forEach(ds => {
-            if(ds.id !== user.uid) {
-                const u = ds.data();
-                const div = document.createElement('div'); div.className='card'; div.style.display='flex'; div.style.alignItems='center'; div.style.gap='12px'; div.style.cursor='pointer';
-                div.innerHTML = `<img src="${u.profile_Image}" class="avatar" style="width:35px; height:35px;"> <b style="flex-grow:1;">${u.username}${getBadgeHTML(ds.id)}</b> <span class="status-dot ${u.is_online?'':'offline'}"></span>`;
-                div.onclick = () => openChat(ds.id, u.username, u.profile_Image);
-                list.appendChild(div);
-            }
-          });
-        });
+        // Load only "My Crew" (People I have chatted with)
+        const loadCrew = () => {
+            onSnapshot(query(collection(db, "chats"), where("chatId", ">=", "")), async (snap) => {
+                const crewIds = new Set();
+                snap.forEach(d => {
+                    const ids = d.data().chatId.split('_');
+                    if(ids.includes(user.uid)) {
+                        const other = ids.find(id => id !== user.uid);
+                        if(other) crewIds.add(other);
+                    }
+                });
+                
+                const list = document.getElementById('crew-list'); list.innerHTML = "";
+                for (let id of crewIds) {
+                    const uSnap = await getDoc(doc(db, "users", id));
+                    if(uSnap.exists()) {
+                        const u = uSnap.data();
+                        const div = document.createElement('div'); div.className='card'; div.style.display='flex'; div.style.alignItems='center'; div.style.gap='12px';
+                        div.innerHTML = `<img src="${u.profile_Image}" class="avatar" style="width:35px;"> <b style="flex-grow:1;">${u.username}${getBadgeHTML(id)}</b> <span class="status-dot"></span>`;
+                        div.onclick = () => openChat(id, u.username, u.profile_Image);
+                        list.appendChild(div);
+                    }
+                }
+            });
+        };
+        loadCrew();
+
         switchTab('home-tab');
       } else {
         document.getElementById('auth-view').classList.add('active');
@@ -227,31 +216,52 @@ $tagline = "Exploring the night side";
       }
     });
 
+    // SEARCH PILOTS LOGIC
+    document.getElementById('search-btn').onclick = async () => {
+        const name = document.getElementById('search-pilot').value.trim();
+        if(!name) return;
+        const q = query(collection(db, "users"), where("username", "==", name));
+        const snap = await getDocs(q);
+        const res = document.getElementById('search-results'); res.innerHTML = "";
+        
+        if(snap.empty) { res.innerHTML = "<p style='font-size:0.8rem; opacity:0.5;'>No pilot found on this frequency.</p>"; return; }
+        
+        snap.forEach(ds => {
+            if(ds.id === auth.currentUser.uid) return;
+            const u = ds.data();
+            const div = document.createElement('div'); div.className='card'; div.style.display='flex'; div.style.alignItems='center'; div.style.gap='12px';
+            div.innerHTML = `<img src="${u.profile_Image}" class="avatar" style="width:35px;"> <b style="flex-grow:1;">${u.username}${getBadgeHTML(ds.id)}</b> <button class="button" style="width:80px; padding:5px;">ADD</button>`;
+            div.onclick = () => openChat(ds.id, u.username, u.profile_Image);
+            res.appendChild(div);
+        });
+    };
+
     window.openChat = async (targetId, targetName, targetImg) => {
       const u = auth.currentUser;
       const mySnap = await getDoc(doc(db, "users", u.uid));
       const myData = mySnap.data();
       const chatId = [u.uid, targetId].sort().join('_');
+      
       document.getElementById('chat-target-name').innerText = targetName;
       document.getElementById('chat-target-img').src = targetImg;
       document.getElementById('chat-overlay').style.display = 'flex';
+      
       const box = document.getElementById('chat-messages');
       if(chatListener) chatListener();
+      
       const q = query(collection(db, "chats"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
       chatListener = onSnapshot(q, (snap) => {
         box.innerHTML = "";
         snap.forEach(d => {
-          const m = d.data(); const isMe = m.sender === u.uid;
-          const senderName = isMe ? myData.username : targetName;
-          const senderImg = isMe ? myData.profile_Image : targetImg;
-          const senderUid = isMe ? u.uid : targetId;
-          
+          const m = d.data(); 
+          const isMe = m.sender === u.uid;
           const wrap = document.createElement('div'); wrap.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
-          wrap.innerHTML = `<img src="${senderImg}" class="chat-pfp"><div class="bubble-container"><span class="chat-user-label">${senderName}${getBadgeHTML(senderUid)}${formatTime(m.timestamp)}</span><div class="bubble">${m.text}</div></div>`;
+          wrap.innerHTML = `<img src="${isMe ? myData.profile_Image : targetImg}" class="chat-pfp"><div style="display:flex; flex-direction:column; max-width:75%; ${isMe ? 'align-items:flex-end':''}"><span style="font-size:0.6rem; color:var(--text-muted);">${isMe ? myData.username : targetName}${formatTime(m.timestamp)}</span><div class="bubble">${m.text}</div></div>`;
           box.appendChild(wrap);
         });
         box.scrollTop = box.scrollHeight;
       });
+
       document.getElementById('chat-send-btn').onclick = async () => {
         const inp = document.getElementById('chat-input'); if(!inp.value.trim()) return;
         const txt = inp.value; inp.value = "";
@@ -266,7 +276,7 @@ $tagline = "Exploring the night side";
       const email = document.getElementById('email').value, pass = document.getElementById('password').value, user = document.getElementById('reg-username').value;
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db, "users", cred.user.uid), { username: user, bio: "Pilot active.", profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user}`, is_online: true });
+        await setDoc(doc(db, "users", cred.user.uid), { username: user, profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user}`, is_online: true });
       } catch (err) { if(err.code === 'auth/email-already-in-use') await signInWithEmailAndPassword(auth, email, pass); }
     };
 
@@ -278,9 +288,8 @@ $tagline = "Exploring the night side";
       t.value = "";
     };
 
-    document.getElementById('logout-btn').onclick = async () => { if(auth.currentUser) await updateDoc(doc(db, "users", auth.currentUser.uid), { is_online: false }); signOut(auth); };
+    document.getElementById('logout-btn').onclick = async () => { signOut(auth); };
   </script>
-  
   <script>
     const canvas = document.getElementById('starCanvas');
     const ctx = canvas.getContext('2d');
@@ -297,7 +306,7 @@ $tagline = "Exploring the night side";
         stars.forEach(s => { s.opacity += s.speed; if (s.opacity > 1 || s.opacity < 0) s.speed *= -1; ctx.globalAlpha = Math.max(0, s.opacity); ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill(); });
         requestAnimationFrame(drawStars);
     }
-    window.addEventListener('resize', initStars); initStars(); drawStars();
+    initStars(); drawStars();
   </script>
 </body>
 </html>
