@@ -8,88 +8,68 @@ $tagline = "Exploring the night side";
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?php echo $title; ?></title>
-  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+  
   <style>
     :root {
       --bg-primary: #05070a;
       --accent-moon: #f0f2ff;
       --accent-nebula: #a5b4fc;
-      --text-primary: #e8ebff;
-      --text-muted: #848bbd;
-      --glass-bg: rgba(13, 19, 45, 0.6);
-      --glass-border: rgba(207, 216, 255, 0.2);
+      --glass-bg: rgba(13, 19, 45, 0.7);
+      --glass-border: rgba(207, 216, 255, 0.15);
     }
 
     body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-      background-image: radial-gradient(circle at 80% 10%, rgba(207, 216, 255, 0.1) 0%, transparent 50%);
+      margin: 0; font-family: 'Poppins', sans-serif;
+      background: var(--bg-primary); color: #e8ebff;
+      min-height: 100vh; overflow-x: hidden;
     }
 
-    /* Fixed Cosmic Background */
-    .stars {
-      position: fixed;
-      inset: 0;
-      background-image: 
-        radial-gradient(1px 1px at 20% 30%, white 80%, transparent 81%),
-        radial-gradient(1.5px 1.5px at 70% 60%, white 80%, transparent 81%),
-        radial-gradient(1px 1px at 40% 80%, white 80%, transparent 81%);
-      opacity: 0.4;
-      z-index: -2;
+    /* Background Elements */
+    .stars { position: fixed; inset: 0; background-image: radial-gradient(1px 1px at 20% 30%, white 80%, transparent 81%), radial-gradient(1.5px 1.5px at 70% 60%, white 80%, transparent 81%); opacity: 0.3; z-index: -2; }
+    .moon-orb { position: fixed; top: -60px; right: -60px; width: 300px; height: 300px; background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); border-radius: 50%; box-shadow: 0 0 60px rgba(207, 216, 255, 0.1); z-index: -1; }
+
+    /* Main Container */
+    main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem 8rem; }
+    .logo-area { text-align: center; padding: 2rem 0; }
+    .logo { font-size: 2.5rem; font-weight: 700; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* App Sections */
+    .app-section { display: none; animation: moonRise 0.5s ease-out; }
+    .app-section.active { display: block; }
+
+    @keyframes moonRise {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .moon-orb {
-      position: fixed;
-      top: -60px;
-      right: -60px;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #94a3b8 70%, #475569 100%);
-      border-radius: 50%;
-      box-shadow: 0 0 60px rgba(207, 216, 255, 0.2), inset -20px -20px 50px rgba(0,0,0,0.5);
-      z-index: -1;
-    }
-
-    header { text-align: center; padding: 5rem 1.5rem 1rem; }
-    .logo { font-size: 3.5rem; font-weight: 700; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .tagline { color: var(--accent-nebula); letter-spacing: 0.4em; font-size: 0.8rem; text-transform: uppercase; margin-top: 0.5rem; }
-
-    main { max-width: 480px; margin: 0 auto; padding: 2rem 1.5rem; }
+    /* Cards */
     .card {
-      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border); border-radius: 30px;
-      padding: 2.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+      background: var(--glass-bg); backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: 24px;
+      padding: 2rem; margin-bottom: 1.5rem;
     }
 
-    .form-group { margin-bottom: 1.2rem; }
-    label { display: block; font-size: 0.7rem; color: var(--accent-nebula); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
-    input {
-      width: 100%; padding: 0.9rem; background: rgba(255,255,255,0.05);
-      border: 1px solid var(--glass-border); border-radius: 12px;
-      color: white; outline: none; box-sizing: border-box; transition: 0.3s;
+    /* Navigation Bar (The Control Module) */
+    .nav-bar {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      width: 90%; max-width: 400px;
+      background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border); border-radius: 20px;
+      display: flex; justify-content: space-around; padding: 12px;
+      z-index: 100; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
     }
-    input:focus { border-color: var(--accent-moon); background: rgba(255,255,255,0.1); }
 
-    .button {
-      width: 100%; padding: 1rem; border: none; border-radius: 12px;
-      background: var(--accent-moon); color: var(--bg-primary);
-      font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; margin-top: 1rem;
+    .nav-item {
+      color: var(--text-muted); text-decoration: none; font-size: 0.75rem;
+      text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+      transition: 0.3s; opacity: 0.6;
     }
-    .button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(207, 216, 255, 0.3); }
 
-    .toggle-link { text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: var(--accent-nebula); cursor: pointer; text-decoration: underline; }
+    .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
+
     .hidden { display: none; }
-    
-    #profile-data p { margin: 5px 0; color: var(--text-muted); }
-    #profile-data strong { color: var(--accent-moon); }
-
-    footer { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.7rem; }
+    .button { width: 100%; padding: 1rem; border-radius: 12px; border: none; background: var(--accent-moon); font-weight: 700; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -97,127 +77,94 @@ $tagline = "Exploring the night side";
   <div class="stars"></div>
   <div class="moon-orb"></div>
 
-  <header>
+  <div class="logo-area">
     <div class="logo">LunarTrev</div>
-    <div class="tagline"><?php echo $tagline; ?></div>
-  </header>
+  </div>
 
   <main>
-    <div class="card" id="auth-card">
-      <h2 id="auth-title" style="margin-top:0; text-align:center;">Initiate Profile</h2>
-      <form id="auth-form">
-        <div class="form-group" id="username-group">
-          <label>Pilot Name</label>
-          <input type="text" id="username" placeholder="MoonWalker">
+    <div id="auth-view" class="app-section active">
+        <div class="card">
+            <h2 id="auth-title">Initiate Profile</h2>
+            <form id="auth-form">
+                <input type="email" id="email" placeholder="Email" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #333; background:#000; color:#fff;">
+                <input type="password" id="password" placeholder="Password" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #333; background:#000; color:#fff;">
+                <button type="submit" class="button">Launch</button>
+            </form>
         </div>
-        <div class="form-group">
-          <label>Earth Email</label>
-          <input type="email" id="email" required>
-        </div>
-        <div class="form-group">
-          <label>Security Key</label>
-          <input type="password" id="password" required>
-        </div>
-        <button type="submit" class="button" id="submit-btn">Launch</button>
-      </form>
-      <div class="toggle-link" id="auth-toggle">Already a member? Return to Base</div>
     </div>
 
-    <div class="card hidden" id="profile-card">
-      <h2 style="margin-top:0;">Pilot Profile</h2>
-      <div id="profile-data">
-        <p>Name: <strong id="disp-name">...</strong></p>
-        <p>Rank: <strong id="disp-rank">...</strong></p>
-        <p>Bio: <em id="disp-bio">...</em></p>
+    <div id="home-tab" class="app-section">
+      <div class="card">
+        <h3>Lunar Feed</h3>
+        <p style="color:var(--accent-nebula)">Waiting for incoming transmissions...</p>
       </div>
-      <button class="button" id="logout-btn" style="background:transparent; border:1px solid var(--accent-moon); color:var(--accent-moon); margin-top:2rem;">Eject (Logout)</button>
+    </div>
+
+    <div id="discover-tab" class="app-section">
+      <div class="card">
+        <h3>The Crew</h3>
+        <p>Scanning local orbit for other pilots.</p>
+      </div>
+    </div>
+
+    <div id="profile-tab" class="app-section">
+      <div class="card">
+        <h3>Pilot Data</h3>
+        <p>Name: <span id="disp-name">Loading...</span></p>
+        <p>Rank: <span id="disp-rank">...</span></p>
+        <button id="logout-btn" style="background:none; color:red; border:none; cursor:pointer;">Terminate Session</button>
+      </div>
     </div>
   </main>
 
-  <footer>
-    © <?php echo date("Y"); ?> LUNARTREV // DATA PROTOCOL 1.0
-  </footer>
+  <nav class="nav-bar hidden" id="main-nav">
+    <div class="nav-item active" onclick="showTab('home-tab', this)">Home</div>
+    <div class="nav-item" onclick="showTab('discover-tab', this)">Discover</div>
+    <div class="nav-item" onclick="showTab('profile-tab', this)">Profile</div>
+  </nav>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // Your Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM",
-      authDomain: "lunartrev.firebaseapp.com",
-      projectId: "lunartrev",
-      storageBucket: "lunartrev.firebasestorage.app",
-      messagingSenderId: "152908127950",
-      appId: "1:152908127950:web:6db39b55cbe5d5b0f33a9f"
-    };
-
+    const firebaseConfig = { /* Your Config Here */ };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let isLoginMode = false;
+    // TAB LOGIC
+    window.showTab = (tabId, element) => {
+      document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      element.classList.add('active');
+    };
 
-    // UI Toggle
-    const authToggle = document.getElementById('auth-toggle');
-    const usernameGroup = document.getElementById('username-group');
-    const authTitle = document.getElementById('auth-title');
-
-    authToggle.addEventListener('click', () => {
-      isLoginMode = !isLoginMode;
-      authTitle.innerText = isLoginMode ? "Return to Base" : "Initiate Profile";
-      usernameGroup.classList.toggle('hidden', isLoginMode);
-      authToggle.innerText = isLoginMode ? "Need an account? Join the crew" : "Already a member? Return to Base";
-    });
-
-    // Handle Form
-    document.getElementById('auth-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const username = document.getElementById('username').value;
-
-      try {
-        if (isLoginMode) {
-          await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          // SAVE DATA TYPES: Strings and Timestamps
-          await setDoc(doc(db, "users", userCredential.user.uid), {
-            username: username,
-            rank: "Stargazer Novice",
-            bio: "Exploring the dark side.",
-            joinedAt: serverTimestamp() // TIMESTAMP TYPE
-          });
-        }
-      } catch (err) { alert(err.message); }
-    });
-
-    // Handle Session State
+    // AUTH OBSERVER
     onAuthStateChanged(auth, async (user) => {
-      const authCard = document.getElementById('auth-card');
-      const profileCard = document.getElementById('profile-card');
-
+      const authView = document.getElementById('auth-view');
+      const nav = document.getElementById('main-nav');
+      
       if (user) {
-        authCard.classList.add('hidden');
-        profileCard.classList.remove('hidden');
-        
-        // Fetch User Data Fields
-        const docSnap = await getDoc(doc(db, "users", user.uid));
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          document.getElementById('disp-name').innerText = data.username;
-          document.getElementById('disp-rank').innerText = data.rank;
-          document.getElementById('disp-bio').innerText = data.bio;
+        authView.classList.remove('active');
+        nav.classList.remove('hidden');
+        showTab('home-tab', document.querySelector('.nav-item'));
+
+        // Load Profile Data
+        const snap = await getDoc(doc(db, "users", user.uid));
+        if (snap.exists()) {
+          document.getElementById('disp-name').innerText = snap.data().username;
+          document.getElementById('disp-rank').innerText = snap.data().rank;
         }
       } else {
-        authCard.classList.remove('hidden');
-        profileCard.classList.add('hidden');
+        authView.classList.add('active');
+        nav.classList.add('hidden');
       }
     });
 
-    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+    document.getElementById('logout-btn').onclick = () => signOut(auth);
   </script>
 </body>
 </html>
