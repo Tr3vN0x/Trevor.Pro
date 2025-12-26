@@ -33,7 +33,6 @@ $tagline = "Exploring the night side";
 
     main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; }
     
-    /* Sections */
     .app-section { display: none; animation: moonRise 0.4s ease-out; }
     .app-section.active { display: block; }
     @keyframes moonRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -44,21 +43,17 @@ $tagline = "Exploring the night side";
       padding: 1.5rem; margin-bottom: 1.2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
 
-    /* Avatars & Status */
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: #111; border: 2px solid var(--glass-border); object-fit: cover; }
     .status-dot { width: 10px; height: 10px; background: var(--online-glow); border-radius: 50%; display: inline-block; box-shadow: 0 0 10px var(--online-glow); }
     .status-dot.offline { background: #444; box-shadow: none; }
 
-    /* Forms */
     input, textarea { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; box-sizing: border-box; font-family: inherit; resize: none; }
     .button { width: 100%; padding: 1rem; border-radius: 12px; border: none; background: var(--accent-moon); color: var(--bg-primary); font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* Nav Bar */
     .nav-bar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 380px; background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 22px; display: flex; justify-content: space-around; padding: 12px; z-index: 100; }
     .nav-item { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; opacity: 0.6; }
     .nav-item.active { color: var(--accent-moon); opacity: 1; font-weight: 700; }
 
-    /* Post Layout */
     .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .post-info { display: flex; flex-direction: column; flex-grow: 1; }
     .post-username { font-weight: 700; font-size: 0.95rem; color: var(--accent-moon); }
@@ -67,6 +62,12 @@ $tagline = "Exploring the night side";
     .pulse-btn { background: none; border: 1px solid var(--glass-border); color: var(--accent-nebula); padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; margin-top: 10px; transition: 0.2s; }
     .pulse-btn.active { background: var(--accent-moon); color: var(--bg-primary); border-color: var(--accent-moon); }
 
+    /* Edit Mode Additions */
+    .edit-link { font-size: 0.65rem; color: var(--accent-nebula); cursor: pointer; text-decoration: underline; opacity: 0.8; }
+    .edit-link:hover { opacity: 1; color: var(--accent-moon); }
+    .edit-area { background: rgba(255,255,255,0.05); border: 1px solid var(--accent-nebula); color: #fff; margin: 10px 0; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; font-family: inherit; }
+    .btn-group { display: flex; gap: 8px; }
+    
     .hidden { display: none; }
   </style>
 </head>
@@ -136,6 +137,7 @@ $tagline = "Exploring the night side";
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Navigation Logic
     const switchTab = (tabId) => {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -147,7 +149,7 @@ $tagline = "Exploring the night side";
       item.addEventListener('click', () => switchTab(item.getAttribute('data-tab')));
     });
 
-    // SIGNUP / LOGIN
+    // Auth Actions
     document.getElementById('auth-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value;
@@ -171,14 +173,13 @@ $tagline = "Exploring the night side";
       }
     });
 
-    // POSTING (THE FIX)
+    // Posting Logic
     document.getElementById('send-btn').addEventListener('click', async () => {
       const content = document.getElementById('post-content').value;
       const user = auth.currentUser;
       if (!content.trim() || !user) return;
 
       const userSnap = await getDoc(doc(db, "users", user.uid));
-      if (!userSnap.exists()) return;
       const u = userSnap.data();
 
       await addDoc(collection(db, "posts"), {
@@ -193,12 +194,14 @@ $tagline = "Exploring the night side";
       document.getElementById('post-content').value = "";
     });
 
-    // FEED LISTENER (FIXING 'UNDEFINED' & '...')
+    // Feed Listener with Editing Capabilities
     onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snapshot) => {
       const feedDiv = document.getElementById('lunar-feed');
       feedDiv.innerHTML = "";
       snapshot.forEach((pDoc) => {
         const p = pDoc.data();
+        const pid = pDoc.id;
+        const isOwner = auth.currentUser?.uid === p.authorId;
         const likes = p.likes ?? [];
         const isLiked = likes.includes(auth.currentUser?.uid);
         const timeStr = p.timestamp ? p.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "Syncing...";
@@ -209,21 +212,50 @@ $tagline = "Exploring the night side";
           <div class="post-header">
             <img class="avatar" src="${p.authorImg || 'https://api.dicebear.com/7.x/bottts/svg?seed=Lunar'}">
             <div class="post-info">
-              <span class="post-username">${p.authorName ?? 'Pilot'}</span>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="post-username">${p.authorName ?? 'Pilot'}</span>
+                ${isOwner ? `<span class="edit-link" onclick="toggleEdit('${pid}')">Modify Signal</span>` : ''}
+              </div>
               <span class="post-meta">${p.authorLoc ?? 'Moon'} • ${timeStr}</span>
             </div>
           </div>
-          <div style="font-size:0.9rem; line-height:1.5;">${p.text}</div>
-          <button class="pulse-btn ${isLiked ? 'active' : ''}">Pulse (${likes.length})</button>
+
+          <div id="text-${pid}" style="font-size:0.9rem; line-height:1.5;">${p.text}</div>
+          
+          <div id="edit-box-${pid}" class="hidden">
+            <textarea id="input-${pid}" class="edit-area" rows="3">${p.text}</textarea>
+            <div class="btn-group">
+               <button class="pulse-btn active" onclick="saveEdit('${pid}')">Update</button>
+               <button class="pulse-btn" onclick="toggleEdit('${pid}')">Cancel</button>
+            </div>
+          </div>
+
+          <button class="pulse-btn like-trigger ${isLiked ? 'active' : ''}">Pulse (${likes.length})</button>
         `;
-        card.querySelector('button').onclick = () => {
-          updateDoc(doc(db, "posts", pDoc.id), { likes: isLiked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid) });
+
+        card.querySelector('.like-trigger').onclick = () => {
+          updateDoc(doc(db, "posts", pid), { likes: isLiked ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid) });
         };
+
         feedDiv.appendChild(card);
       });
     });
 
-    // CREW LISTENER
+    // Global Functions for Edit UI
+    window.toggleEdit = (id) => {
+      document.getElementById(`text-${id}`).classList.toggle('hidden');
+      document.getElementById(`edit-box-${id}`).classList.toggle('hidden');
+    };
+
+    window.saveEdit = async (id) => {
+      const newText = document.getElementById(`input-${id}`).value;
+      if(!newText.trim()) return;
+      try {
+        await updateDoc(doc(db, "posts", id), { text: newText });
+      } catch (e) { alert("Transmission Error."); }
+    };
+
+    // Crew List
     onSnapshot(collection(db, "users"), (snapshot) => {
       const crewList = document.getElementById('crew-list');
       crewList.innerHTML = "";
@@ -241,7 +273,7 @@ $tagline = "Exploring the night side";
       });
     });
 
-    // GLOBAL AUTH OBSERVER
+    // Auth Observer
     onAuthStateChanged(auth, async (user) => {
       const nav = document.getElementById('main-nav');
       if (user) {
@@ -255,9 +287,7 @@ $tagline = "Exploring the night side";
           document.getElementById('disp-name').innerText = d.username ?? "Pilot";
           document.getElementById('disp-bio').innerText = d.bio ?? "";
           document.getElementById('my-avatar').src = d.profile_Image ?? "";
-          if(d.coordinates) {
-             document.getElementById('disp-coords').innerText = `${d.coordinates.latitude}° N, ${d.coordinates.longitude}° E`;
-          }
+          if(d.coordinates) document.getElementById('disp-coords').innerText = `${d.coordinates.latitude}° N, ${d.coordinates.longitude}° E`;
           await updateDoc(doc(db, "users", user.uid), { is_online: true });
         }
       } else {
