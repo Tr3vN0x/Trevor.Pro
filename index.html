@@ -18,6 +18,8 @@ $tagline = "Exploring the night side";
       --glass-bg: rgba(13, 19, 45, 0.75);
       --glass-border: rgba(207, 216, 255, 0.15);
       --online-glow: #00ff88;
+      --owner-gold: #ffd700;
+      --verified-blue: #3897f0;
     }
 
     body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: #e8ebff; min-height: 100vh; overflow-x: hidden; }
@@ -34,6 +36,11 @@ $tagline = "Exploring the night side";
         background: radial-gradient(circle at 35% 35%, var(--accent-moon) 0%, #475569 100%); 
         border-radius: 50%; box-shadow: 0 0 80px rgba(240, 242, 255, 0.15); z-index: -1; 
     }
+
+    /* --- BADGE STYLES --- */
+    .badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; font-weight: 700; text-transform: uppercase; }
+    .badge-owner { background: rgba(255, 215, 0, 0.2); color: var(--owner-gold); border: 1px solid var(--owner-gold); box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
+    .badge-verified { background: rgba(56, 151, 240, 0.2); color: var(--verified-blue); border: 1px solid var(--verified-blue); box-shadow: 0 0 8px rgba(56, 151, 240, 0.3); }
 
     /* --- LAYOUT --- */
     main { max-width: 500px; margin: 0 auto; padding: 1rem 1.5rem 8rem; position: relative; z-index: 10; }
@@ -209,6 +216,13 @@ $tagline = "Exploring the night side";
     const db = getFirestore(app);
     let chatListener = null;
 
+    // Helper: Badge Logic
+    const getBadgeHTML = (uid) => {
+        if (uid === "kAWYdnGnDuYJk9JZYsWZYqRo7ml1") return `<span class="badge badge-owner">Owner</span>`;
+        if (uid === "tZkA30TJhCVpQ1dlAukrk6fOvpr2") return `<span class="badge badge-verified">Verified</span>`;
+        return "";
+    };
+
     const switchTab = (id) => {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -227,9 +241,9 @@ $tagline = "Exploring the night side";
           const d = snap.data();
           if(d) {
             document.getElementById('my-avatar').src = d.profile_Image; 
-            document.getElementById('disp-name').innerText = d.username;
+            document.getElementById('disp-name').innerHTML = d.username + getBadgeHTML(user.uid); 
             document.getElementById('disp-bio').innerText = d.bio;
-            document.getElementById('greet-name').innerText = d.username; // SET WELCOME NAME
+            document.getElementById('greet-name').innerText = d.username;
           }
         });
 
@@ -241,7 +255,7 @@ $tagline = "Exploring the night side";
             const card = document.createElement('div');
             card.className = 'card'; card.style.display = 'flex'; card.style.gap = '15px';
             card.innerHTML = `<img src="${p.authorImg}" class="avatar" style="width:40px; height:40px;">
-              <div><b style="color:var(--accent-nebula); font-size:0.85rem;">${p.authorName}</b>
+              <div><b style="color:var(--accent-nebula); font-size:0.85rem;">${p.authorName}${getBadgeHTML(p.authorId)}</b>
               <p style="margin:5px 0 0; font-size:0.9rem;">${p.text}</p></div>`;
             feed.appendChild(card);
           });
@@ -255,7 +269,7 @@ $tagline = "Exploring the night side";
                 const u = docSnap.data();
                 const div = document.createElement('div'); div.className='card'; div.style.display='flex'; div.style.alignItems='center'; div.style.gap='12px'; div.style.cursor='pointer';
                 div.innerHTML = `<img src="${u.profile_Image}" class="avatar" style="width:35px; height:35px;"> 
-                                 <b style="flex-grow:1;">${u.username}</b> 
+                                 <b style="flex-grow:1;">${u.username}${getBadgeHTML(docSnap.id)}</b> 
                                  <span class="status-dot ${u.is_online?'':'offline'}"></span>`;
                 div.onclick = () => openChat(docSnap.id, u.username, u.profile_Image);
                 list.appendChild(div);
