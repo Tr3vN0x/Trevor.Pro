@@ -1,100 +1,64 @@
-<?php
-$title = "LunarTrev";
-$tagline = "Exploring the night side";
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><?php echo $title; ?></title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-primary: #05070a;
-      --accent-moon: #f0f2ff;
-      --accent-nebula: #a5b4fc;
-      --text-primary: #e8ebff;
-      --text-muted: #848bbd;
-      --glass-bg: rgba(13, 19, 45, 0.6);
-      --glass-border: rgba(207, 216, 255, 0.2);
-    }
+// Import the functions you need from the SDKs
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    body {
-      margin: 0; font-family: 'Poppins', sans-serif;
-      background: var(--bg-primary); color: var(--text-primary);
-      min-height: 100vh; overflow-x: hidden;
-      background-image: radial-gradient(circle at 80% 10%, rgba(207, 216, 255, 0.08) 0%, transparent 40%);
-    }
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM",
+  authDomain: "lunartrev.firebaseapp.com",
+  projectId: "lunartrev",
+  storageBucket: "lunartrev.firebasestorage.app",
+  messagingSenderId: "152908127950",
+  appId: "1:152908127950:web:6db39b55cbe5d5b0f33a9f",
+  measurementId: "G-CJQGEV0YV6"
+};
 
-    /* Starfield */
-    body::before {
-      content: ""; position: fixed; inset: 0;
-      background-image: radial-gradient(1px 1px at 25% 15%, #fff 50%, transparent 50%),
-                        radial-gradient(1px 1px at 60% 80%, #fff 50%, transparent 50%);
-      opacity: 0.3; z-index: -1;
-    }
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-    header { text-align: center; padding: 4rem 1.5rem 1rem; }
-    .logo { font-size: 3.5rem; font-weight: 700; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .tagline { color: var(--accent-nebula); letter-spacing: 0.2em; font-size: 0.8rem; text-transform: uppercase; }
+// Handle Form Submission
+const signupForm = document.getElementById('signup-form');
 
-    main { max-width: 450px; margin: 0 auto; padding: 2rem 1.5rem; }
-    .card {
-      background: var(--glass-bg); backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border); border-radius: 24px;
-      padding: 2.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    }
+signupForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-    .form-group { margin-bottom: 1.2rem; }
-    label { display: block; font-size: 0.75rem; color: var(--accent-nebula); margin-bottom: 0.5rem; text-transform: uppercase; }
-    input {
-      width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.05);
-      border: 1px solid var(--glass-border); border-radius: 10px;
-      color: white; outline: none; box-sizing: border-box;
-    }
-    input:focus { border-color: var(--accent-moon); }
+  // Get user input values
+  const username = document.getElementById('username').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const submitBtn = signupForm.querySelector('.button');
 
-    .button {
-      width: 100%; padding: 1rem; border: none; border-radius: 10px;
-      background: var(--accent-moon); color: var(--bg-primary);
-      font-weight: 700; cursor: pointer; text-transform: uppercase;
-      transition: 0.3s; margin-top: 1rem;
-    }
-    .button:hover { opacity: 0.9; transform: translateY(-2px); }
+  try {
+    // Disable button to prevent double clicks
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Initializing...";
 
-    footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.7rem; }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="logo">LunarTrev</div>
-    <div class="tagline"><?php echo $tagline; ?></div>
-  </header>
+    // 1. Create the user in Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-  <main>
-    <div class="card">
-      <h2 style="margin-top:0; text-align:center;">Create Profile</h2>
-      <form id="signup-form">
-        <div class="form-group">
-          <label>Pilot Name</label>
-          <input type="text" id="username" placeholder="MoonWalker" required>
-        </div>
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" id="email" required>
-        </div>
-        <div class="form-group">
-          <label>Security Key (Password)</label>
-          <input type="password" id="password" required>
-        </div>
-        <button type="submit" class="button">Begin Journey</button>
-      </form>
-    </div>
-  </main>
+    // 2. Set the Display Name (Pilot Name)
+    await updateProfile(user, {
+      displayName: username
+    });
 
-  <footer>© <?php echo date("Y"); ?> LUNARTREV // SYSTEM ONLINE</footer>
+    alert(`Welcome aboard, Pilot ${username}!`);
+    
+    // Redirect or update UI here
+    // window.location.href = 'dashboard.php';
 
-  <script type="module" src="src/main.js"></script>
-</body>
-</html>
+  } catch (error) {
+    console.error("Signup Error:", error.code, error.message);
+    
+    // Simple error handling for the user
+    let userMessage = "System error. Please try again.";
+    if (error.code === 'auth/email-already-in-use') userMessage = "Email already registered.";
+    if (error.code === 'auth/weak-password') userMessage = "Security key is too weak.";
+    
+    alert(userMessage);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Begin Journey";
+  }
+});
