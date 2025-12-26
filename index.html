@@ -32,22 +32,18 @@ $tagline = "Exploring the night side";
     .card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; padding: 1.5rem; margin-bottom: 1.2rem; }
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: #111; border: 2px solid var(--glass-border); object-fit: cover; }
     
-    /* --- Chat Bubble Styling --- */
+    /* --- Chat Bubble CSS --- */
     #chat-overlay { position: fixed; inset: 0; background: var(--bg-primary); z-index: 200; display: none; flex-direction: column; }
     #chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; background: var(--glass-bg); }
     #chat-messages { flex-grow: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 15px; }
-    
     .msg-wrapper { display: flex; align-items: flex-end; gap: 10px; width: 100%; }
     .msg-wrapper.sent { flex-direction: row-reverse; }
     .chat-pfp { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--glass-border); }
-    
     .bubble-container { display: flex; flex-direction: column; max-width: 75%; }
     .sent .bubble-container { align-items: flex-end; }
-    
     .bubble { padding: 12px 16px; border-radius: 20px; font-size: 0.9rem; line-height: 1.4; }
     .sent .bubble { background: var(--accent-moon); color: var(--bg-primary); border-bottom-right-radius: 4px; }
     .received .bubble { background: rgba(255,255,255,0.1); color: #fff; border-bottom-left-radius: 4px; border: 1px solid var(--glass-border); }
-    
     .chat-meta { font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: uppercase; display: flex; gap: 10px; }
     .sent .chat-meta { flex-direction: row-reverse; }
 
@@ -75,36 +71,42 @@ $tagline = "Exploring the night side";
     </div>
     <div id="chat-messages"></div>
     <div id="chat-input-area">
-      <input type="text" id="chat-input" placeholder="Frequency check..." style="margin:0;">
+      <input type="text" id="chat-input" placeholder="Frequency check...">
       <button id="chat-send-btn" class="button" style="width:80px;">SEND</button>
     </div>
   </div>
 
   <main>
     <div id="auth-view" class="app-section active">
-        <div class="card" style="text-align:center;">
-            <h2>LUNARTREV</h2>
-            <form id="auth-form">
-                <input type="text" id="reg-username" placeholder="Pilot Username" required>
-                <input type="email" id="email" placeholder="Earth Email" required>
-                <input type="password" id="password" placeholder="Security Key" required>
-                <button type="submit" class="button">Access System</button>
-            </form>
-        </div>
+      <div class="card" style="text-align:center;">
+        <h2>LUNARTREV</h2>
+        <form id="auth-form">
+          <input type="text" id="reg-username" placeholder="Pilot Username" required>
+          <input type="email" id="email" placeholder="Earth Email" required>
+          <input type="password" id="password" placeholder="Security Key" required>
+          <button type="submit" class="button">Access System</button>
+        </form>
+      </div>
     </div>
 
     <div id="home-tab" class="app-section">
-      <div class="card"><textarea id="post-content" placeholder="Broadcast..." rows="3"></textarea><button id="send-btn" class="button">Transmit</button></div>
+      <div class="card">
+        <textarea id="post-content" placeholder="Broadcast..." rows="3"></textarea>
+        <button id="send-btn" class="button">Transmit</button>
+      </div>
       <div id="lunar-feed"></div>
     </div>
 
     <div id="videos-tab" class="app-section">
-      <div class="card"><input type="text" id="video-url" placeholder="Direct MP4 URL"><input type="text" id="video-desc" placeholder="Video Description"><button id="post-video-btn" class="button">Upload</button></div>
+      <div class="card">
+        <input type="text" id="video-url" placeholder="Direct MP4 URL">
+        <input type="text" id="video-desc" placeholder="Video Description">
+        <button id="post-video-btn" class="button">Upload</button>
+      </div>
       <div id="video-feed"></div>
     </div>
 
     <div id="discover-tab" class="app-section"><h3>Your Crew</h3><div id="crew-list"></div></div>
-    <div id="requests-tab" class="app-section"><h3>Requests</h3><div id="requests-list"></div></div>
 
     <div id="profile-tab" class="app-section">
       <div class="card" style="text-align:center;">
@@ -129,14 +131,13 @@ $tagline = "Exploring the night side";
     <div class="nav-item active" data-tab="home-tab">Feed</div>
     <div class="nav-item" data-tab="videos-tab">Video</div>
     <div class="nav-item" data-tab="discover-tab">Crew</div>
-    <div class="nav-item" data-tab="requests-tab">Req</div>
     <div class="nav-item" data-tab="profile-tab">Me</div>
   </nav>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, GeoPoint, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, GeoPoint, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM",
@@ -171,7 +172,7 @@ $tagline = "Exploring the night side";
       document.getElementById('chat-overlay').style.display = 'flex';
       
       const box = document.getElementById('chat-messages');
-      box.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Opening frequency...</p>';
+      box.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Syncing frequency...</p>';
 
       if(chatListener) chatListener();
       
@@ -181,7 +182,8 @@ $tagline = "Exploring the night side";
         box.innerHTML = "";
         if (snap.empty) { box.innerHTML = '<p style="text-align:center; color:var(--text-muted);">No transmissions yet.</p>'; }
         snap.forEach(d => {
-          const m = d.data(); const isMe = m.sender === u.uid;
+          const m = d.data(); 
+          const isMe = m.sender === u.uid;
           const time = m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Sending...";
           const wrap = document.createElement('div'); wrap.className = `msg-wrapper ${isMe ? 'sent' : 'received'}`;
           wrap.innerHTML = `
@@ -193,6 +195,11 @@ $tagline = "Exploring the night side";
           box.appendChild(wrap);
         });
         box.scrollTop = box.scrollHeight;
+      }, (err) => {
+          if(err.code === "failed-precondition") {
+            box.innerHTML = '<p style="text-align:center; color:orange;">Database needs indexing. Check console for link.</p>';
+            console.error("INDEX REQUIRED: Click the link in this error to fix:", err);
+          }
       });
 
       document.getElementById('chat-send-btn').onclick = async () => {
@@ -209,31 +216,59 @@ $tagline = "Exploring the night side";
       const email = document.getElementById('email').value, pass = document.getElementById('password').value, user = document.getElementById('reg-username').value;
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db, "users", cred.user.uid), { username: user, bio: "Pilot active.", friends: [], requests: [], profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user}`, is_online: true, coordinates: new GeoPoint(0,0) });
+        await setDoc(doc(db, "users", cred.user.uid), { username: user, bio: "Pilot active.", friends: [], profile_Image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user}`, is_online: true, coordinates: new GeoPoint(0,0) });
       } catch (err) { if(err.code === 'auth/email-already-in-use') await signInWithEmailAndPassword(auth, email, pass); }
     };
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         document.getElementById('auth-view').classList.remove('active'); document.getElementById('main-nav').classList.remove('hidden');
+        
+        // 1. Sync User Data & Crew
         onSnapshot(doc(db, "users", user.uid), (snap) => {
           const d = snap.data();
-          document.getElementById('my-avatar').src = d.profile_Image; document.getElementById('disp-name').innerText = d.username;
+          document.getElementById('my-avatar').src = d.profile_Image; 
+          document.getElementById('disp-name').innerText = d.username;
           document.getElementById('disp-bio').innerText = d.bio;
           if(d.coordinates) document.getElementById('disp-coords').innerText = `${d.coordinates.latitude.toFixed(2)}° N, ${d.coordinates.longitude.toFixed(2)}° E`;
 
-          const cL = document.getElementById('crew-list'); cL.innerHTML = d.friends.length ? "" : "Empty crew.";
-          d.friends.forEach(async fid => { 
-            const fs = await getDoc(doc(db, "users", fid)); const f = fs.data(); 
-            const div = document.createElement('div'); div.className='card'; div.style.display='flex'; div.style.alignItems='center'; div.style.gap='10px'; div.style.cursor='pointer';
-            div.innerHTML=`<img class="avatar" src="${f.profile_Image}"> <b>${f.username}</b> <span class="status-dot ${f.is_online ? '' : 'offline'}"></span>`;
-            div.onclick = () => openChat(fid, f.username, f.profile_Image); cL.appendChild(div);
+          const cL = document.getElementById('crew-list'); cL.innerHTML = "";
+          // Displaying all users in "Crew" for easy testing
+          onSnapshot(collection(db, "users"), (uSnap) => {
+            cL.innerHTML = "";
+            uSnap.forEach(uDoc => {
+                if(uDoc.id !== user.uid) {
+                    const f = uDoc.data();
+                    const div = document.createElement('div'); div.className='card'; div.style.display='flex'; div.style.alignItems='center'; div.style.gap='10px'; div.style.cursor='pointer';
+                    div.innerHTML=`<img class="avatar" src="${f.profile_Image}"> <b>${f.username}</b> <span class="status-dot ${f.is_online ? '' : 'offline'}"></span>`;
+                    div.onclick = () => openChat(uDoc.id, f.username, f.profile_Image);
+                    cL.appendChild(div);
+                }
+            });
           });
         });
+
+        // 2. Sync Feeds
+        onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (s) => {
+          const f = document.getElementById('lunar-feed'); f.innerHTML = "";
+          s.forEach(d => { const p = d.data(); f.innerHTML += `<div class="card"><b>${p.authorName}</b><p>${p.text}</p></div>`; });
+        });
+        onSnapshot(query(collection(db, "videos"), orderBy("timestamp", "desc")), (s) => {
+          const vf = document.getElementById('video-feed'); vf.innerHTML = "";
+          s.forEach(d => { const v = d.data(); vf.innerHTML += `<div class="card"><b>${v.authorName}</b><p>${v.text}</p><video src="${v.url}" controls style="width:100%; border-radius:15px;"></video></div>`; });
+        });
+
         switchTab('home-tab');
       } else { document.getElementById('auth-view').classList.add('active'); document.getElementById('main-nav').classList.add('hidden'); }
     });
     
+    document.getElementById('send-btn').onclick = async () => {
+      const t = document.getElementById('post-content'); if(!t.value.trim()) return;
+      const u = auth.currentUser, d = (await getDoc(doc(db, "users", u.uid))).data();
+      await addDoc(collection(db, "posts"), { text: t.value, authorId: u.uid, authorName: d.username, timestamp: serverTimestamp() });
+      t.value = "";
+    };
+
     window.toggleProfileEdit = (s) => { document.getElementById('profile-display').classList.toggle('hidden', s); document.getElementById('profile-edit').classList.toggle('hidden', !s); };
     document.getElementById('save-profile-btn').onclick = async () => { await updateDoc(doc(db, "users", auth.currentUser.uid), { profile_Image: document.getElementById('edit-avatar-url').value, bio: document.getElementById('edit-bio').value }); toggleProfileEdit(false); };
     document.getElementById('logout-btn').onclick = async () => { if(auth.currentUser) await updateDoc(doc(db, "users", auth.currentUser.uid), { is_online: false }); signOut(auth); };
