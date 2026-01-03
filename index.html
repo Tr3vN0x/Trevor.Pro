@@ -3,26 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survival Evolved 2D</title>
+    <title>Survival Evolved: Sprite Edition</title>
     <style>
-        body { margin: 0; background: #050508; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; background: #050508; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
         canvas { display: block; }
-        #overlay {
-            position: absolute; top: 20px; left: 20px; color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); pointer-events: none;
-        }
-        .vitals { width: 200px; height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; margin: 5px 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
-        #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff4b2b, #ff416c); }
-        #stamina-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #00f2ff, #00d2ff); }
+        #overlay { position: absolute; top: 20px; left: 20px; color: white; pointer-events: none; }
+        .bar { width: 200px; height: 10px; background: rgba(0,0,0,0.5); border: 1px solid #444; margin: 5px 0; }
+        #hp { width: 100%; height: 100%; background: #ff416c; transition: 0.3s; }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <div style="font-weight: bold; letter-spacing: 2px;">SURVIVOR STATUS</div>
-        <div class="vitals"><div id="hp-bar"></div></div>
-        <div class="vitals"><div id="stamina-bar"></div></div>
-        <div id="inv-hint" style="font-size: 12px; margin-top: 10px; opacity: 0.7;">[1-4] Switch Tools | [LMB] Action</div>
+        <div style="font-weight: bold; font-size: 20px;">SURVIVOR</div>
+        <div class="bar"><div id="hp"></div></div>
+        <div id="stamina-ui" style="font-size: 12px; color: #00f2ff;">DASH READY [SHIFT]</div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -33,196 +28,109 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const world = {
-        width: 4000,
-        height: 1200,
-        gravity: 0.5,
-        friction: 0.8,
-        tiles: [],
-        mobs: []
-    };
+    // --- SPRITE LOADING ---
+    const charSprite = new Image();
+    // Replace the URL below with your actual hosted image link!
+    charSprite.src = 'https://i.postimg.cc/your-image-here.png'; 
 
+    const world = { gravity: 0.5, tiles: [] };
     const player = {
         x: 500, y: 300, vx: 0, vy: 0,
-        w: 30, h: 64,
-        hp: 100, stamina: 100,
-        flip: false, walkCycle: 0,
+        w: 50, h: 80, // Size adjusted for your character
+        speed: 5, jump: 12,
+        flip: false, 
+        dashTimer: 0,
         isAttacking: 0
     };
 
-    const keys = {};
-    const TILE_SIZE = 48;
-
-    // Generate Realistic Terrain
-    for(let x = 0; x < world.width/TILE_SIZE; x++) {
+    // Generate terrain
+    for(let x=0; x<200; x++) {
         world.tiles[x] = [];
-        let noise = Math.sin(x * 0.1) * 5 + Math.cos(x * 0.05) * 10;
-        let groundLevel = 15 + Math.floor(noise);
-        for(let y = 0; y < world.height/TILE_SIZE; y++) {
-            if(y > groundLevel) world.tiles[x][y] = (y > groundLevel + 4) ? 'stone' : 'dirt';
-            else world.tiles[x][y] = null;
+        let ground = 12 + Math.floor(Math.sin(x*0.1)*3);
+        for(let y=0; y<30; y++) {
+            if(y > ground) world.tiles[x][y] = (y > ground + 5) ? '#444' : '#5d4037';
         }
     }
 
-    class Mob {
-        constructor(x, y) {
-            this.x = x; this.y = y; this.vx = 0; this.vy = 0;
-            this.hp = 50; this.type = 'beast';
-            this.walkCycle = 0;
-        }
-        update() {
-            let dx = player.x - this.x;
-            if(Math.abs(dx) < 400) {
-                this.vx = Math.sign(dx) * 2;
-                this.walkCycle += 0.15;
-            } else {
-                this.vx *= 0.9;
-            }
-            this.vy += world.gravity;
-            this.x += this.vx; this.y += this.vy;
-            
-            // Collision
-            let tx = Math.floor(this.x / TILE_SIZE);
-            let ty = Math.floor((this.y + 32) / TILE_SIZE);
-            if(world.tiles[tx] && world.tiles[tx][ty]) {
-                this.y = ty * TILE_SIZE - 32;
-                this.vy = 0;
-            }
-        }
-        draw() {
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.fillStyle = '#4a0e0e';
-            ctx.fillRect(-20, -10, 40, 25); // Body
-            // Moving legs
-            let legH = Math.sin(this.walkCycle) * 10;
-            ctx.fillRect(-15, 15, 8, 10 + legH);
-            ctx.fillRect(7, 15, 8, 10 - legH);
-            ctx.restore();
-        }
-    }
-
-    // Spawn initial mobs
-    for(let i=0; i<5; i++) world.mobs.push(new Mob(1000 + i*600, 200));
-
+    const keys = {};
     window.onkeydown = e => keys[e.code] = true;
     window.onkeyup = e => keys[e.code] = false;
 
-    function drawPlayer() {
-        ctx.save();
-        ctx.translate(player.x, player.y);
-        if (player.flip) ctx.scale(-1, 1);
-
-        let walkBnd = Math.sin(player.walkCycle) * 15;
-        let armBnd = Math.cos(player.walkCycle) * 20;
-
-        // Realistic limb coloring
-        const skin = '#ffdbac';
-        const clothes = '#2c3e50';
-
-        // Back Leg
-        ctx.fillStyle = '#1a252f';
-        ctx.fillRect(-walkBnd/2, 10, 12, 25);
-
-        // Torso
-        ctx.fillStyle = clothes;
-        ctx.fillRect(-12, -20, 24, 35);
-
-        // Head
-        ctx.fillStyle = skin;
-        ctx.beginPath();
-        ctx.arc(0, -32, 12, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Arm (Skeletal move)
-        ctx.save();
-        ctx.translate(0, -15);
-        if(player.isAttacking > 0) ctx.rotate(-Math.PI/2 + (player.isAttacking * 0.1));
-        else ctx.rotate(armBnd * Math.PI/180);
-        ctx.fillStyle = skin;
-        ctx.fillRect(0, 0, 10, 25); // Upper arm
-        ctx.fillStyle = '#555';
-        ctx.fillRect(-2, 20, 6, 20); // Tool handle
-        ctx.restore();
-
-        // Front Leg
-        ctx.fillStyle = clothes;
-        ctx.fillRect(walkBnd/2, 10, 12, 25);
-
-        ctx.restore();
-    }
-
     function update() {
-        if (keys['KeyA']) { player.vx = -player.speed; player.flip = true; player.walkCycle += 0.2; }
-        else if (keys['KeyD']) { player.vx = player.speed; player.flip = false; player.walkCycle += 0.2; }
-        else { player.vx *= world.friction; }
+        // Movement & Dash
+        let moveSpeed = player.speed;
+        if(keys['ShiftLeft'] && player.dashTimer === 0) {
+            player.vx = player.flip ? -20 : 20;
+            player.dashTimer = 50; // Cooldown
+        }
+        
+        if (keys['KeyA']) { player.vx = -moveSpeed; player.flip = true; }
+        else if (keys['KeyD']) { player.vx = moveSpeed; player.flip = false; }
+        else { player.vx *= 0.8; }
 
         if (keys['Space'] && player.grounded) {
-            player.vy = -12;
+            player.vy = -player.jump;
             player.grounded = false;
         }
 
-        player.speed = keys['ShiftLeft'] ? 6 : 4;
         player.vy += world.gravity;
         player.x += player.vx;
         player.y += player.vy;
 
-        // Ground Collision
-        let tx = Math.floor(player.x / TILE_SIZE);
-        let ty = Math.floor((player.y + player.h/2) / TILE_SIZE);
+        // Tile Collision
+        let tx = Math.floor(player.x / 40);
+        let ty = Math.floor((player.y + player.h/2) / 40);
         if(world.tiles[tx] && world.tiles[tx][ty]) {
-            player.y = ty * TILE_SIZE - player.h/2;
+            player.y = ty * 40 - player.h/2;
             player.vy = 0;
             player.grounded = true;
         }
 
-        if(player.isAttacking > 0) player.isAttacking--;
-
-        world.mobs.forEach(m => m.update());
+        if(player.dashTimer > 0) player.dashTimer--;
     }
 
-    function render() {
-        // Gradient Sky
-        let sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        sky.addColorStop(0, '#0a192f');
-        sky.addColorStop(1, '#1a2a6c');
-        ctx.fillStyle = sky;
+    function draw() {
+        ctx.fillStyle = '#0a192f';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.save();
         ctx.translate(canvas.width/2 - player.x, canvas.height/2 - player.y);
 
-        // Draw Tiles with shading
-        for(let x = Math.floor(player.x/TILE_SIZE)-15; x < Math.floor(player.x/TILE_SIZE)+15; x++) {
-            for(let y = 0; y < world.height/TILE_SIZE; y++) {
+        // Draw Tiles
+        for(let x = Math.floor(player.x/40)-15; x < Math.floor(player.x/40)+15; x++) {
+            for(let y=0; y<30; y++) {
                 if(!world.tiles[x] || !world.tiles[x][y]) continue;
-                
-                ctx.fillStyle = world.tiles[x][y] === 'stone' ? '#444' : '#5d4037';
-                ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                
-                // Bevel/Depth effect
-                ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-                ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                
-                // Grass top
-                if(world.tiles[x][y-1] === null) {
-                    ctx.fillStyle = '#2d5a27';
-                    ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, 6);
+                ctx.fillStyle = world.tiles[x][y];
+                ctx.fillRect(x*40, y*40, 40, 40);
+                if(world.tiles[x][y-1] == null) {
+                    ctx.fillStyle = '#2d5a27'; // Grass top
+                    ctx.fillRect(x*40, y*40, 40, 5);
                 }
             }
         }
 
-        world.mobs.forEach(m => m.draw());
-        drawPlayer();
+        // Draw Your Character
+        ctx.save();
+        ctx.translate(player.x, player.y);
+        if(player.flip) ctx.scale(-1, 1);
+        
+        // If image is loaded, use it. Otherwise, draw a placeholder.
+        if(charSprite.complete) {
+            // This pulls the side-view section of your image
+            // Parameters: img, sourceX, sourceY, sourceW, sourceH, destX, destY, destW, destH
+            ctx.drawImage(charSprite, 400, 50, 200, 500, -30, -50, 60, 100);
+        } else {
+            ctx.fillStyle = '#ff416c';
+            ctx.fillRect(-15, -40, 30, 80);
+        }
         ctx.restore();
 
+        ctx.restore();
         update();
-        requestAnimationFrame(render);
+        requestAnimationFrame(draw);
     }
 
-    canvas.onmousedown = () => player.isAttacking = 20;
-
-    render();
+    draw();
 </script>
 </body>
 </html>
