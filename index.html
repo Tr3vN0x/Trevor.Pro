@@ -24,43 +24,38 @@ $tagline = "The Roblox Social Layer";
       margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh;
       background-image: linear-gradient(rgba(0, 162, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 162, 255, 0.05) 1px, transparent 1px);
       background-size: 40px 40px;
-      overflow-x: hidden;
     }
 
     h1, h2, .logo { font-family: 'Fredoka One', cursive; letter-spacing: 1px; }
 
-    /* --- UI ELEMENTS --- */
-    main { max-width: 450px; margin: 0 auto; padding: 20px 20px 120px; position: relative; }
+    main { max-width: 450px; margin: 0 auto; padding: 20px 20px 120px; }
     
     .card { 
       background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); 
       border-radius: 20px; padding: 1.2rem; margin-bottom: 1rem; position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
+    /* --- AVATAR SYSTEM --- */
     .avatar-ring {
-      width: 55px; height: 55px; border-radius: 14px;
+      width: 60px; height: 60px; border-radius: 15px;
       background: linear-gradient(45deg, var(--roblox-blue), var(--roblox-purple));
       padding: 2px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      overflow: hidden; margin: 0 auto 10px;
     }
-    .avatar { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; background: #1a1a1a; }
+    .avatar { width: 100%; height: 100%; border-radius: 13px; object-fit: cover; background: #1a1a1a; display: block; }
 
     input, textarea {
       width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border);
       background: rgba(0,0,0,0.4); color: #fff; margin-bottom: 12px; box-sizing: border-box;
-      font-family: 'Poppins', sans-serif; outline: none; transition: 0.2s;
+      font-family: inherit; outline: none;
     }
-    input:focus { border-color: var(--roblox-blue); background: rgba(0,0,0,0.6); }
 
     .btn {
       width: 100%; padding: 14px; border-radius: 12px; border: none;
       background: linear-gradient(90deg, var(--roblox-blue), var(--roblox-purple));
       color: white; font-weight: 800; cursor: pointer; text-transform: uppercase;
-      box-shadow: 0 4px 15px rgba(0, 162, 255, 0.3); transition: 0.2s;
     }
-    .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-    /* --- NAVIGATION --- */
     .nav {
       position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
       width: 85%; max-width: 380px; background: rgba(15, 15, 30, 0.9);
@@ -68,8 +63,8 @@ $tagline = "The Roblox Social Layer";
       display: none; justify-content: space-around; padding: 15px; z-index: 100;
       backdrop-filter: blur(10px);
     }
-    .nav-item { color: var(--text-muted); font-size: 0.75rem; font-weight: 800; cursor: pointer; text-align: center; }
-    .nav-item.active { color: var(--roblox-blue); text-shadow: 0 0 10px rgba(0, 162, 255, 0.5); }
+    .nav-item { color: var(--text-muted); font-size: 0.75rem; font-weight: 800; cursor: pointer; }
+    .nav-item.active { color: var(--roblox-blue); }
 
     .hidden { display: none !important; }
     .shout-user { font-size: 0.85rem; font-weight: 800; color: var(--roblox-blue); margin-bottom: 2px; }
@@ -80,10 +75,18 @@ $tagline = "The Roblox Social Layer";
 <main>
     <div id="auth-view" class="app-section">
         <div class="card" style="text-align:center;">
-            <h1 style="font-size: 2.5rem; margin: 10px 0 5px;">BloxHub</h1>
-            <p style="margin-bottom: 25px; color: var(--text-muted);">The Social Layer of Roblox</p>
+            <h1>BloxHub</h1>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Metaverse Social Hub</p>
+            
+            <div id="preview-container">
+                <div class="avatar-ring">
+                    <img id="avatar-preview" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=preview" class="avatar">
+                </div>
+                <p id="preview-status" style="font-size: 0.7rem; color: var(--roblox-blue); margin-top: -5px; margin-bottom: 15px;">Enter Username to Preview</p>
+            </div>
+
             <form id="auth-form">
-                <input type="text" id="reg-username" placeholder="Roblox Username" required>
+                <input type="text" id="reg-username" placeholder="Roblox Username" required autocomplete="off">
                 <input type="email" id="email" placeholder="Email" required>
                 <input type="password" id="password" placeholder="Password" required>
                 <button type="submit" class="btn">Spawn In</button>
@@ -92,23 +95,17 @@ $tagline = "The Roblox Social Layer";
     </div>
 
     <div id="home-tab" class="app-section hidden">
-        <h2 id="welcome-msg" style="margin-bottom: 20px;">Hey, Player!</h2>
+        <h2 id="welcome-msg">Hey, Player!</h2>
         <div class="card">
-            <textarea id="post-content" placeholder="Broadcast a shout to the server..." rows="2"></textarea>
+            <textarea id="post-content" placeholder="Broadcast a shout..." rows="2"></textarea>
             <button id="send-btn" class="btn">Post Shout</button>
         </div>
         <div id="shout-feed"></div>
-    </div>
-
-    <div id="crew-tab" class="app-section hidden">
-        <h2>Online Crew</h2>
-        <div id="crew-list"></div>
     </div>
 </main>
 
 <nav class="nav" id="main-nav">
     <div class="nav-item active" onclick="switchTab('home-tab')">FEED</div>
-    <div class="nav-item" onclick="switchTab('crew-tab')">CREW</div>
     <div class="nav-item" onclick="logout()">LOGOUT</div>
 </nav>
 
@@ -130,60 +127,66 @@ $tagline = "The Roblox Social Layer";
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // --- ROBLOX AVATAR LOGIC ---
-    async function fetchRobloxData(username) {
+    // --- AVATAR FETCH LOGIC ---
+    async function getRobloxAvatar(username) {
+        if(!username) return null;
         try {
-            // CORS Proxy is used to hit Roblox's internal search API
             const proxy = "https://corsproxy.io/?";
-            const searchUrl = encodeURIComponent(`https://www.roblox.com/search/users/results?keyword=${username}&maxRows=1`);
-            
+            const searchUrl = encodeURIComponent(`https://users.roblox.com/v1/users/search?keyword=${username}&limit=1`);
             const res = await fetch(proxy + searchUrl);
             const data = await res.json();
-            
-            if (data.UserSearchResults && data.UserSearchResults.length > 0) {
-                const userId = data.UserSearchResults[0].UserId;
+
+            if (data.data && data.data.length > 0) {
+                const userId = data.data[0].id;
                 return `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=150&height=150&format=png`;
             }
-            throw new Error('Not found');
-        } catch (e) {
-            // Fallback to a stylish Bot avatar if the user isn't found or API is blocked
-            return `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${username}`;
-        }
+            return null;
+        } catch (e) { return null; }
     }
 
-    // --- NAVIGATION ---
-    window.switchTab = (tabId) => {
-        document.querySelectorAll('.app-section').forEach(s => s.classList.add('hidden'));
-        document.getElementById(tabId).classList.remove('hidden');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(event) event.currentTarget.classList.add('active');
-    };
+    // --- PREVIEW HANDLER ---
+    let typingTimer;
+    document.getElementById('reg-username').addEventListener('input', (e) => {
+        clearTimeout(typingTimer);
+        const user = e.target.value;
+        const status = document.getElementById('preview-status');
+        const img = document.getElementById('avatar-preview');
+        
+        status.innerText = "Searching...";
+        
+        typingTimer = setTimeout(async () => {
+            const pfp = await getRobloxAvatar(user);
+            if(pfp) {
+                img.src = pfp;
+                status.innerText = "Avatar Found!";
+                status.style.color = "var(--roblox-blue)";
+            } else {
+                img.src = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${user}`;
+                status.innerText = "Player not found (Using Guest Bot)";
+                status.style.color = "var(--text-muted)";
+            }
+        }, 800);
+    });
 
-    window.logout = () => {
-        signOut(auth).then(() => location.reload());
-    };
-
-    // --- AUTHENTICATION ---
+    // --- AUTH & POSTS ---
     document.getElementById('auth-form').onsubmit = async (e) => {
         e.preventDefault();
+        const username = document.getElementById('reg-username').value;
         const email = document.getElementById('email').value;
         const pass = document.getElementById('password').value;
-        const username = document.getElementById('reg-username').value;
+        const pfp = document.getElementById('avatar-preview').src;
 
         try {
-            const pfp = await fetchRobloxData(username);
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "users", cred.user.uid), {
                 username: username,
-                profile_Image: pfp,
-                joined: serverTimestamp()
+                profile_Image: pfp
             });
         } catch (err) {
-            signInWithEmailAndPassword(auth, email, pass).catch(e => alert("Access Denied: Check credentials."));
+            signInWithEmailAndPassword(auth, email, pass).catch(e => alert("Login Failed"));
         }
     };
 
-    // --- REALTIME APP STATE ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('auth-view').classList.add('hidden');
@@ -192,52 +195,41 @@ $tagline = "The Roblox Social Layer";
 
             const userSnap = await getDoc(doc(db, "users", user.uid));
             const userData = userSnap.data();
-            if(userData) {
-                document.getElementById('welcome-msg').innerText = `What's up, ${userData.username}!`;
-            }
+            if(userData) document.getElementById('welcome-msg').innerText = `What's up, ${userData.username}!`;
 
-            // Live Shout Feed
-            const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snap) => {
+            onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snap) => {
                 const feed = document.getElementById('shout-feed');
                 feed.innerHTML = "";
                 snap.forEach(d => {
                     const p = d.data();
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.innerHTML = `
-                        <div style="display:flex; gap:15px; align-items:flex-start;">
-                            <div class="avatar-ring"><img src="${p.authorImg}" class="avatar"></div>
-                            <div style="flex:1;">
-                                <div class="shout-user">${p.authorName}</div>
-                                <div style="font-size:0.9rem; line-height:1.4; color:#e0e0ff;">${p.text}</div>
-                            </div>
-                        </div>
-                    `;
+                    card.innerHTML = `<div style="display:flex; gap:12px;">
+                        <div class="avatar-ring"><img src="${p.authorImg}" class="avatar"></div>
+                        <div><div class="shout-user">${p.authorName}</div><div style="font-size:0.9rem;">${p.text}</div></div>
+                    </div>`;
                     feed.appendChild(card);
                 });
             });
         }
     });
 
-    // --- ACTIONS ---
     document.getElementById('send-btn').onclick = async () => {
         const text = document.getElementById('post-content').value.trim();
-        if (!text) return;
-
         const userSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
         const u = userSnap.data();
-
         await addDoc(collection(db, "posts"), {
-            text: text,
-            authorId: auth.currentUser.uid,
-            authorName: u.username,
-            authorImg: u.profile_Image,
-            timestamp: serverTimestamp()
+            text, authorName: u.username, authorImg: u.profile_Image, timestamp: serverTimestamp()
         });
-
         document.getElementById('post-content').value = "";
     };
+
+    window.switchTab = (id) => {
+        document.querySelectorAll('.app-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    };
+
+    window.logout = () => signOut(auth).then(() => location.reload());
 </script>
 </body>
 </html>
