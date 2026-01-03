@@ -3,35 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Survivor 2D</title>
+    <title>Neon Survivor TPS</title>
     <style>
-        body { margin: 0; background: #050510; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
-        canvas { display: block; filter: drop-shadow(0 0 5px #00f2ff); }
+        body { margin: 0; background: #020205; overflow: hidden; font-family: 'Orbitron', sans-serif; }
+        canvas { display: block; }
         #ui {
             position: absolute; top: 20px; left: 20px; color: #00f2ff;
-            pointer-events: none; text-shadow: 0 0 5px #00f2ff;
+            pointer-events: none; font-family: monospace; font-size: 18px;
         }
-        .game-over {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            text-align: center; color: #ff0055; display: none;
-        }
-        button {
-            background: none; border: 2px solid #00f2ff; color: #00f2ff;
-            padding: 10px 20px; cursor: pointer; font-family: inherit; font-weight: bold;
-        }
+        .bar { width: 200px; height: 10px; background: #111; border: 1px solid #00f2ff; margin-top: 5px; }
+        #hp-fill { width: 100%; height: 100%; background: #00f2ff; transition: 0.2s; }
     </style>
 </head>
 <body>
 
     <div id="ui">
-        <div>CORE_DATA: <span id="score">0</span></div>
-        <div>STABILITY: <span id="health">100</span>%</div>
-    </div>
-
-    <div id="game-over" class="game-over">
-        <h1 style="font-size: 3rem;">SYSTEM_CRITICAL</h1>
-        <p>CONNECTION LOST. DATA CORRUPTED.</p>
-        <button onclick="location.reload()">REBOOT SYSTEM</button>
+        <div>KILLS: <span id="kills">0</span></div>
+        <div>AMMO: <span id="ammo">∞</span></div>
+        <div class="bar"><div id="hp-fill"></div></div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -39,143 +28,160 @@
 <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const scoreEl = document.getElementById('score');
-    const healthEl = document.getElementById('health');
-    const gameOverEl = document.getElementById('game-over');
+    const hpFill = document.getElementById('hp-fill');
+    const killEl = document.getElementById('kills');
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    let score = 0;
+    // --- GAME WORLD SETTINGS ---
+    const world = { width: 3000, height: 3000 };
+    let kills = 0;
     let health = 100;
-    let gameActive = true;
 
     const player = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        size: 20,
-        speed: 5,
-        color: '#00f2ff'
+        x: world.width / 2,
+        y: world.height / 2,
+        size: 25,
+        speed: 4,
+        angle: 0
     };
 
-    const keys = {};
+    const camera = { x: 0, y: 0 };
+    const bullets = [];
     const enemies = [];
-    const particles = [];
-    const coins = [];
+    const keys = {};
 
+    // Input Listeners
     window.addEventListener('keydown', e => keys[e.code] = true);
     window.addEventListener('keyup', e => keys[e.code] = false);
+    window.addEventListener('mousemove', e => {
+        const dx = e.clientX - canvas.width / 2;
+        const dy = e.clientY - canvas.height / 2;
+        player.angle = Math.atan2(dy, dx);
+    });
+    window.addEventListener('mousedown', shoot);
 
-    class Enemy {
+    function shoot() {
+        bullets.push({
+            x: player.x,
+            y: player.y,
+            vx: Math.cos(player.angle) * 10,
+            vy: Math.sin(player.angle) * 10,
+            life: 100
+        });
+    }
+
+    class Mob {
         constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() < 0.5 ? -20 : canvas.height + 20;
-            this.size = 15;
-            this.speed = 1.5 + (score / 10);
-            this.color = '#ff0055';
+            this.x = Math.random() * world.width;
+            this.y = Math.random() * world.height;
+            this.speed = 2 + Math.random() * 2;
+            this.hp = 2;
         }
         update() {
             const dx = player.x - this.x;
             const dy = player.y - this.y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
+            const dist = Math.hypot(dx, dy);
             this.x += (dx / dist) * this.speed;
             this.y += (dy / dist) * this.speed;
 
-            // Collision with player
             if (dist < player.size) {
-                health -= 0.5;
-                if (health <= 0) endGame();
+                health -= 0.2;
+                hpFill.style.width = health + "%";
             }
         }
-        draw() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.moveTo(this.x, this.y - this.size);
-            ctx.lineTo(this.x + this.size, this.y + this.size);
-            ctx.lineTo(this.x - this.size, this.y + this.size);
-            ctx.fill();
-        }
     }
 
-    class Coin {
-        constructor() {
-            this.x = Math.random() * (canvas.width - 40) + 20;
-            this.y = Math.random() * (canvas.height - 40) + 20;
-            this.size = 8;
-        }
-        draw() {
-            ctx.fillStyle = '#bc13fe';
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#bc13fe';
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        }
+    function spawnEnemies() {
+        if(enemies.length < 50) enemies.push(new Mob());
+        setTimeout(spawnEnemies, 1000 - (kills * 5));
     }
 
-    function spawnStuff() {
-        if (!gameActive) return;
-        if (Math.random() < 0.05) enemies.push(new Enemy());
-        if (coins.length < 5) coins.push(new Coin());
-        setTimeout(spawnStuff, 100);
-    }
+    function update() {
+        // Movement
+        if (keys['KeyW'] || keys['ArrowUp']) player.y -= player.speed;
+        if (keys['KeyS'] || keys['ArrowDown']) player.y += player.speed;
+        if (keys['KeyA'] || keys['ArrowLeft']) player.x -= player.speed;
+        if (keys['KeyD'] || keys['ArrowRight']) player.x += player.speed;
 
-    function updatePlayer() {
-        if (keys['ArrowUp'] || keys['KeyW']) player.y -= player.speed;
-        if (keys['ArrowDown'] || keys['KeyS']) player.y += player.speed;
-        if (keys['ArrowLeft'] || keys['KeyA']) player.x -= player.speed;
-        if (keys['ArrowRight'] || keys['KeyD']) player.x += player.speed;
+        // Keep player in world
+        player.x = Math.max(0, Math.min(world.width, player.x));
+        player.y = Math.max(0, Math.min(world.height, player.y));
 
-        // Boundaries
-        player.x = Math.max(player.size, Math.min(canvas.width - player.size, player.x));
-        player.y = Math.max(player.size, Math.min(canvas.height - player.size, player.y));
-    }
+        // Camera Follow
+        camera.x = player.x - canvas.width / 2;
+        camera.y = player.y - canvas.height / 2;
 
-    function checkCoins() {
-        coins.forEach((coin, index) => {
-            const dist = Math.hypot(player.x - coin.x, player.y - coin.y);
-            if (dist < player.size + coin.size) {
-                coins.splice(index, 1);
-                score += 1;
-                scoreEl.innerText = score;
-            }
+        // Update Bullets
+        bullets.forEach((b, i) => {
+            b.x += b.vx; b.y += b.vy; b.life--;
+            if (b.life <= 0) bullets.splice(i, 1);
+            
+            // Hit detection
+            enemies.forEach((e, ei) => {
+                if (Math.hypot(b.x - e.x, b.y - e.y) < 20) {
+                    e.hp--;
+                    bullets.splice(i, 1);
+                    if(e.hp <= 0) {
+                        enemies.splice(ei, 1);
+                        kills++;
+                        killEl.innerText = kills;
+                        if(health < 100) health += 2;
+                    }
+                }
+            });
         });
+
+        enemies.forEach(e => e.update());
+        if (health <= 0) location.reload();
     }
 
-    function endGame() {
-        gameActive = false;
-        gameOverEl.style.display = 'block';
-    }
-
-    function animate() {
-        if (!gameActive) return;
-        ctx.fillStyle = 'rgba(5, 5, 16, 0.2)'; // Trail effect
+    function draw() {
+        ctx.fillStyle = '#020205';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        ctx.save();
+        ctx.translate(-camera.x, -camera.y);
+
+        // Draw Grid Map
+        ctx.strokeStyle = '#11112b';
+        ctx.lineWidth = 2;
+        for (let i = 0; i <= world.width; i += 100) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, world.height); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(world.width, i); ctx.stroke();
+        }
+
         // Draw Player
-        ctx.fillStyle = player.color;
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = player.color;
-        ctx.fillRect(player.x - player.size/2, player.y - player.size/2, player.size, player.size);
-        ctx.shadowBlur = 0;
+        ctx.save();
+        ctx.translate(player.x, player.y);
+        ctx.rotate(player.angle);
+        ctx.fillStyle = '#00f2ff';
+        ctx.shadowBlur = 15; ctx.shadowColor = '#00f2ff';
+        ctx.fillRect(-15, -15, 30, 30); // Body
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(10, -5, 15, 10); // Gun barrel
+        ctx.restore();
 
-        updatePlayer();
-        checkCoins();
-
-        enemies.forEach((enemy, i) => {
-            enemy.update();
-            enemy.draw();
+        // Draw Enemies
+        ctx.shadowBlur = 10; ctx.shadowColor = '#ff0055';
+        ctx.fillStyle = '#ff0055';
+        enemies.forEach(e => {
+            ctx.beginPath();
+            ctx.arc(e.x, e.y, 15, 0, Math.PI*2);
+            ctx.fill();
         });
 
-        coins.forEach(coin => coin.draw());
+        // Draw Bullets
+        ctx.fillStyle = '#fff';
+        bullets.forEach(b => ctx.fillRect(b.x, b.y, 6, 6));
 
-        healthEl.innerText = Math.ceil(health);
-        requestAnimationFrame(animate);
+        ctx.restore();
+        requestAnimationFrame(() => { update(); draw(); });
     }
 
-    spawnStuff();
-    animate();
+    spawnEnemies();
+    draw();
 
     window.onresize = () => {
         canvas.width = window.innerWidth;
