@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trevor | Personal Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         :root {
@@ -68,7 +68,6 @@
             align-items: flex-start;
         }
 
-        /* Image Styling */
         .image-container {
             position: sticky;
             top: 120px;
@@ -87,7 +86,6 @@
 
         .image-container:hover img { transform: scale(1.08); }
 
-        /* Bio Content */
         .content h1 {
             font-size: 4rem;
             font-weight: 700;
@@ -118,7 +116,6 @@
             padding-left: 20px;
         }
 
-        /* Game Tags */
         .section-title {
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -158,6 +155,7 @@
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
             color: white;
+            cursor: pointer;
         }
 
         .social-item:hover {
@@ -181,7 +179,7 @@
         .social-item.discord:hover i { color: #5865F2; }
         .social-item.snapchat:hover i { color: #FFFC00; }
         .social-item.instagram:hover i { color: #E1306C; }
-        .social-item.twitter:hover i { color: #1DA1F2; }
+        .social-item.twitter:hover i { color: #ffffff; }
 
         @media (max-width: 900px) {
             main { grid-template-columns: 1fr; }
@@ -229,16 +227,16 @@
 
             <div class="section-title">Network // Socials</div>
             <div class="social-grid">
-                <div class="social-item discord">
-                    <i class="fab fa-discord"></i>
+                <div class="social-item discord" onclick="copyDiscord()">
+                    <i class="fa-brands fa-discord"></i>
                     <div class="social-info">
-                        <span class="social-label">Discord</span>
-                        <span class="social-username">Tr3vN0x</span>
+                        <span class="social-label">Discord (Click to Copy)</span>
+                        <span class="social-username" id="discord-name">Tr3vN0x</span>
                     </div>
                 </div>
 
-                <a href="#" class="social-item instagram">
-                    <i class="fab fa-instagram"></i>
+                <a href="https://instagram.com/Tr3vN0x" target="_blank" class="social-item instagram">
+                    <i class="fa-brands fa-instagram"></i>
                     <div class="social-info">
                         <span class="social-label">Instagram</span>
                         <span class="social-username">Tr3vN0x</span>
@@ -246,17 +244,17 @@
                 </a>
 
                 <div class="social-item snapchat">
-                    <i class="fab fa-snapchat"></i>
+                    <i class="fa-brands fa-snapchat"></i>
                     <div class="social-info">
                         <span class="social-label">Snapchat</span>
                         <span class="social-username">Tr3vN0x</span>
                     </div>
                 </div>
 
-                <a href="#" class="social-item twitter">
-                    <i class="fab fa-x-twitter"></i>
+                <a href="https://twitter.com/Tr3vN0x" target="_blank" class="social-item twitter">
+                    <i class="fa-brands fa-x-twitter"></i>
                     <div class="social-info">
-                        <span class="social-label">Twitter</span>
+                        <span class="social-label">Twitter / X</span>
                         <span class="social-username">Tr3vN0x</span>
                     </div>
                 </a>
@@ -268,5 +266,16 @@
         &copy; 2026 TREVOR.PRO — ALL RIGHTS RESERVED
     </footer>
 
+    <script>
+        function copyDiscord() {
+            const el = document.createElement('textarea');
+            el.value = 'Tr3vN0x';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("Discord username copied: Tr3vN0x");
+        }
+    </script>
 </body>
 </html>
