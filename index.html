@@ -3,190 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Survivor TPS</title>
+    <title>BlockCraft 2D</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; background: #020205; overflow: hidden; font-family: 'Orbitron', sans-serif; }
-        canvas { display: block; }
-        #ui {
-            position: absolute; top: 20px; left: 20px; color: #00f2ff;
-            pointer-events: none; font-family: monospace; font-size: 18px;
-        }
-        .bar { width: 200px; height: 10px; background: #111; border: 1px solid #00f2ff; margin-top: 5px; }
-        #hp-fill { width: 100%; height: 100%; background: #00f2ff; transition: 0.2s; }
+        body { margin: 0; background: #87CEEB; overflow: hidden; font-family: 'Press Start 2P', cursive; }
+        canvas { display: block; image-rendering: pixelated; }
+        #ui { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; background: rgba(0,0,0,0.6); padding: 10px; border: 4px solid #333; }
+        .slot { width: 50px; height: 50px; border: 2px solid #555; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; position: relative; }
+        .slot.active { border-color: #fff; background: rgba(255,255,255,0.2); }
+        #auth-screen { position: absolute; inset: 0; background: #222; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+        input { padding: 10px; margin: 5px; font-family: inherit; }
+        button { padding: 10px 20px; font-family: inherit; cursor: pointer; background: #5a5; color: #fff; border: none; }
     </style>
 </head>
 <body>
 
+    <div id="auth-screen">
+        <h1 style="color: #fff;">BLOCKCRAFT 2D</h1>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Passkey">
+        <button id="login-btn">ENTER WORLD</button>
+    </div>
+
     <div id="ui">
-        <div>KILLS: <span id="kills">0</span></div>
-        <div>AMMO: <span id="ammo">∞</span></div>
-        <div class="bar"><div id="hp-fill"></div></div>
+        <div class="slot active" data-id="1">Dirt</div>
+        <div class="slot" data-id="2">Stone</div>
+        <div class="slot" data-id="3">Wood</div>
+        <div class="slot" data-id="4">Leaves</div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
 
-<script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM", 
+        authDomain: "lunartrev.firebaseapp.com", 
+        projectId: "lunartrev", 
+        storageBucket: "lunartrev.firebasestorage.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const hpFill = document.getElementById('hp-fill');
-    const killEl = document.getElementById('kills');
-
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // --- GAME WORLD SETTINGS ---
-    const world = { width: 3000, height: 3000 };
-    let kills = 0;
-    let health = 100;
-
-    const player = {
-        x: world.width / 2,
-        y: world.height / 2,
-        size: 25,
-        speed: 4,
-        angle: 0
-    };
-
+    // --- GAME CONSTANTS ---
+    const TILE_SIZE = 40;
+    const world = { width: 100, height: 40, tiles: [] };
+    const player = { x: 400, y: 100, vx: 0, vy: 0, w: 30, h: 60, speed: 4, jump: 12, grounded: false };
     const camera = { x: 0, y: 0 };
-    const bullets = [];
-    const enemies = [];
-    const keys = {};
+    let selectedTile = 1;
+    let currentUser = null;
 
-    // Input Listeners
-    window.addEventListener('keydown', e => keys[e.code] = true);
-    window.addEventListener('keyup', e => keys[e.code] = false);
-    window.addEventListener('mousemove', e => {
-        const dx = e.clientX - canvas.width / 2;
-        const dy = e.clientY - canvas.height / 2;
-        player.angle = Math.atan2(dy, dx);
-    });
-    window.addEventListener('mousedown', shoot);
-
-    function shoot() {
-        bullets.push({
-            x: player.x,
-            y: player.y,
-            vx: Math.cos(player.angle) * 10,
-            vy: Math.sin(player.angle) * 10,
-            life: 100
-        });
-    }
-
-    class Mob {
-        constructor() {
-            this.x = Math.random() * world.width;
-            this.y = Math.random() * world.height;
-            this.speed = 2 + Math.random() * 2;
-            this.hp = 2;
-        }
-        update() {
-            const dx = player.x - this.x;
-            const dy = player.y - this.y;
-            const dist = Math.hypot(dx, dy);
-            this.x += (dx / dist) * this.speed;
-            this.y += (dy / dist) * this.speed;
-
-            if (dist < player.size) {
-                health -= 0.2;
-                hpFill.style.width = health + "%";
+    // --- WORLD GENERATION ---
+    function generateWorld() {
+        for (let x = 0; x < world.width; x++) {
+            world.tiles[x] = [];
+            let surface = 15 + Math.floor(Math.sin(x * 0.2) * 3);
+            for (let y = 0; y < world.height; y++) {
+                if (y > surface + 4) world.tiles[x][y] = 2; // Stone
+                else if (y > surface) world.tiles[x][y] = 1; // Dirt
+                else world.tiles[x][y] = 0; // Air
             }
         }
     }
 
-    function spawnEnemies() {
-        if(enemies.length < 50) enemies.push(new Mob());
-        setTimeout(spawnEnemies, 1000 - (kills * 5));
+    // --- AUTH ---
+    document.getElementById('login-btn').onclick = async () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('password').value;
+        try {
+            await createUserWithEmailAndPassword(auth, email, pass);
+        } catch {
+            await signInWithEmailAndPassword(auth, email, pass);
+        }
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('auth-screen').style.display = 'none';
+            generateWorld();
+            const snap = await getDoc(doc(db, "saves", user.uid));
+            if(snap.exists()) player.x = snap.data().x;
+            requestAnimationFrame(gameLoop);
+            setInterval(save, 5000);
+        }
+    });
+
+    async function save() {
+        if(currentUser) await setDoc(doc(db, "saves", currentUser.uid), { x: player.x });
     }
 
+    // --- INPUTS ---
+    const keys = {};
+    window.onkeydown = e => keys[e.code] = true;
+    window.onkeyup = e => keys[e.code] = false;
+    canvas.onmousedown = (e) => {
+        const tx = Math.floor((e.clientX + camera.x) / TILE_SIZE);
+        const ty = Math.floor((e.clientY + camera.y) / TILE_SIZE);
+        if (e.button === 0) world.tiles[tx][ty] = 0; // Break
+        else world.tiles[tx][ty] = selectedTile; // Build
+    };
+    canvas.oncontextmenu = (e) => e.preventDefault();
+
     function update() {
-        // Movement
-        if (keys['KeyW'] || keys['ArrowUp']) player.y -= player.speed;
-        if (keys['KeyS'] || keys['ArrowDown']) player.y += player.speed;
-        if (keys['KeyA'] || keys['ArrowLeft']) player.x -= player.speed;
-        if (keys['KeyD'] || keys['ArrowRight']) player.x += player.speed;
+        if (keys['KeyA']) player.vx = -player.speed;
+        else if (keys['KeyD']) player.vx = player.speed;
+        else player.vx *= 0.8;
 
-        // Keep player in world
-        player.x = Math.max(0, Math.min(world.width, player.x));
-        player.y = Math.max(0, Math.min(world.height, player.y));
+        if (keys['Space'] && player.grounded) {
+            player.vy = -player.jump;
+            player.grounded = false;
+        }
 
-        // Camera Follow
+        player.vy += 0.6; // Gravity
+        player.x += player.vx;
+        player.y += player.vy;
+
+        // Simple Collision
+        const tx = Math.floor(player.x / TILE_SIZE);
+        const ty = Math.floor((player.y + player.h) / TILE_SIZE);
+        if (world.tiles[tx] && world.tiles[tx][ty] > 0) {
+            player.y = ty * TILE_SIZE - player.h;
+            player.vy = 0;
+            player.grounded = true;
+        }
+
         camera.x = player.x - canvas.width / 2;
         camera.y = player.y - canvas.height / 2;
-
-        // Update Bullets
-        bullets.forEach((b, i) => {
-            b.x += b.vx; b.y += b.vy; b.life--;
-            if (b.life <= 0) bullets.splice(i, 1);
-            
-            // Hit detection
-            enemies.forEach((e, ei) => {
-                if (Math.hypot(b.x - e.x, b.y - e.y) < 20) {
-                    e.hp--;
-                    bullets.splice(i, 1);
-                    if(e.hp <= 0) {
-                        enemies.splice(ei, 1);
-                        kills++;
-                        killEl.innerText = kills;
-                        if(health < 100) health += 2;
-                    }
-                }
-            });
-        });
-
-        enemies.forEach(e => e.update());
-        if (health <= 0) location.reload();
     }
 
     function draw() {
-        ctx.fillStyle = '#020205';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         ctx.translate(-camera.x, -camera.y);
 
-        // Draw Grid Map
-        ctx.strokeStyle = '#11112b';
-        ctx.lineWidth = 2;
-        for (let i = 0; i <= world.width; i += 100) {
-            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, world.height); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(world.width, i); ctx.stroke();
+        // Draw Tiles
+        for (let x = 0; x < world.width; x++) {
+            for (let y = 0; y < world.height; y++) {
+                if (world.tiles[x][y] === 1) ctx.fillStyle = '#8B4513'; // Dirt
+                else if (world.tiles[x][y] === 2) ctx.fillStyle = '#808080'; // Stone
+                else continue;
+                ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
         }
 
-        // Draw Player
-        ctx.save();
-        ctx.translate(player.x, player.y);
-        ctx.rotate(player.angle);
-        ctx.fillStyle = '#00f2ff';
-        ctx.shadowBlur = 15; ctx.shadowColor = '#00f2ff';
-        ctx.fillRect(-15, -15, 30, 30); // Body
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(10, -5, 15, 10); // Gun barrel
-        ctx.restore();
-
-        // Draw Enemies
-        ctx.shadowBlur = 10; ctx.shadowColor = '#ff0055';
-        ctx.fillStyle = '#ff0055';
-        enemies.forEach(e => {
-            ctx.beginPath();
-            ctx.arc(e.x, e.y, 15, 0, Math.PI*2);
-            ctx.fill();
-        });
-
-        // Draw Bullets
-        ctx.fillStyle = '#fff';
-        bullets.forEach(b => ctx.fillRect(b.x, b.y, 6, 6));
+        // Draw Player Sprite
+        ctx.fillStyle = '#f0a';
+        ctx.fillRect(player.x - player.w/2, player.y, player.w, player.h); // Body
+        ctx.fillStyle = '#000';
+        ctx.fillRect(player.x - 5, player.y + 10, 10, 10); // Eyes
 
         ctx.restore();
-        requestAnimationFrame(() => { update(); draw(); });
     }
 
-    spawnEnemies();
-    draw();
+    function gameLoop() {
+        update();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
 
-    window.onresize = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    };
+    // Slot selection
+    document.querySelectorAll('.slot').forEach(s => {
+        s.onclick = () => {
+            document.querySelectorAll('.slot').forEach(sl => sl.classList.remove('active'));
+            s.classList.add('active');
+            selectedTile = parseInt(s.dataset.id);
+        };
+    });
 </script>
 </body>
 </html>
