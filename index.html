@@ -19,7 +19,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
         body { background-color: var(--bg); color: white; overflow-x: hidden; scroll-behavior: smooth; }
 
-        /* Tech Aesthetic */
+        /* Tech Aesthetic Background */
         body::before {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
@@ -28,45 +28,71 @@
         }
 
         .hero {
-            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 60vh; /* Shorter hero to get straight to content */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center; background: radial-gradient(circle at center, rgba(112, 0, 255, 0.15) 0%, transparent 70%);
         }
 
         .profile-img {
-            width: 180px; height: 180px; object-fit: cover; border-radius: 25px;
-            border: 2px solid var(--primary); box-shadow: 0 0 40px rgba(0, 242, 255, 0.2);
-            margin-bottom: 25px; transition: 0.4s;
+            width: 140px; height: 140px; object-fit: cover; border-radius: 20px;
+            border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+            margin-bottom: 15px;
         }
 
         .glitch-text {
-            font-family: 'Orbitron', sans-serif; font-size: clamp(3rem, 10vw, 5.5rem);
-            font-weight: 900; letter-spacing: 10px; text-transform: uppercase;
-            text-shadow: 3px 3px var(--secondary), -3px -3px var(--primary);
+            font-family: 'Orbitron', sans-serif; font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 900; letter-spacing: 8px; text-transform: uppercase;
+            text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary);
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
-        .section-title { font-family: 'Orbitron', sans-serif; text-align: center; font-size: 2rem; margin-bottom: 50px; letter-spacing: 5px; color: var(--primary); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .section-title { font-family: 'Orbitron', sans-serif; text-align: left; font-size: 1.5rem; margin-bottom: 30px; letter-spacing: 3px; color: var(--primary); border-bottom: 1px solid var(--glass); padding-bottom: 10px; }
 
-        /* Video Grid */
-        #video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .video-card { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; overflow: hidden; transition: 0.3s; }
-        .video-card:hover { transform: translateY(-10px); border-color: var(--primary); }
-        .video-card iframe { width: 100%; aspect-ratio: 16/9; border: none; }
-        .video-info { padding: 20px; }
-        .video-info h3 { font-size: 1.2rem; margin-bottom: 8px; color: #fff; }
+        /* MINI VIDEO GRID */
+        #video-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Smaller minimum width */
+            gap: 20px; 
+        }
 
-        /* Admin Dashboard (Hidden by default) */
+        .video-card { 
+            background: var(--glass); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            transition: 0.3s; 
+        }
+
+        .video-card:hover { transform: scale(1.03); border-color: var(--primary); }
+        
+        .video-card iframe { 
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            border: none; 
+        }
+
+        .video-info { padding: 12px; }
+        .video-info h3 { 
+            font-size: 0.95rem; /* Smaller font for smaller cards */
+            margin-bottom: 5px; 
+            color: #fff; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; /* Keeps titles on one line */
+        }
+
+        /* Admin Dashboard */
         #admin-panel { 
-            background: #111; padding: 40px; border-radius: 20px; margin-top: 50px; 
-            border: 1px dashed var(--secondary); display: none;
+            background: #111; padding: 25px; border-radius: 15px; margin-top: 50px; 
+            border: 1px dashed var(--secondary); display: none; max-width: 500px; margin-inline: auto;
         }
         input { 
-            width: 100%; padding: 12px; margin: 10px 0; background: #000; 
+            width: 100%; padding: 10px; margin: 8px 0; background: #000; 
             border: 1px solid #333; color: white; border-radius: 5px; 
         }
         .btn { 
             background: var(--secondary); color: white; border: none; 
-            padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; 
+            padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;
         }
 
         footer { text-align: center; padding: 40px; color: #444; font-size: 0.8rem; letter-spacing: 2px; }
@@ -78,27 +104,29 @@
         <img src="https://scontent-iad3-2.xx.fbcdn.net/v/t39.30808-1/607266518_858006396834394_2937293459458675257_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=1d2534&_nc_ohc=CpJJRZ9kx_oQ7kxvwFppkdv&_nc_oc=Adm06wRfZhRFSC4xcLz-BgBXA2rhy3R3A2FCW1M_CO_tLPDr9SXzjsposSe3kVeZ-au7vRx1WX8_IXArEwHcdObd&_nc_zt=24&_nc_ht=scontent-iad3-2.xx&_nc_gid=IW_eOoRxRfyipNb30mB_pw&oh=00_AfpBZvc4jDEMijba7usiGUE7RSDULUfZtehQgO1qsxEKiQ&oe=69603740" 
              alt="Trevor" class="profile-img">
         <h1 class="glitch-text">Tr3vN0x</h1>
-        <p style="letter-spacing: 8px; color: var(--primary); margin-top: 10px;">LUNAR TREV // CONTENT CREATOR</p>
+        <p style="letter-spacing: 5px; color: var(--primary); font-size: 0.9rem;">LUNAR TREV // YOUTUBER</p>
     </section>
 
     <div class="container">
-        <h2 class="section-title">Latest Uploads</h2>
+        <h2 class="section-title">Latest Videos</h2>
         <div id="video-grid">
-            <p style="text-align:center; width: 100%;">Syncing with LunarTrev Firebase...</p>
+            <p style="text-align:center; width: 100%; opacity: 0.5;">Loading Gallery...</p>
         </div>
 
         <div id="admin-panel">
-            <h3 style="margin-bottom: 15px; color: var(--primary);">Add New Video</h3>
+            <h3 style="margin-bottom: 10px; color: var(--primary);">Add Video</h3>
             <input type="text" id="v-title" placeholder="Video Title">
-            <input type="text" id="v-id" placeholder="YouTube Video ID (e.g. dQw4w9WgXcQ)">
-            <button class="btn" onclick="uploadVideo()">Add to Website</button>
-            <p id="status-msg" style="margin-top:10px; font-size:0.9rem;"></p>
+            <input type="text" id="v-id" placeholder="YouTube ID (e.g. dQw4w9WgXcQ)">
+            <button class="btn" onclick="uploadVideo()">Publish to Feed</button>
+            <p id="status-msg" style="margin-top:10px; font-size:0.8rem; text-align: center;"></p>
         </div>
-        <p style="text-align:center; margin-top: 30px; opacity: 0.3; cursor: pointer;" onclick="document.getElementById('admin-panel').style.display='block'">Admin Access</p>
+        
+        <p style="text-align:center; margin-top: 40px; opacity: 0.2; cursor: pointer; font-size: 0.7rem;" 
+           onclick="document.getElementById('admin-panel').style.display='block'">[ ADMIN ACCESS ]</p>
     </div>
 
     <footer>
-        &copy; 2024 LUNARTREV // BUILT FOR THE COMMUNITY
+        &copy; 2024 LUNARTREV CONTENT HUB
     </footer>
 
     <script type="module">
@@ -117,7 +145,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to Load Videos
         async function fetchVideos() {
             const grid = document.getElementById('video-grid');
             try {
@@ -135,16 +162,16 @@
                         </div>
                     `;
                 });
-            } catch (e) { grid.innerHTML = "Error: Check Firestore Rules."; }
+                if(snap.empty) grid.innerHTML = "<p style='opacity:0.5'>No videos found. Use Admin to add some!</p>";
+            } catch (e) { grid.innerHTML = "Error connecting to Firebase."; }
         }
 
-        // Function to Upload Video (Trevor's Dashboard)
         window.uploadVideo = async () => {
             const title = document.getElementById('v-title').value;
             const ytId = document.getElementById('v-id').value;
             const status = document.getElementById('status-msg');
 
-            if(!title || !ytId) return alert("Fill everything!");
+            if(!title || !ytId) return alert("Please fill in both fields.");
 
             try {
                 await addDoc(collection(db, "videos"), {
@@ -152,10 +179,12 @@
                     ytId: ytId,
                     createdAt: serverTimestamp()
                 });
-                status.innerText = "Success! Refreshing...";
-                setTimeout(() => location.reload(), 1500);
+                status.style.color = "var(--primary)";
+                status.innerText = "Video Added Successfully!";
+                setTimeout(() => location.reload(), 1000);
             } catch (e) {
-                status.innerText = "Error: Ensure Firestore 'videos' collection exists.";
+                status.style.color = "red";
+                status.innerText = "Error: Check Firestore Rules.";
             }
         };
 
