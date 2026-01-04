@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tr3vN0x | Official YouTuber</title>
+    <title>Tr3vN0x | LunarTrev Official</title>
     <link rel="icon" type="image/png" href="https://img.icons8.com/neon/96/controller.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Rajdhani:wght@500;700&display=swap');
@@ -13,127 +13,153 @@
             --secondary: #7000ff;
             --accent: #ff0000;
             --bg: #0a0a0a;
-            --glass: rgba(255, 255, 255, 0.03);
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
         body { background-color: var(--bg); color: white; overflow-x: hidden; scroll-behavior: smooth; }
 
-        /* Scanline Effect */
+        /* Tech Aesthetic */
         body::before {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             z-index: 9999; pointer-events: none; background-size: 100% 2px, 3px 100%;
         }
 
         .hero {
             height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; background: radial-gradient(circle at center, rgba(112, 0, 255, 0.1) 0%, transparent 70%);
+            text-align: center; background: radial-gradient(circle at center, rgba(112, 0, 255, 0.15) 0%, transparent 70%);
         }
 
         .profile-img {
-            width: 200px; height: 200px; object-fit: cover; border-radius: 20px;
-            border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
-            transform: rotate(-2deg); transition: 0.4s; margin-bottom: 20px;
+            width: 180px; height: 180px; object-fit: cover; border-radius: 25px;
+            border: 2px solid var(--primary); box-shadow: 0 0 40px rgba(0, 242, 255, 0.2);
+            margin-bottom: 25px; transition: 0.4s;
         }
 
         .glitch-text {
-            font-family: 'Orbitron', sans-serif; font-size: clamp(3rem, 10vw, 6rem);
-            font-weight: 900; letter-spacing: 12px; text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif; font-size: clamp(3rem, 10vw, 5.5rem);
+            font-weight: 900; letter-spacing: 10px; text-transform: uppercase;
             text-shadow: 3px 3px var(--secondary), -3px -3px var(--primary);
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 100px 20px; }
-        .section-title { font-family: 'Orbitron', sans-serif; text-align: center; font-size: 2rem; margin-bottom: 60px; letter-spacing: 5px; text-transform: uppercase; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        .section-title { font-family: 'Orbitron', sans-serif; text-align: center; font-size: 2rem; margin-bottom: 50px; letter-spacing: 5px; color: var(--primary); }
 
-        /* Firebase Video Grid */
-        #video-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        /* Video Grid */
+        #video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .video-card { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; overflow: hidden; transition: 0.3s; }
+        .video-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        .video-card iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+        .video-info { padding: 20px; }
+        .video-info h3 { font-size: 1.2rem; margin-bottom: 8px; color: #fff; }
 
-        .video-card {
-            background: var(--glass); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 15px; overflow: hidden; transition: 0.3s; text-decoration: none; color: white;
+        /* Admin Dashboard (Hidden by default) */
+        #admin-panel { 
+            background: #111; padding: 40px; border-radius: 20px; margin-top: 50px; 
+            border: 1px dashed var(--secondary); display: none;
+        }
+        input { 
+            width: 100%; padding: 12px; margin: 10px 0; background: #000; 
+            border: 1px solid #333; color: white; border-radius: 5px; 
+        }
+        .btn { 
+            background: var(--secondary); color: white; border: none; 
+            padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; 
         }
 
-        .video-card:hover { transform: translateY(-10px); border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
-
-        .video-card iframe { width: 100%; aspect-ratio: 16/9; border: none; border-bottom: 2px solid var(--accent); }
-
-        .video-info { padding: 20px; }
-        .video-info h3 { font-size: 1.1rem; margin-bottom: 10px; }
-
-        footer { text-align: center; padding: 60px; background: #050505; color: #444; font-size: 0.8rem; letter-spacing: 2px; }
+        footer { text-align: center; padding: 40px; color: #444; font-size: 0.8rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
     <section class="hero">
-        <img src="https://scontent-iad3-2.xx.fbcdn.net/v/t39.30808-1/607266518_858006396834394_2937293459458675257_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=1d2534&_nc_ohc=CpJJRZ9kx_oQ7kxvwFppkdv&_nc_oc=Adm06wRfZhRFSC4xcLz-BgBXA2rhy3R3A2FCW1M_CO_tLPDr9SXzjsposSe3kVeZ-au7vRx1WX8_IXArEwHcdObd&_nc_zt=24&_nc_ht=scontent-iad3-2.xx&_nc_gid=IW_eOoRxRfyipNb30mB_pw&oh=00_AfpBZvc4jDEMijba7usiGUE7RSDULUfZtehQgO1qsxEKiQ&oe=69603740" alt="Trevor" class="profile-img">
+        <img src="https://scontent-iad3-2.xx.fbcdn.net/v/t39.30808-1/607266518_858006396834394_2937293459458675257_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=1d2534&_nc_ohc=CpJJRZ9kx_oQ7kxvwFppkdv&_nc_oc=Adm06wRfZhRFSC4xcLz-BgBXA2rhy3R3A2FCW1M_CO_tLPDr9SXzjsposSe3kVeZ-au7vRx1WX8_IXArEwHcdObd&_nc_zt=24&_nc_ht=scontent-iad3-2.xx&_nc_gid=IW_eOoRxRfyipNb30mB_pw&oh=00_AfpBZvc4jDEMijba7usiGUE7RSDULUfZtehQgO1qsxEKiQ&oe=69603740" 
+             alt="Trevor" class="profile-img">
         <h1 class="glitch-text">Tr3vN0x</h1>
-        <p style="letter-spacing: 5px; color: var(--primary);">YOUTUBER // CONTENT CREATOR</p>
+        <p style="letter-spacing: 8px; color: var(--primary); margin-top: 10px;">LUNAR TREV // CONTENT CREATOR</p>
     </section>
 
     <div class="container">
         <h2 class="section-title">Latest Uploads</h2>
-        <div id="video-container">
-            <p style="text-align: center; grid-column: 1/-1;">Connecting to Database...</p>
+        <div id="video-grid">
+            <p style="text-align:center; width: 100%;">Syncing with LunarTrev Firebase...</p>
         </div>
+
+        <div id="admin-panel">
+            <h3 style="margin-bottom: 15px; color: var(--primary);">Add New Video</h3>
+            <input type="text" id="v-title" placeholder="Video Title">
+            <input type="text" id="v-id" placeholder="YouTube Video ID (e.g. dQw4w9WgXcQ)">
+            <button class="btn" onclick="uploadVideo()">Add to Website</button>
+            <p id="status-msg" style="margin-top:10px; font-size:0.9rem;"></p>
+        </div>
+        <p style="text-align:center; margin-top: 30px; opacity: 0.3; cursor: pointer;" onclick="document.getElementById('admin-panel').style.display='block'">Admin Access</p>
     </div>
 
     <footer>
-        <p>OFFICIAL HUB OF TR3VN0X // TREVOR // 2024</p>
+        &copy; 2024 LUNARTREV // BUILT FOR THE COMMUNITY
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // REPLACE THIS with your actual Firebase Project Config
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyCGTSiMcNQaAVjkEI_9YRbb2C4CTvqQWEM",
+            authDomain: "lunartrev.firebaseapp.com",
+            projectId: "lunartrev",
+            storageBucket: "lunartrev.firebasestorage.app",
+            messagingSenderId: "152908127950",
+            appId: "1:152908127950:web:6db39b55cbe5d5b0f33a9f"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        async function loadVideos() {
-            const videoContainer = document.getElementById('video-container');
-            
+        // Function to Load Videos
+        async function fetchVideos() {
+            const grid = document.getElementById('video-grid');
             try {
-                // We assume you have a collection named "videos" in Firestore
-                const q = query(collection(db, "videos"), orderBy("timestamp", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                videoContainer.innerHTML = ''; // Clear the "loading" text
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    
-                    // Create HTML for each video
-                    const videoCard = `
+                const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
+                const snap = await getDocs(q);
+                grid.innerHTML = '';
+                snap.forEach(doc => {
+                    const v = doc.data();
+                    grid.innerHTML += `
                         <div class="video-card">
-                            <iframe src="https://www.youtube.com/embed/${data.youtubeId}" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/${v.ytId}" allowfullscreen></iframe>
                             <div class="video-info">
-                                <h3>${data.title}</h3>
-                                <p style="color:#888; font-size:0.8rem;">${data.category || 'Gaming'}</p>
+                                <h3>${v.title}</h3>
                             </div>
                         </div>
                     `;
-                    videoContainer.innerHTML += videoCard;
                 });
-            } catch (error) {
-                console.error("Error loading videos: ", error);
-                videoContainer.innerHTML = "<p>Failed to load videos. Check Firebase config.</p>";
-            }
+            } catch (e) { grid.innerHTML = "Error: Check Firestore Rules."; }
         }
 
-        loadVideos();
+        // Function to Upload Video (Trevor's Dashboard)
+        window.uploadVideo = async () => {
+            const title = document.getElementById('v-title').value;
+            const ytId = document.getElementById('v-id').value;
+            const status = document.getElementById('status-msg');
+
+            if(!title || !ytId) return alert("Fill everything!");
+
+            try {
+                await addDoc(collection(db, "videos"), {
+                    title: title,
+                    ytId: ytId,
+                    createdAt: serverTimestamp()
+                });
+                status.innerText = "Success! Refreshing...";
+                setTimeout(() => location.reload(), 1500);
+            } catch (e) {
+                status.innerText = "Error: Ensure Firestore 'videos' collection exists.";
+            }
+        };
+
+        fetchVideos();
     </script>
 </body>
 </html>
