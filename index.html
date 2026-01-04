@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BloxWorld | Play Games</title>
+    <title>BloxWorld | Games & Avatars</title>
     <style>
         :root {
             --rbx-bg: #191b1d;
@@ -14,154 +14,190 @@
             --rbx-green: #00b06f;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: var(--rbx-bg); color: var(--rbx-text); display: flex; overflow: hidden; height: 100vh; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--rbx-bg); color: var(--rbx-text); display: flex; height: 100vh; overflow: hidden; }
 
         /* Sidebar */
-        aside { width: 180px; background: var(--rbx-nav); padding: 20px 10px; border-right: 1px solid #333; }
-        .side-link { display: block; padding: 10px; color: #bbb; text-decoration: none; font-size: 14px; margin-bottom: 5px; border-radius: 4px; }
-        .side-link:hover { background: #333; color: white; }
+        aside { width: 200px; background: var(--rbx-nav); padding: 20px; border-right: 1px solid #333; }
+        .side-link { display: block; padding: 12px; color: #bbb; text-decoration: none; border-radius: 8px; margin-bottom: 5px; cursor: pointer; }
+        .side-link:hover, .side-link.active { background: #3a3d40; color: white; }
 
-        /* Main */
+        /* Main Content */
         main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
-        header { background: var(--rbx-nav); padding: 10px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-        .logo { font-weight: bold; font-size: 20px; }
-        .currency { color: #f3ad16; font-weight: bold; }
+        header { background: var(--rbx-nav); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .currency { color: #f3ad16; font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; }
+
+        .container { padding: 30px; }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Avatar Editor Styles */
+        .avatar-view { 
+            width: 200px; height: 200px; background: #333; border-radius: 50%; 
+            margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; 
+            font-size: 80px; border: 5px solid var(--rbx-accent);
+        }
+        .custom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
+        .item-box { background: var(--rbx-card); padding: 20px; text-align: center; border-radius: 10px; cursor: pointer; border: 2px solid transparent; }
+        .item-box:hover { border-color: var(--rbx-accent); }
 
         /* Game Grid */
-        .content { padding: 30px; }
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-        .game-card { cursor: pointer; background: var(--rbx-card); border-radius: 8px; padding: 10px; transition: 0.2s; text-align: center; }
-        .game-card:hover { transform: translateY(-5px); background: #4a4c4e; }
-        .thumb { font-size: 3rem; margin-bottom: 10px; }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .game-card { background: var(--rbx-card); border-radius: 12px; padding: 15px; cursor: pointer; transition: 0.3s; text-align: center; }
+        .game-card:hover { transform: translateY(-5px); background: #45484a; }
+        .thumb { font-size: 50px; margin-bottom: 10px; }
 
-        /* --- GAME CLIENT OVERLAY --- */
-        #game-client {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; align-items: center; justify-content: center;
+        /* Game Engine Overlay */
+        #game-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 999; flex-direction: column; align-items: center; justify-content: center;
         }
-        #canvas-container {
-            background: #000; width: 800px; height: 500px; border: 5px solid #333; border-radius: 10px;
-            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        #game-canvas {
+            width: 80%; max-width: 800px; height: 500px; background: #111; 
+            border: 4px solid #333; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .close-game { position: absolute; top: 20px; right: 20px; color: white; font-size: 30px; cursor: pointer; }
-        
-        /* Game Mechanics UI */
-        #game-ui { text-align: center; }
-        #click-target { 
-            font-size: 100px; cursor: pointer; user-select: none; transition: transform 0.1s; 
-            filter: drop-shadow(0 0 10px var(--rbx-accent));
-        }
-        #click-target:active { transform: scale(0.9); }
-        .score-board { font-size: 24px; margin-top: 20px; color: var(--rbx-green); font-weight: bold; }
-        
-        .play-btn { 
-            background: var(--rbx-green); color: white; border: none; padding: 15px 40px; 
-            font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold;
-        }
+        .btn-exit { position: absolute; top: 20px; right: 20px; background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <aside>
-        <div style="color:#888; font-size:11px; margin-bottom:10px; padding-left:10px;">HOME</div>
-        <a href="#" class="side-link">🏠 Home</a>
-        <a href="#" class="side-link">🎮 Games</a>
-        <a href="#" class="side-link">👕 Avatar</a>
-        <a href="#" class="side-link">💰 Trade</a>
+        <h2 style="color: var(--rbx-accent); margin-bottom: 20px;">BLOX</h2>
+        <div class="side-link active" onclick="showPage('home')">🏠 Games</div>
+        <div class="side-link" onclick="showPage('avatar')">👤 Avatar</div>
     </aside>
 
     <main>
         <header>
-            <div class="logo">BLOXWORLD</div>
-            <div style="display:flex; gap:20px; align-items:center;">
-                <span class="currency">⏣ <span id="user-robux">100</span></span>
-                <div id="user-tag" style="font-size: 14px; font-weight: bold;">Guest_1234</div>
-            </div>
+            <h2 id="page-title">Discover</h2>
+            <div class="currency">⏣ <span id="balance">500</span></div>
         </header>
 
-        <div class="content">
-            <h2 style="margin-bottom:20px;">Featured Games</h2>
+        <div id="home" class="page active container">
             <div class="game-grid">
-                <div class="game-card" onclick="launchGame('Clicker Tycoon', '💰')">
-                    <div class="thumb">💰</div>
-                    <div class="title">Clicker Tycoon</div>
-                    <div style="font-size:10px; color:#bbb;">Active: 1.2K</div>
+                <div class="game-card" onclick="startGame('cookie')">
+                    <div class="thumb">🍪</div>
+                    <h3>Cookie Clicker</h3>
+                    <p style="font-size: 12px; color: #aaa;">The classic endless grind.</p>
                 </div>
-                <div class="game-card" onclick="launchGame('Speed Run', '⚡')">
+                <div class="game-card" onclick="startGame('reaction')">
                     <div class="thumb">⚡</div>
-                    <div class="title">Speed Run</div>
-                    <div style="font-size:10px; color:#bbb;">Active: 800</div>
+                    <h3>Reaction Test</h3>
+                    <p style="font-size: 12px; color: #aaa;">How fast are you?</p>
                 </div>
-                <div class="game-card" onclick="launchGame('Pizza Simulator', '🍕')">
-                    <div class="thumb">🍕</div>
-                    <div class="title">Pizza Simulator</div>
-                    <div style="font-size:10px; color:#bbb;">Active: 5K</div>
-                </div>
+            </div>
+        </div>
+
+        <div id="avatar" class="page container" style="text-align: center;">
+            <div class="avatar-view" id="current-avatar">👤</div>
+            <h3>Avatar Editor</h3>
+            <p style="margin-bottom: 20px; color: #888;">Select your character style</p>
+            <div class="custom-grid">
+                <div class="item-box" onclick="changeAvatar('👤')">Default</div>
+                <div class="item-box" onclick="changeAvatar('🐱')">Cat Boy</div>
+                <div class="item-box" onclick="changeAvatar('🤖')">Robot</div>
+                <div class="item-box" onclick="changeAvatar('👽')">Alien</div>
+                <div class="item-box" onclick="changeAvatar('👑')">King</div>
+                <div class="item-box" onclick="changeAvatar('忍者')">Ninja</div>
             </div>
         </div>
     </main>
 
-    <div id="game-client">
-        <span class="close-game" onclick="quitGame()">&times; Exit</span>
-        <h1 id="playing-title" style="margin-bottom: 20px;">Game Name</h1>
-        
-        <div id="canvas-container">
-            <div id="game-ui">
-                <div id="click-target">💰</div>
-                <div class="score-board">Earnings: <span id="game-score">0</span></div>
-                <p style="margin-top: 10px; color: #888;">Click the icon as fast as you can!</p>
-            </div>
-        </div>
-        
-        <div style="margin-top: 20px;">
-            <button class="play-btn" onclick="saveProgress()">Save & Quit</button>
+    <div id="game-overlay">
+        <button class="btn-exit" onclick="exitGame()">EXIT</button>
+        <div id="game-canvas">
+            <div id="game-content"></div>
         </div>
     </div>
 
     <script>
-        let currentScore = 0;
-        let totalRobux = 100;
+        let balance = parseInt(localStorage.getItem('rbx_balance')) || 500;
+        let currentAvatar = localStorage.getItem('rbx_avatar') || '👤';
 
-        // Launch the "Game Client"
-        function launchGame(title, emoji) {
-            document.getElementById('game-client').style.display = 'flex';
-            document.getElementById('playing-title').innerText = "Playing: " + title;
-            document.getElementById('click-target').innerText = emoji;
-            currentScore = 0;
-            updateDisplay();
+        // Initialize UI
+        document.getElementById('balance').innerText = balance;
+        document.getElementById('current-avatar').innerText = currentAvatar;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.side-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+            document.getElementById('page-title').innerText = pageId.charAt(0).toUpperCase() + pageId.slice(1);
         }
 
-        // Game Logic: Click the emoji
-        document.getElementById('click-target').addEventListener('click', () => {
-            currentScore += 10;
-            updateDisplay();
+        function changeAvatar(emoji) {
+            currentAvatar = emoji;
+            document.getElementById('current-avatar').innerText = emoji;
+            localStorage.setItem('rbx_avatar', emoji);
+        }
+
+        // --- GAME SYSTEM ---
+        function startGame(type) {
+            const overlay = document.getElementById('game-overlay');
+            const content = document.getElementById('game-content');
+            overlay.style.display = 'flex';
+            content.innerHTML = '';
+
+            if (type === 'cookie') {
+                runCookieClicker(content);
+            } else if (type === 'reaction') {
+                runReactionTest(content);
+            }
+        }
+
+        function exitGame() {
+            document.getElementById('game-overlay').style.display = 'none';
+        }
+
+        // --- GAME 1: COOKIE CLICKER ---
+        function runCookieClicker(container) {
+            let cookies = 0;
+            container.innerHTML = `
+                <div style="text-align:center">
+                    <div id="cookie" style="font-size:100px; cursor:pointer; user-select:none;">🍪</div>
+                    <h2 style="font-size:40px; margin-top:20px;">Cookies: <span id="c-count">0</span></h2>
+                    <p>Click the cookie! Each click = 1 BloxCoin</p>
+                </div>
+            `;
+            const cookie = container.querySelector('#cookie');
+            cookie.onclick = () => {
+                cookies++;
+                balance++;
+                document.getElementById('c-count').innerText = cookies;
+                document.getElementById('balance').innerText = balance;
+                localStorage.setItem('rbx_balance', balance);
+                cookie.style.transform = "scale(0.9)";
+                setTimeout(() => cookie.style.transform = "scale(1)", 50);
+            };
+        }
+
+        // --- GAME 2: REACTION TEST ---
+        function runReactionTest(container) {
+            container.innerHTML = `
+                <div id="test-box" style="width:300px; height:300px; background:red; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:20px;">
+                    <h2>Wait for Green...</h2>
+                </div>
+            `;
+            const box = container.querySelector('#test-box');
+            let startTime;
             
-            // Visual feedback
-            const target = document.getElementById('click-target');
-            target.style.transform = "scale(1.2)";
-            setTimeout(() => target.style.transform = "scale(1)", 50);
-        });
-
-        function updateDisplay() {
-            document.getElementById('game-score').innerText = currentScore;
+            setTimeout(() => {
+                box.style.background = '#00b06f';
+                box.innerHTML = '<h2>CLICK NOW!</h2>';
+                startTime = Date.now();
+                box.onclick = () => {
+                    const reactionTime = Date.now() - startTime;
+                    const reward = Math.max(10, 500 - reactionTime);
+                    balance += Math.max(0, reward);
+                    box.onclick = null;
+                    box.style.background = '#333';
+                    box.innerHTML = `<h2>${reactionTime}ms!</h2><p>Reward: ⏣${Math.max(0, reward)}</p>`;
+                    document.getElementById('balance').innerText = balance;
+                    localStorage.setItem('rbx_balance', balance);
+                };
+            }, 2000 + Math.random() * 3000);
         }
-
-        // Save progress (Simulating the "Robux" gain)
-        function saveProgress() {
-            const earnings = Math.floor(currentScore / 10);
-            totalRobux += earnings;
-            document.getElementById('user-robux').innerText = totalRobux;
-            alert("You earned ⏣ " + earnings + " from playing!");
-            quitGame();
-        }
-
-        function quitGame() {
-            document.getElementById('game-client').style.display = 'none';
-        }
-
-        // For real-time multiplayer or database saving, 
-        // you would use fetch() to send 'totalRobux' to a PHP file.
     </script>
 </body>
 </html>
