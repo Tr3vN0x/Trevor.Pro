@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Burger World | Quality Fast Food</title>
+    <title>Burger World | Better Burgers & Fries</title>
     <style>
-        /* CSS STYLES */
+        /* --- CSS STYLING --- */
         :root {
             --mcd-red: #da291c;
             --mcd-yellow: #ffc72c;
@@ -15,313 +15,214 @@
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Speedee", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
-        body {
-            background-color: var(--mcd-white);
-            color: var(--mcd-black);
-            line-height: 1.6;
-        }
+        body { background-color: var(--mcd-white); color: var(--mcd-black); line-height: 1.6; }
 
         /* Navigation */
         header {
             background: var(--mcd-white);
             padding: 1rem 8%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--mcd-red); text-decoration: none; }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--mcd-red);
-            text-decoration: none;
-            letter-spacing: -1px;
-        }
+        .nav-links { display: flex; list-style: none; align-items: center; }
+        .nav-links li { margin: 0 1rem; }
+        .nav-links a { text-decoration: none; color: var(--mcd-black); font-weight: bold; font-size: 0.9rem; }
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links li {
-            margin: 0 1.5rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--mcd-black);
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .nav-links a:hover {
-            color: var(--mcd-red);
-        }
-
-        .btn-order {
+        .btn-main {
             background-color: var(--mcd-yellow);
             color: var(--mcd-black);
-            padding: 12px 24px;
-            border-radius: 4px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
+            padding: 10px 20px; border-radius: 4px; border: none;
+            font-weight: bold; cursor: pointer; transition: 0.2s;
         }
+        .btn-main:hover { background-color: #f0b810; }
 
-        .btn-order:hover {
-            background-color: #f0b810;
-        }
-
-        /* Hero Section */
+        /* Hero */
         .hero {
             background-color: var(--mcd-bg);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             padding: 4rem 8%;
-            min-height: 500px;
+            display: flex; align-items: center; justify-content: space-between;
         }
+        .hero-text h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem; }
 
-        .hero-text {
-            flex: 1;
-        }
+        /* Menu Section */
+        .menu-section { padding: 4rem 8%; text-align: center; }
+        .menu-section h2 { font-size: 2.5rem; margin-bottom: 2rem; }
 
-        .hero-text h1 {
-            font-size: 3.5rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-text p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-        }
-
-        .hero-image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            font-size: 10rem; /* Placeholder for burger image */
-        }
-
-        /* Promotion Cards */
-        .promo-section {
-            padding: 4rem 8%;
+        .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
         }
 
-        .promo-card {
-            background: var(--mcd-white);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
-        }
-
-        .promo-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .promo-img {
-            height: 200px;
-            background: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-        }
-
-        .promo-content {
-            padding: 1.5rem;
-        }
-
-        .promo-content h3 {
-            margin-bottom: 0.5rem;
-        }
-
-        .btn-secondary {
-            background: var(--mcd-red);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 1rem;
-        }
-
-        /* App Section */
-        .app-cta {
-            background: var(--mcd-yellow);
-            margin: 4rem 8%;
-            padding: 3rem;
+        .product-card {
+            background: white;
+            border: 1px solid #ddd;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
+            padding: 2rem;
+            position: relative;
+            transition: 0.3s;
         }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+        .price-tag {
+            position: absolute; top: 15px; right: 15px;
+            background: var(--mcd-yellow);
+            padding: 5px 12px; border-radius: 20px; font-weight: bold;
+        }
+
+        .emoji { font-size: 5rem; display: block; margin-bottom: 1rem; }
+        .product-card h3 { margin-bottom: 0.5rem; }
+        .product-card p { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
+
+        /* Modal */
+        .modal {
+            display: none; position: fixed; z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+        }
+        .modal-content {
+            background: white; margin: 10% auto; padding: 2rem;
+            width: 90%; max-width: 400px; border-radius: 12px; text-align: center;
+        }
+        .modal-content input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            border: 1px solid #ddd; border-radius: 4px;
+        }
+        .close { float: right; cursor: pointer; font-size: 1.5rem; }
 
         /* Footer */
-        footer {
-            background: var(--mcd-white);
-            padding: 4rem 8% 2rem;
-            border-top: 1px solid #eee;
-        }
+        footer { padding: 4rem 8%; border-top: 1px solid #eee; text-align: center; font-size: 0.9rem; color: #888; }
 
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-col h4 {
-            margin-bottom: 1.2rem;
-        }
-
-        .footer-col ul {
-            list-style: none;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-col ul li a {
-            text-decoration: none;
-            color: #555;
-            font-size: 0.9rem;
-        }
-
-        .legal {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #888;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-        }
-
-        /* Mobile Responsive */
         @media (max-width: 768px) {
             .nav-links { display: none; }
             .hero { flex-direction: column; text-align: center; }
-            .hero-text h1 { font-size: 2.5rem; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <nav>
-            <a href="#" class="logo">BURGER WORLD</a>
-            <ul class="nav-links">
-                <li><a href="#">Language</a></li>
-                <li><a href="#">Sign Up for Email</a></li>
-                <li><a href="#">Careers</a></li>
-                <button class="btn-order">Order Now</button>
-            </ul>
-        </nav>
+        <a href="#" class="logo">BURGER WORLD</a>
+        <ul class="nav-links">
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#">Locations</a></li>
+            <li><a href="#">Deals</a></li>
+            <li><button class="btn-main" id="auth-btn" onclick="toggleModal()">Login</button></li>
+        </ul>
     </header>
 
     <section class="hero">
         <div class="hero-text">
-            <h1>Free Large Fries. <br>Now with more Joy.</h1>
-            <p>Download the app and get your first order of Large Fries on us. Min. $1 purchase required.</p>
-            <button class="btn-order" style="padding: 15px 40px;">Get the App</button>
+            <h1>Crispy. Juicy. <br>Delivered.</h1>
+            <p>Sign in to earn points on every order.</p>
+            <button class="btn-main" style="padding: 15px 30px; margin-top: 1rem;">View Deals</button>
         </div>
-        <div class="hero-image">
-            🍟
-        </div>
+        <div style="font-size: 10rem;">🍔</div>
     </section>
 
-    <section class="promo-section">
-        <div class="promo-card">
-            <div class="promo-img">🍔</div>
-            <div class="promo-content">
-                <h3>Try the New Deluxe</h3>
-                <p>Juicy beef, fresh lettuce, and our secret recipe sauce.</p>
-                <button class="btn-secondary">Order Item</button>
+    <section class="menu-section" id="menu">
+        <h2>Our Favorites</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <span class="price-tag">$6.49</span>
+                <span class="emoji">🍔</span>
+                <h3>Big Stack Burger</h3>
+                <p>Two 100% beef patties, shredded lettuce, and our signature sauce.</p>
+                <button class="btn-main">Add to Cart</button>
             </div>
-        </div>
-        <div class="promo-card">
-            <div class="promo-img">🍦</div>
-            <div class="promo-content">
-                <h3>Treat Yourself</h3>
-                <p>Cool down with our limited time Vanilla Swirl.</p>
-                <button class="btn-secondary">View Deals</button>
+            <div class="product-card">
+                <span class="price-tag">$2.99</span>
+                <span class="emoji">🍟</span>
+                <h3>Golden Fries</h3>
+                <p>The gold standard. Crispy, salty, and perfect.</p>
+                <button class="btn-main">Add to Cart</button>
             </div>
-        </div>
-        <div class="promo-card">
-            <div class="promo-img">📦</div>
-            <div class="promo-content">
-                <h3>McDelivery®</h3>
-                <p>Get your favorites delivered straight to your door.</p>
-                <button class="btn-secondary">Order Now</button>
+            <div class="product-card">
+                <span class="price-tag">$4.50</span>
+                <span class="emoji">🍦</span>
+                <h3>Choco-McFlurry</h3>
+                <p>Creamy vanilla soft serve mixed with chocolate chunks.</p>
+                <button class="btn-main">Add to Cart</button>
             </div>
         </div>
     </section>
 
-    <section class="app-cta">
-        <div>
-            <h2>Order on the go with our App</h2>
-            <p>Exclusive deals and faster checkout at your fingertips.</p>
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleModal()">&times;</span>
+            <h2 id="modal-title">Sign In</h2>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn-main" style="width: 100%; margin-top: 1rem;" onclick="handleAuth('login')">Login</button>
+            <button class="btn-main" style="width: 100%; margin-top: 0.5rem; background: #eee;" onclick="handleAuth('signup')">Create Account</button>
+            <p id="error-msg" style="color: red; font-size: 0.8rem; margin-top: 10px;"></p>
         </div>
-        <button class="btn-order" style="background: white;">Download App</button>
-    </section>
+    </div>
 
     <footer>
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h4>About Us</h4>
-                <ul>
-                    <li><a href="#">Our History</a></li>
-                    <li><a href="#">Leadership Team</a></li>
-                    <li><a href="#">Values in Action</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Services</h4>
-                <ul>
-                    <li><a href="#">Wi-Fi</a></li>
-                    <li><a href="#">Gift Cards</a></li>
-                    <li><a href="#">PlayPlace</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Support</h4>
-                <ul>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Donations</a></li>
-                    <li><a href="#">Employment</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Connect</h4>
-                <p>Follow us on Social Media</p>
-            </div>
-        </div>
-        <div class="legal">
-            <p>© 2024 Burger World. All Rights Reserved.</p>
-            <p>Privacy Policy | Terms & Conditions | Accessibility</p>
-        </div>
+        <p>© 2024 Burger World. All Rights Reserved.</p>
     </footer>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // --- REPLACE THE KEYS BELOW WITH YOUR FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+
+        // Modal Toggle
+        window.toggleModal = () => {
+            const modal = document.getElementById('login-modal');
+            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Auth Logic
+        window.handleAuth = async (type) => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            try {
+                if (type === 'login') {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                }
+                toggleModal();
+            } catch (error) {
+                errorMsg.innerText = error.message;
+            }
+        };
+
+        // UI State Update
+        onAuthStateChanged(auth, (user) => {
+            const authBtn = document.getElementById('auth-btn');
+            if (user) {
+                authBtn.innerText = "Logout (" + user.email.split('@')[0] + ")";
+                authBtn.onclick = () => signOut(auth);
+            } else {
+                authBtn.innerText = "Login";
+                authBtn.onclick = toggleModal;
+            }
+        });
+    </script>
 </body>
 </html>
