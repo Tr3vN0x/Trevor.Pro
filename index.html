@@ -15,6 +15,7 @@
             --live: #ff0000;
             --bg: #0a0a0a;
             --glass: rgba(255, 255, 255, 0.05);
+            /* Social Colors */
             --snapchat: #FFFC00; --discord: #5865F2; --instagram: #E1306C; --twitter: #1DA1F2;
         }
 
@@ -36,16 +37,19 @@
         .profile-img { width: 120px; height: 120px; object-fit: cover; border-radius: 20px; border: 2px solid var(--primary); margin-bottom: 15px; }
         .glitch-text { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; letter-spacing: 8px; text-transform: uppercase; text-shadow: 2px 2px var(--secondary), -2px -2px var(--primary); }
 
-        /* SOCIAL BAR */
-        .social-bar { display: flex; gap: 15px; margin-top: 25px; min-height: 50px; }
+        /* SOCIAL BAR - AUTO GENERATED BUTTONS */
+        .social-bar { display: flex; gap: 15px; margin-top: 25px; min-height: 50px; flex-wrap: wrap; justify-content: center; }
         .social-link {
-            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
+            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
             background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
-            transition: 0.3s; text-decoration: none;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-decoration: none;
         }
-        .social-link img { width: 22px; filter: brightness(0) invert(1); }
-        .social-link:hover { transform: translateY(-5px); border-color: white; }
+        .social-link img { width: 24px; filter: brightness(0) invert(1); }
+        .social-link:hover { transform: translateY(-8px) scale(1.1); border-color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        
+        /* Specific Brand Colors on Hover */
         .social-link.sc:hover { background: var(--snapchat); }
+        .social-link.sc:hover img { filter: brightness(0); } /* Snapchat icon stays black on yellow */
         .social-link.dc:hover { background: var(--discord); }
         .social-link.ig:hover { background: var(--instagram); }
         .social-link.tw:hover { background: var(--twitter); }
@@ -55,14 +59,12 @@
         .video-card { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; position: relative; }
         .video-card iframe { width: 100%; aspect-ratio: 16/9; border: none; }
         .video-info { padding: 12px; }
-        .video-info h3 { font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
+        
         /* ADMIN PANEL */
         #admin-panel { background: #111; padding: 25px; border-radius: 15px; border: 1px dashed var(--secondary); display: none; max-width: 500px; margin: 30px auto; }
         .admin-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #222; }
         input { width: 100%; padding: 10px; margin: 5px 0; background: #000; border: 1px solid #333; color: white; border-radius: 5px; }
         .btn-main { background: var(--secondary); color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 5px; }
-        
         .admin-controls { position: absolute; top: 5px; right: 5px; display: none; gap: 5px; z-index: 10; }
         .btn-mini { padding: 5px 8px; font-size: 10px; border: none; border-radius: 4px; cursor: pointer; color: white; }
 
@@ -78,39 +80,38 @@
     <section class="hero">
         <img src="https://scontent-iad3-2.xx.fbcdn.net/v/t39.30808-1/607266518_858006396834394_2937293459458675257_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=1d2534&_nc_ohc=CpJJRZ9kx_oQ7kxvwFppkdv&_nc_oc=Adm06wRfZhRFSC4xcLz-BgBXA2rhy3R3A2FCW1M_CO_tLPDr9SXzjsposSe3kVeZ-au7vRx1WX8_IXArEwHcdObd&_nc_zt=24&_nc_ht=scontent-iad3-2.xx&_nc_gid=IW_eOoRxRfyipNb30mB_pw&oh=00_AfpBZvc4jDEMijba7usiGUE7RSDULUfZtehQgO1qsxEKiQ&oe=69603740" class="profile-img">
         <h1 class="glitch-text">Tr3vN0x</h1>
-        <div class="social-bar" id="social-display"></div>
+        <div class="social-bar" id="social-display">
+            </div>
     </section>
 
     <div class="container">
         <div id="admin-panel">
             <div class="admin-section">
-                <h3 style="color:var(--primary)">Live & Social Management</h3>
-                <input type="text" id="stream-url" placeholder="Paste Live Stream URL">
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-main" onclick="updateLive(true)">Go Live</button>
-                    <button class="btn-main" style="background:#444" onclick="updateLive(false)">End Stream</button>
-                </div>
-                <hr style="margin:15px 0; border:0; border-top:1px solid #333;">
-                <input type="text" id="snap-in" placeholder="Snapchat Username">
-                <input type="text" id="disc-in" placeholder="Discord URL">
+                <h3 style="color:var(--primary)">Social Buttons Manager</h3>
+                <p style="font-size: 12px; opacity: 0.6; margin-bottom: 5px;">Leave empty to hide a button</p>
+                <input type="text" id="snap-in" placeholder="Snapchat Username (Tr3vN0x)">
+                <input type="text" id="disc-in" placeholder="Discord Link (Invite URL)">
                 <input type="text" id="insta-in" placeholder="Instagram URL">
-                <input type="text" id="twit-in" placeholder="Twitter URL">
-                <button class="btn-main" onclick="saveSocials()">Save All Socials</button>
+                <input type="text" id="twit-in" placeholder="Twitter/X URL">
+                <button class="btn-main" onclick="saveSocials()">Update My Socials</button>
             </div>
             <div class="admin-section">
-                <h3 style="color:var(--primary)">Video Upload</h3>
-                <input type="text" id="v-title" placeholder="Video Title">
-                <input type="text" id="v-id" placeholder="YouTube Video ID (e.g. dQw4w9WgXcQ)">
-                <input type="hidden" id="edit-id">
-                <button class="btn-main" id="sub-btn" onclick="handleVideo()">Publish Video</button>
+                <h3 style="color:var(--primary)">Live Stream</h3>
+                <input type="text" id="stream-url" placeholder="Paste URL">
+                <button class="btn-main" onclick="updateLive(true)">Go Live</button>
+                <button class="btn-main" style="background:#444" onclick="updateLive(false)">End</button>
+            </div>
+            <div class="admin-section">
+                <h3 style="color:var(--primary)">Videos</h3>
+                <input type="text" id="v-title" placeholder="Title">
+                <input type="text" id="v-id" placeholder="YouTube ID">
+                <button class="btn-main" onclick="handleVideo()">Publish</button>
             </div>
         </div>
 
         <div id="video-grid"></div>
         <p style="text-align:center; margin-top: 40px; opacity: 0.2; cursor: pointer;" onclick="toggleAdmin()">[ ADMIN PANEL ]</p>
     </div>
-
-    <footer>&copy; 2024 LUNARTREV // TR3VNOX HUB</footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -129,29 +130,32 @@
         const db = getFirestore(app);
         let isAdmin = false;
 
-        // --- LISTENERS ---
+        // --- DYNAMIC SOCIAL BUTTON LOADER ---
+        onSnapshot(doc(db, "settings", "socials"), (d) => {
+            if(d.exists()){
+                const s = d.data();
+                const bar = document.getElementById('social-display');
+                bar.innerHTML = ''; // Clear and rebuild
+                
+                if(s.snapchat) bar.innerHTML += `<a href="https://snapchat.com/add/${s.snapchat}" class="social-link sc" target="_blank" title="Snapchat"><img src="https://img.icons8.com/ios-filled/50/ffffff/snapchat.png"></a>`;
+                if(s.discord) bar.innerHTML += `<a href="${s.discord}" class="social-link dc" target="_blank" title="Discord"><img src="https://img.icons8.com/ios-filled/50/ffffff/discord-logo.png"></a>`;
+                if(s.instagram) bar.innerHTML += `<a href="${s.instagram}" class="social-link ig" target="_blank" title="Instagram"><img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"></a>`;
+                if(s.twitter) bar.innerHTML += `<a href="${s.twitter}" class="social-link tw" target="_blank" title="Twitter"><img src="https://img.icons8.com/ios-filled/50/ffffff/twitterx.png"></a>`;
+
+                // Update input values in admin panel too
+                document.getElementById('snap-in').value = s.snapchat || '';
+                document.getElementById('disc-in').value = s.discord || '';
+                document.getElementById('insta-in').value = s.instagram || '';
+                document.getElementById('twit-in').value = s.twitter || '';
+            }
+        });
+
+        // Other Listeners and Admin Functions
         onSnapshot(doc(db, "settings", "live_status"), (d) => {
             if(d.exists()){
                 const data = d.data();
                 document.getElementById('live-banner').style.display = data.isLive ? 'block' : 'none';
                 document.getElementById('live-link').href = data.url || '#';
-                document.getElementById('stream-url').value = data.url || '';
-            }
-        });
-
-        onSnapshot(doc(db, "settings", "socials"), (d) => {
-            if(d.exists()){
-                const s = d.data();
-                document.getElementById('social-display').innerHTML = `
-                    <a href="https://snapchat.com/add/${s.snapchat}" class="social-link sc" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/snapchat.png"></a>
-                    <a href="${s.discord}" class="social-link dc" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/discord-logo.png"></a>
-                    <a href="${s.instagram}" class="social-link ig" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"></a>
-                    <a href="${s.twitter}" class="social-link tw" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/twitterx.png"></a>
-                `;
-                document.getElementById('snap-in').value = s.snapchat || '';
-                document.getElementById('disc-in').value = s.discord || '';
-                document.getElementById('insta-in').value = s.instagram || '';
-                document.getElementById('twit-in').value = s.twitter || '';
             }
         });
 
@@ -161,31 +165,18 @@
             snap.forEach(docSnap => {
                 const v = docSnap.data();
                 const id = docSnap.id;
-                grid.innerHTML += `
-                    <div class="video-card">
-                        <div class="admin-controls" style="display: ${isAdmin ? 'flex' : 'none'}">
-                            <button class="btn-mini" style="background:var(--primary);color:black" onclick="setupEdit('${id}','${v.title}','${v.ytId}')">✎</button>
-                            <button class="btn-mini" style="background:var(--danger)" onclick="deleteVideo('${id}')">✖</button>
-                        </div>
-                        <iframe src="https://www.youtube.com/embed/${v.ytId}" allowfullscreen></iframe>
-                        <div class="video-info"><h3>${v.title}</h3></div>
-                    </div>
-                `;
+                grid.innerHTML += `<div class="video-card">
+                    <div class="admin-controls" style="display: ${isAdmin ? 'flex' : 'none'}"><button class="btn-mini" style="background:var(--danger)" onclick="deleteVideo('${id}')">✖</button></div>
+                    <iframe src="https://www.youtube.com/embed/${v.ytId}" allowfullscreen></iframe>
+                    <div class="video-info"><h3>${v.title}</h3></div>
+                </div>`;
             });
         });
 
-        // --- ADMIN ACTIONS ---
         window.toggleAdmin = () => {
             isAdmin = !isAdmin;
             document.getElementById('admin-panel').style.display = isAdmin ? 'block' : 'none';
             document.querySelectorAll('.admin-controls').forEach(e => e.style.display = isAdmin ? 'flex' : 'none');
-        };
-
-        window.updateLive = async (status) => {
-            try {
-                await setDoc(doc(db, "settings", "live_status"), { isLive: status, url: document.getElementById('stream-url').value }, {merge: true});
-                alert(status ? "Live Banner Active!" : "Live Banner Hidden");
-            } catch(e) { alert("Error: " + e.message); }
         };
 
         window.saveSocials = async () => {
@@ -196,29 +187,22 @@
                     instagram: document.getElementById('insta-in').value,
                     twitter: document.getElementById('twit-in').value
                 }, {merge: true});
-                alert("Social Media Links Saved!");
-            } catch(e) { alert("Error: " + e.message); }
+                alert("Social Buttons Updated!");
+            } catch(e) { alert("Permission Error! Check Firestore Rules."); }
+        };
+
+        window.updateLive = async (status) => {
+            await setDoc(doc(db, "settings", "live_status"), { isLive: status, url: document.getElementById('stream-url').value }, {merge: true});
         };
 
         window.handleVideo = async () => {
             const title = document.getElementById('v-title').value;
             const ytId = document.getElementById('v-id').value;
-            const editId = document.getElementById('edit-id').value;
-            try {
-                if(!editId) await addDoc(collection(db, "videos"), { title, ytId, createdAt: serverTimestamp() });
-                else await updateDoc(doc(db, "videos", editId), { title, ytId });
-                document.getElementById('v-title').value = ''; document.getElementById('v-id').value = ''; document.getElementById('edit-id').value = '';
-                document.getElementById('sub-btn').innerText = "Publish Video";
-                alert("Video Saved!");
-            } catch(e) { alert("Error: " + e.message); }
+            await addDoc(collection(db, "videos"), { title, ytId, createdAt: serverTimestamp() });
+            document.getElementById('v-title').value = ''; document.getElementById('v-id').value = '';
         };
 
-        window.deleteVideo = async (id) => { if(confirm("Delete this video?")) await deleteDoc(doc(db, "videos", id)); };
-
-        window.setupEdit = (id, t, y) => {
-            document.getElementById('v-title').value = t; document.getElementById('v-id').value = y; document.getElementById('edit-id').value = id;
-            document.getElementById('sub-btn').innerText = "Update Video"; window.scrollTo(0,0);
-        };
+        window.deleteVideo = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "videos", id)); };
     </script>
 </body>
 </html>
