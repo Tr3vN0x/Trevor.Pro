@@ -3,200 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tr3vN0x | The Architect</title>
+    <title>Tr3vN0x | The Archive</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         :root {
             --gold: #c8aa6e;
             --blue: #00d1ff;
-            --bg: #02060a;
-            --panel: rgba(5, 15, 25, 0.8);
+            --bg: #010a13;
+            --panel-bg: rgba(10, 20, 30, 0.95);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
+        /* Prevent scrolling entirely */
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
             background-color: var(--bg);
+            font-family: 'Inter', sans-serif;
             color: #fff;
-            line-height: 1.6;
-            overflow-x: hidden;
         }
 
-        /* --- BACKGROUND DECOR --- */
-        .bg-glow {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 209, 255, 0.03) 0%, transparent 70%);
-            z-index: -1;
-        }
-
-        /* --- SECTION STYLING --- */
-        section {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 10%;
-        }
-
-        .content-box {
-            max-width: 900px;
+        /* Hextech Background Glow */
+        body::before {
+            content: '';
+            position: absolute;
             width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 209, 255, 0.05) 0%, transparent 80%);
+            pointer-events: none;
         }
 
-        /* --- TYPOGRAPHY --- */
-        .label {
+        /* MAIN HUB LAYOUT */
+        .hub-interface {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            height: 100vh;
+            padding: 40px;
+            gap: 40px;
+            box-sizing: border-box;
+        }
+
+        /* LEFT NAVIGATION */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-right: 1px solid rgba(200, 170, 110, 0.2);
+            padding-right: 20px;
+        }
+
+        .nav-item {
             font-family: 'Cinzel';
-            color: var(--blue);
-            font-size: 0.8rem;
-            letter-spacing: 5px;
+            color: var(--gold);
+            padding: 15px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(0, 209, 255, 0.1);
+            border: 1px solid var(--blue);
+            color: #fff;
+            text-shadow: 0 0 10px var(--blue);
+        }
+
+        /* MAIN DISPLAY AREA */
+        .display-screen {
+            background: var(--panel-bg);
+            border: 1px solid var(--gold);
+            position: relative;
+            padding: 60px;
+            overflow-y: auto; /* Content can scroll inside the box if needed */
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Content Animations */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .content-section.active {
             display: block;
-            margin-bottom: 10px;
         }
 
         h1, h2 {
             font-family: 'Cinzel', serif;
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            line-height: 1;
-            margin-bottom: 25px;
             color: var(--gold);
-        }
-
-        .intro-text {
-            font-size: 1.3rem;
-            color: #a0aeba;
-            font-weight: 300;
-        }
-
-        /* --- THE "ABOUT" CARDS --- */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .feature-card {
-            background: var(--panel);
-            border: 1px solid rgba(200, 170, 110, 0.2);
-            padding: 40px;
-            position: relative;
-            transition: 0.4s;
-        }
-
-        .feature-card:hover {
-            border-color: var(--blue);
-            box-shadow: 0 0 30px rgba(0, 209, 255, 0.1);
-            transform: translateY(-5px);
-        }
-
-        .feature-card i {
-            font-size: 2rem;
-            color: var(--blue);
             margin-bottom: 20px;
+            letter-spacing: 5px;
         }
 
-        /* --- BUTTONS --- */
-        .cta-btn {
-            display: inline-block;
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blue), transparent);
+        }
+
+        /* DECORATIVE CORNERS */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gold);
+        }
+        .top-left { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+        .bottom-right { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .social-links {
             margin-top: 40px;
-            padding: 15px 40px;
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            text-decoration: none;
-            font-family: 'Cinzel';
-            letter-spacing: 2px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .social-links a {
+            color: var(--blue);
+            font-size: 1.5rem;
             transition: 0.3s;
-            background: transparent;
         }
 
-        .cta-btn:hover {
-            background: var(--gold);
-            color: #000;
-            box-shadow: 0 0 20px rgba(200, 170, 110, 0.4);
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            padding: 50px;
-            text-align: center;
-            border-top: 1px solid rgba(200, 170, 110, 0.1);
-            font-family: 'Cinzel';
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            opacity: 0.5;
-        }
+        .social-links a:hover { color: #fff; transform: translateY(-3px); }
 
     </style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
-
-<section>
-    <div class="content-box">
-        <span class="label">IDENTITY LOG // TR3VN0X</span>
-        <h1>I AM THE <br><span style="color: #fff;">ARCHITECT.</span></h1>
-        <p class="intro-text">
-            Mixing the precision of <b>Web Development</b> with the raw energy of <b>Gaming Culture</b>. 
-            I build digital spaces that don't just function—they leave an impact.
-        </p>
-        <a href="#about" class="cta-btn">Initiate Archive</a>
+<div class="hub-interface">
+    <div class="sidebar">
+        <div style="margin-bottom: 40px;">
+            <h2 style="font-size: 1.2rem; margin: 0;">TR3VN0X</h2>
+            <p style="font-size: 0.6rem; letter-spacing: 2px; color: var(--blue);">SYSTEM ARCHITECT</p>
+        </div>
+        
+        <div class="nav-item active" onclick="showContent('intro')">Introduction</div>
+        <div class="nav-item" onclick="showContent('about')">The Persona</div>
+        <div class="nav-item" onclick="showContent('vision')">Mission Log</div>
+        <div class="nav-item" onclick="showContent('connect')">Connect</div>
     </div>
-</section>
 
-<section id="about">
-    <div class="content-box">
-        <span class="label">BIOGRAPHY</span>
-        <h2>Bridging the Worlds.</h2>
-        <p style="color: #a0aeba; margin-bottom: 40px;">
-            Like the Hextech pioneers of Piltover, I believe technology should empower community. My journey as <b>Tr3vN0x</b> is about more than code; it's about building a network where creators, gamers, and developers collaborate as peers.
-        </p>
+    <div class="display-screen">
+        <div class="status-bar"></div>
+        <div class="corner top-left"></div>
+        <div class="corner bottom-right"></div>
 
-        <div class="feature-grid">
-            <div class="feature-card">
-                <i class="fa-solid fa-code"></i>
-                <h3 style="font-family: 'Cinzel'; margin-bottom: 10px;">The Developer</h3>
-                <p style="font-size: 0.9rem; color: #889;">Specializing in immersive frontend design and community-focused web tools.</p>
-            </div>
+        <div id="intro" class="content-section active">
+            <span style="color: var(--blue); font-size: 0.8rem; letter-spacing: 3px;">// ACCESSING CORE DATA</span>
+            <h1 style="font-size: 3rem; margin-top: 10px;">HELLO, I AM <span style="color: #fff;">TREVOR.</span></h1>
+            <p style="font-size: 1.2rem; color: #a0aeba; max-width: 600px;">
+                Known in the digital wild as <b>Tr3vN0x</b>. I specialize in crafting high-performance web experiences and building gaming communities.
+            </p>
+        </div>
 
-            <div class="feature-card">
-                <i class="fa-solid fa-gamepad"></i>
-                <h3 style="font-family: 'Cinzel'; margin-bottom: 10px;">The Player</h3>
-                <p style="font-size: 0.9rem; color: #889;">Active in high-stakes competitive play and collaborative sandbox environments.</p>
-            </div>
-
-            <div class="feature-card">
-                <i class="fa-solid fa-users-rays"></i>
-                <h3 style="font-family: 'Cinzel'; margin-bottom: 10px;">The Founder</h3>
-                <p style="font-size: 0.9rem; color: #889;">Leading <b>PLAYERREC</b>, a project dedicated to peer recruitment and creator growth.</p>
+        <div id="about" class="content-section">
+            <h2>The Persona</h2>
+            <p style="color: #a0aeba; margin-bottom: 20px;">
+                Half developer, half strategist. I spend my time balancing the technical logic of <b>Web Design</b> with the competitive spirit of <b>Gaming</b>.
+            </p>
+            <div style="border-left: 2px solid var(--blue); padding-left: 20px; margin-top: 30px;">
+                <p><b>ACTIVE ROLES:</b></p>
+                <ul style="list-style: none; margin-top: 10px; color: var(--gold); font-size: 0.9rem;">
+                    <li>> PLAYERREC Founder</li>
+                    <li>> Full-Stack Architect</li>
+                    <li>> Community Lead</li>
+                </ul>
             </div>
         </div>
-    </div>
-</section>
 
-<section>
-    <div class="content-box" style="text-align: center;">
-        <span class="label">CONNECTION NODES</span>
-        <h2>Join the Network.</h2>
-        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 40px; font-size: 1.5rem;">
-            <a href="#" style="color: var(--blue);"><i class="fa-brands fa-discord"></i></a>
-            <a href="#" style="color: var(--blue);"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" style="color: var(--blue);"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#" style="color: var(--blue);"><i class="fa-brands fa-github"></i></a>
+        <div id="vision" class="content-section">
+            <h2>Mission Log</h2>
+            <p style="color: #a0aeba;">
+                My goal is simple: to stop the "solo" grind. Through <b>PLAYERREC</b>, I'm building a network where creators and developers help each other level up.
+            </p>
+            <p style="margin-top: 20px; color: #a0aeba;">
+                I believe the best projects are born from collaboration, not competition.
+            </p>
         </div>
-        <p style="margin-top: 30px; font-size: 0.8rem; color: var(--gold); letter-spacing: 2px;">DISCORD ID: TR3VN0X</p>
-    </div>
-</section>
 
-<footer>
-    EVERY MONSTER IS A SELF-PORTRAIT. // PLAYERREC 2026
-</footer>
+        <div id="connect" class="content-section">
+            <h2>Connection Nodes</h2>
+            <p>Authorized channels for communication:</p>
+            <div class="social-links">
+                <a href="#"><i class="fa-brands fa-discord"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-github"></i></a>
+            </div>
+            <p style="margin-top: 40px; font-size: 0.7rem; color: var(--gold);">SECURE LINE: Tr3vN0x</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function showContent(sectionId) {
+        // Hide all sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Remove active class from nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Show selected section
+        document.getElementById(sectionId).classList.add('active');
+        
+        // Find the clicked nav item and set it active
+        event.currentTarget.classList.add('active');
+    }
+</script>
 
 </body>
 </html>
