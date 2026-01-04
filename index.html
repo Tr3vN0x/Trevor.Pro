@@ -3,200 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYBER-BITE | Weirdly Delicious</title>
+    <title>BloxWorld | Discover Games</title>
     <style>
         :root {
-            --neon-pink: #ff00ff;
-            --neon-blue: #00f2ff;
-            --bg-dark: #0a0a0c;
-            --glass: rgba(255, 255, 255, 0.1);
+            --rbx-bg: #191b1d;
+            --rbx-nav: #232527;
+            --rbx-card: #393b3d;
+            --rbx-text: #ffffff;
+            --rbx-accent: #00a2ff;
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: "HCo Gotham SSm", "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: white;
-            overflow-x: hidden;
+            background-color: var(--rbx-bg);
+            color: var(--rbx-text);
+            display: flex;
+            min-height: 100vh;
         }
 
-        /* --- THE WEIRD STUFF --- */
-        .glitch-bg {
+        /* --- SIDEBAR NAVIGATION --- */
+        aside {
+            width: 200px;
+            background-color: var(--rbx-nav);
+            padding: 20px 10px;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
-            z-index: -1;
-            opacity: 0.5;
+            height: 100vh;
+            border-right: 1px solid #444;
         }
 
-        /* Moving floating emojis */
-        .floating-food {
-            position: absolute;
-            font-size: 5rem;
-            filter: drop-shadow(0 0 15px var(--neon-blue));
-            animation: float 6s ease-in-out infinite;
-            user-select: none;
-            cursor: pointer;
+        .side-link {
+            display: block;
+            padding: 12px;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 5px;
+            margin-bottom: 5px;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-40px) rotate(20deg); }
+        .side-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
         }
 
-        /* --- HEADER --- */
+        /* --- MAIN CONTENT AREA --- */
+        main {
+            margin-left: 200px;
+            width: calc(100% - 200px);
+            padding: 0;
+        }
+
+        /* Top Bar */
         header {
-            padding: 2rem;
+            background-color: var(--rbx-nav);
+            padding: 10px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--neon-pink);
-            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            color: var(--neon-pink);
-            text-shadow: 2px 2px var(--neon-blue);
-        }
+        .logo { font-weight: bold; font-size: 22px; letter-spacing: 1px; }
 
-        /* --- MENU SECTION --- */
-        .weird-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            padding: 5rem 10%;
-        }
-
-        .weird-card {
-            background: var(--glass);
-            border: 1px solid var(--neon-blue);
-            padding: 2rem;
-            border-radius: 0px; /* Sharp edges for weirdness */
-            position: relative;
-            transition: 0.4s;
-            overflow: hidden;
-        }
-
-        .weird-card:hover {
-            transform: skewX(-5deg) scale(1.05);
-            background: rgba(0, 242, 255, 0.1);
-            box-shadow: 10px 10px 0px var(--neon-pink);
-        }
-
-        .weird-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--neon-blue);
-        }
-
-        .weird-card .price {
-            font-size: 2rem;
-            color: var(--neon-pink);
-            font-weight: bold;
-        }
-
-        /* --- BUTTONS --- */
-        .btn-glitch {
-            background: transparent;
+        .search-bar {
+            background: #000;
+            border: 1px solid #555;
+            padding: 8px 15px;
+            border-radius: 5px;
+            width: 40%;
             color: white;
-            border: 2px solid var(--neon-pink);
-            padding: 10px 20px;
-            text-transform: uppercase;
+        }
+
+        .user-controls { display: flex; align-items: center; gap: 20px; }
+        .currency { color: #f3ad16; font-weight: bold; font-size: 14px; }
+
+        /* Game Grid */
+        .content-padding { padding: 40px; }
+        .section-title { margin-bottom: 20px; font-size: 24px; }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
             cursor: pointer;
-            margin-top: 1rem;
-            position: relative;
+            transition: transform 0.2s;
         }
 
-        .btn-glitch:hover {
-            background: var(--neon-pink);
-            box-shadow: 0 0 20px var(--neon-pink);
+        .game-card:hover { transform: scale(1.03); }
+
+        .thumbnail {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background-color: var(--rbx-card);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
         }
 
-        /* Custom Cursor */
-        .custom-cursor {
-            width: 20px; height: 20px;
-            border: 2px solid var(--neon-blue);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s;
+        .game-info .title { font-weight: bold; font-size: 14px; display: block; }
+        .game-info .stats { font-size: 11px; color: #bbb; margin-top: 4px; }
+
+        /* Login Modal (Shared with previous logic) */
+        .modal {
+            display: none; position: fixed; z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+        }
+        .modal-content {
+            background: #232527; margin: 10% auto; padding: 2rem;
+            width: 90%; max-width: 400px; border-radius: 8px; text-align: center;
+        }
+        .modal-content input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            background: #000; border: 1px solid #444; color: white; border-radius: 4px;
+        }
+        .btn-blue {
+            background: var(--rbx-accent); color: white; border: none;
+            padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="glitch-bg"></div>
-    <div class="custom-cursor" id="cursor"></div>
-
-    <div class="floating-food" style="top: 20%; left: 10%;">🍔</div>
-    <div class="floating-food" style="top: 60%; right: 15%; animation-delay: 2s;">🍟</div>
-    <div class="floating-food" style="top: 10%; right: 5%; animation-delay: 4s;">🥤</div>
-
-    <header>
-        <div class="logo">CYBER-BITE</div>
-        <button class="btn-glitch" id="loginBtn">Connect Soul</button>
-    </header>
+    <aside>
+        <a href="#" class="side-link">🏠 Home</a>
+        <a href="#" class="side-link">🕹️ Discover</a>
+        <a href="#" class="side-link">👤 Avatar</a>
+        <a href="#" class="side-link">💬 Chat</a>
+        <a href="#" class="side-link">🛒 Shop</a>
+    </aside>
 
     <main>
-        <section style="text-align: center; padding: 100px 20px;">
-            <h1 id="glitch-text" style="font-size: 4rem; text-transform: uppercase;">Eat the Future</h1>
-            <p style="color: var(--neon-blue);">Warning: May contain digital flavors.</p>
-        </section>
-
-        <section class="weird-grid">
-            <div class="weird-card">
-                <h3>Vapor-Burger</h3>
-                <p>A burger that tastes like 1988. Compressed data beef and synth-lettuce.</p>
-                <div class="price">0.004 BTC</div>
-                <button class="btn-glitch">Consume</button>
+        <header>
+            <div class="logo">BLOXWORLD</div>
+            <input type="text" class="search-bar" placeholder="Search Games...">
+            <div class="user-controls">
+                <span class="currency">⏣ 1,250</span>
+                <button class="btn-blue" id="auth-btn" onclick="toggleModal()" style="width: auto;">Login</button>
             </div>
+        </header>
 
-            <div class="weird-card">
-                <h3>Void Fries</h3>
-                <p>Potatoes harvested from the dark side of the moon. Zero calories, infinite salt.</p>
-                <div class="price">$13.37</div>
-                <button class="btn-glitch">Consume</button>
+        <div class="content-padding">
+            <h2 class="section-title">Recommended For You</h2>
+            <div class="game-grid">
+                <div class="game-card">
+                    <div class="thumbnail">🏗️</div>
+                    <div class="game-info">
+                        <span class="title">Obby Master</span>
+                        <div class="stats">👍 89% | 👤 12.4K</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="thumbnail">🏎️</div>
+                    <div class="game-info">
+                        <span class="title">Nitro Racers</span>
+                        <div class="stats">👍 92% | 👤 5.1K</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="thumbnail">🍕</div>
+                    <div class="game-info">
+                        <span class="title">Work at a Pizza Place</span>
+                        <div class="stats">👍 95% | 👤 25K</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="thumbnail">🧟</div>
+                    <div class="game-info">
+                        <span class="title">Zombie Survival</span>
+                        <div class="stats">👍 82% | 👤 8.9K</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="thumbnail">🏢</div>
+                    <div class="game-info">
+                        <span class="title">Brookhaven Tycoon</span>
+                        <div class="stats">👍 90% | 👤 100K</div>
+                    </div>
+                </div>
             </div>
-
-            <div class="weird-card">
-                <h3>Neon Shake</h3>
-                <p>It glows in your stomach. Literally. Choice of Blue or Pink flavor.</p>
-                <div class="price">$9.99</div>
-                <button class="btn-glitch">Consume</button>
-            </div>
-        </section>
+        </div>
     </main>
 
-    <script>
-        // Custom Cursor movement
-        const cursor = document.getElementById('cursor');
-        document.addEventListener('mousemove', e => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Log In</h2>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn-blue" onclick="handleAuth('login')">Log In</button>
+            <p id="error-msg" style="color: #ff5555; font-size: 12px; margin-top: 10px;"></p>
+            <button onclick="toggleModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
 
-        // Make the login button run away (only once for fun)
-        const loginBtn = document.getElementById('loginBtn');
-        loginBtn.addEventListener('mouseover', () => {
-            loginBtn.style.transform = `translate(${Math.random() * 50}px, ${Math.random() * 20}px)`;
-        });
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // Glitch text effect
-        const text = document.getElementById('glitch-text');
-        setInterval(() => {
-            text.style.textShadow = `${Math.random()*10}px ${Math.random()*10}px var(--neon-pink)`;
-            setTimeout(() => {
-                text.style.textShadow = 'none';
-            }, 100);
-        }, 2000);
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+
+        window.toggleModal = () => {
+            const m = document.getElementById('login-modal');
+            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+        }
+
+        window.handleAuth = async (type) => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            try {
+                await signInWithEmailAndPassword(auth, e, p);
+                toggleModal();
+            } catch (err) {
+                document.getElementById('error-msg').innerText = err.message;
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            const btn = document.getElementById('auth-btn');
+            if (user) {
+                btn.innerText = "Logout";
+                btn.onclick = () => signOut(auth);
+            } else {
+                btn.innerText = "Login";
+                btn.onclick = toggleModal;
+            }
+        });
     </script>
 </body>
 </html>
