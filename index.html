@@ -3,232 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tr3vN0x | The Archive</title>
+    <title>Tr3vN0x | Player Profile</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Beaufort+for+LoL:ital,wght@0,400;0,700;1,400&family=Spiegel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* LoL Palette */
         :root {
-            --gold: #c8aa6e;
-            --blue: #00d1ff;
-            --bg: #010a13;
-            --panel-bg: rgba(10, 20, 30, 0.95);
+            --gold-1: #c8aa6e; /* Main Gold */
+            --gold-2: #c89b3c; /* Darker Gold */
+            --gold-3: #785a28; /* Border Gold */
+            --blue-1: #005a82; /* Deep Blue */
+            --blue-2: #0ac8b9; /* Hextech Teal */
+            --bg-dark: #010a13;
         }
 
-        /* Prevent scrolling entirely */
-        html, body {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
             height: 100%;
-            margin: 0;
-            overflow: hidden;
-            background-color: var(--bg);
-            font-family: 'Inter', sans-serif;
-            color: #fff;
+            font-family: 'Spiegel', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f0e6d2;
+            overflow: hidden; /* No scrolling */
         }
 
-        /* Hextech Background Glow */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 209, 255, 0.05) 0%, transparent 80%);
-            pointer-events: none;
-        }
-
-        /* MAIN HUB LAYOUT */
-        .hub-interface {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            height: 100vh;
-            padding: 40px;
-            gap: 40px;
-            box-sizing: border-box;
-        }
-
-        /* LEFT NAVIGATION */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            border-right: 1px solid rgba(200, 170, 110, 0.2);
-            padding-right: 20px;
-        }
-
-        .nav-item {
-            font-family: 'Cinzel';
-            color: var(--gold);
-            padding: 15px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border: 1px solid transparent;
-            transition: 0.3s;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: rgba(0, 209, 255, 0.1);
-            border: 1px solid var(--blue);
-            color: #fff;
-            text-shadow: 0 0 10px var(--blue);
-        }
-
-        /* MAIN DISPLAY AREA */
-        .display-screen {
-            background: var(--panel-bg);
-            border: 1px solid var(--gold);
-            position: relative;
-            padding: 60px;
-            overflow-y: auto; /* Content can scroll inside the box if needed */
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Content Animations */
-        .content-section {
-            display: none;
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        h1, h2 {
-            font-family: 'Cinzel', serif;
-            color: var(--gold);
-            margin-bottom: 20px;
-            letter-spacing: 5px;
-        }
-
-        .status-bar {
-            position: absolute;
+        /* Video/Image Background */
+        .video-bg {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--blue), transparent);
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.4) contrast(1.1);
         }
 
-        /* DECORATIVE CORNERS */
-        .corner {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--gold);
-        }
-        .top-left { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
-        .bottom-right { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
+        /* Main App Wrapper */
+        .client-wrapper {
+            height: 100vh;
+            display: grid;
+            grid-template-rows: 80px 1fr;
+            grid-template-columns: 1fr 300px;
+            background: rgba(1, 10, 19, 0.6);
+            backdrop-filter: blur(5px);
+            border: 2px solid var(--gold-3);
         }
 
-        .social-links {
-            margin-top: 40px;
+        /* Top Navigation Bar */
+        header {
+            grid-column: 1 / 3;
             display: flex;
-            gap: 20px;
+            align-items: center;
+            padding: 0 40px;
+            border-bottom: 1px solid var(--gold-3);
+            background: linear-gradient(to bottom, rgba(200, 170, 110, 0.1), transparent);
         }
 
-        .social-links a {
-            color: var(--blue);
-            font-size: 1.5rem;
+        .logo {
+            font-family: 'Beaufort for LoL', serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--gold-1);
+            letter-spacing: 2px;
+            margin-right: 50px;
+        }
+
+        nav ul { display: flex; list-style: none; gap: 30px; }
+
+        nav li {
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            cursor: pointer;
             transition: 0.3s;
+            color: #a09b8c;
         }
 
-        .social-links a:hover { color: #fff; transform: translateY(-3px); }
+        nav li:hover, nav li.active {
+            color: #fff;
+            text-shadow: 0 0 10px var(--blue-2);
+        }
+
+        /* Center Content Area */
+        .main-view {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero-text h1 {
+            font-family: 'Beaufort for LoL', serif;
+            font-size: 4.5rem;
+            font-style: italic;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .hero-text h2 {
+            color: var(--gold-1);
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+        }
+
+        .desc-box {
+            max-width: 500px;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid var(--gold-1);
+            padding: 20px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        /* Right Side Sidebar (Friends List Style) */
+        .social-sidebar {
+            background: rgba(1, 10, 19, 0.8);
+            border-left: 1px solid var(--gold-3);
+            padding: 20px;
+        }
+
+        .sidebar-header {
+            font-size: 0.8rem;
+            color: var(--gold-1);
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(200, 170, 110, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .social-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .social-item:hover { background: rgba(255,255,255,0.05); }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--gold-1);
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .status-online { color: var(--blue-2); font-size: 0.7rem; font-weight: bold; }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Play Button Style */
+        .play-btn {
+            margin-top: 40px;
+            background: linear-gradient(to bottom, #1e2328, #111);
+            border: 1px solid var(--gold-1);
+            color: var(--gold-1);
+            padding: 15px 60px;
+            font-weight: 900;
+            font-family: 'Beaufort for LoL';
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: inset 0 0 10px rgba(200, 170, 110, 0.2);
+        }
+
+        .play-btn:hover {
+            color: #fff;
+            background: var(--gold-3);
+            box-shadow: 0 0 20px rgba(200, 170, 110, 0.4);
+        }
 
     </style>
 </head>
 <body>
 
-<div class="hub-interface">
-    <div class="sidebar">
-        <div style="margin-bottom: 40px;">
-            <h2 style="font-size: 1.2rem; margin: 0;">TR3VN0X</h2>
-            <p style="font-size: 0.6rem; letter-spacing: 2px; color: var(--blue);">SYSTEM ARCHITECT</p>
-        </div>
-        
-        <div class="nav-item active" onclick="showContent('intro')">Introduction</div>
-        <div class="nav-item" onclick="showContent('about')">The Persona</div>
-        <div class="nav-item" onclick="showContent('vision')">Mission Log</div>
-        <div class="nav-item" onclick="showContent('connect')">Connect</div>
-    </div>
+    <img class="video-bg" src="https://images.contentstack.io/v3/assets/blt731eb9a2aa3045c9/blt46366539a6747ed1/636ad90b6a2267104b281f6d/110922_Empyrean_Worlds_Cinematic_Stills_04.jpg" alt="LoL Background">
 
-    <div class="display-screen">
-        <div class="status-bar"></div>
-        <div class="corner top-left"></div>
-        <div class="corner bottom-right"></div>
-
-        <div id="intro" class="content-section active">
-            <span style="color: var(--blue); font-size: 0.8rem; letter-spacing: 3px;">// ACCESSING CORE DATA</span>
-            <h1 style="font-size: 3rem; margin-top: 10px;">HELLO, I AM <span style="color: #fff;">TREVOR.</span></h1>
-            <p style="font-size: 1.2rem; color: #a0aeba; max-width: 600px;">
-                Known in the digital wild as <b>Tr3vN0x</b>. I specialize in crafting high-performance web experiences and building gaming communities.
-            </p>
-        </div>
-
-        <div id="about" class="content-section">
-            <h2>The Persona</h2>
-            <p style="color: #a0aeba; margin-bottom: 20px;">
-                Half developer, half strategist. I spend my time balancing the technical logic of <b>Web Design</b> with the competitive spirit of <b>Gaming</b>.
-            </p>
-            <div style="border-left: 2px solid var(--blue); padding-left: 20px; margin-top: 30px;">
-                <p><b>ACTIVE ROLES:</b></p>
-                <ul style="list-style: none; margin-top: 10px; color: var(--gold); font-size: 0.9rem;">
-                    <li>> PLAYERREC Founder</li>
-                    <li>> Full-Stack Architect</li>
-                    <li>> Community Lead</li>
+    <div class="client-wrapper">
+        <header>
+            <div class="logo">PLAYERREC</div>
+            <nav>
+                <ul>
+                    <li class="active">Home</li>
+                    <li>Profile</li>
+                    <li>Collection</li>
+                    <li>Recruitment</li>
                 </ul>
+            </nav>
+        </header>
+
+        <main class="main-view">
+            <div class="hero-text">
+                <h2>LEVEL 18 ARCHITECT</h2>
+                <h1>TREVOR <br><span style="color:var(--gold-1)">TR3VN0X</span></h1>
+                <div class="desc-box">
+                    Welcome to the archive. I am a Web Developer and Community Lead bridging the gap between high-level code and competitive gaming.
+                </div>
             </div>
-        </div>
-
-        <div id="vision" class="content-section">
-            <h2>Mission Log</h2>
-            <p style="color: #a0aeba;">
-                My goal is simple: to stop the "solo" grind. Through <b>PLAYERREC</b>, I'm building a network where creators and developers help each other level up.
-            </p>
-            <p style="margin-top: 20px; color: #a0aeba;">
-                I believe the best projects are born from collaboration, not competition.
-            </p>
-        </div>
-
-        <div id="connect" class="content-section">
-            <h2>Connection Nodes</h2>
-            <p>Authorized channels for communication:</p>
-            <div class="social-links">
-                <a href="#"><i class="fa-brands fa-discord"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="#"><i class="fa-brands fa-github"></i></a>
+            <div>
+                <button class="play-btn">START COLLABORATION</button>
             </div>
-            <p style="margin-top: 40px; font-size: 0.7rem; color: var(--gold);">SECURE LINE: Tr3vN0x</p>
-        </div>
+        </main>
 
+        <aside class="social-sidebar">
+            <div class="sidebar-header">SOCIAL NODES</div>
+            
+            <div class="social-item">
+                <div class="avatar"><img src="https://via.placeholder.com/40/005a82/fff?text=D"></div>
+                <div>
+                    <div style="font-weight: bold; font-size: 0.9rem;">Discord</div>
+                    <div class="status-online">TR3VN0X</div>
+                </div>
+            </div>
+
+            <div class="social-item">
+                <div class="avatar"><img src="https://via.placeholder.com/40/c8aa6e/fff?text=I"></div>
+                <div>
+                    <div style="font-weight: bold; font-size: 0.9rem;">Instagram</div>
+                    <div class="status-online">FOLLOWING</div>
+                </div>
+            </div>
+
+            <div class="social-item">
+                <div class="avatar"><img src="https://via.placeholder.com/40/0ac8b9/fff?text=X"></div>
+                <div>
+                    <div style="font-weight: bold; font-size: 0.9rem;">Twitter / X</div>
+                    <div class="status-online">ACTIVE</div>
+                </div>
+            </div>
+        </aside>
     </div>
-</div>
-
-<script>
-    function showContent(sectionId) {
-        // Hide all sections
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Remove active class from nav items
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-
-        // Show selected section
-        document.getElementById(sectionId).classList.add('active');
-        
-        // Find the clicked nav item and set it active
-        event.currentTarget.classList.add('active');
-    }
-</script>
 
 </body>
 </html>
